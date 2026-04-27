@@ -1,5 +1,16 @@
 # scitex-msword
 
+<!-- scitex-badges:start -->
+[![PyPI](https://img.shields.io/pypi/v/scitex-msword.svg)](https://pypi.org/project/scitex-msword/)
+[![Python](https://img.shields.io/pypi/pyversions/scitex-msword.svg)](https://pypi.org/project/scitex-msword/)
+[![Tests](https://github.com/ywatanabe1989/scitex-msword/actions/workflows/test.yml/badge.svg)](https://github.com/ywatanabe1989/scitex-msword/actions/workflows/test.yml)
+[![Install Test](https://github.com/ywatanabe1989/scitex-msword/actions/workflows/install-test.yml/badge.svg)](https://github.com/ywatanabe1989/scitex-msword/actions/workflows/install-test.yml)
+[![Coverage](https://codecov.io/gh/ywatanabe1989/scitex-msword/graph/badge.svg)](https://codecov.io/gh/ywatanabe1989/scitex-msword)
+[![Docs](https://readthedocs.org/projects/scitex-msword/badge/?version=latest)](https://scitex-msword.readthedocs.io/en/latest/)
+[![License: AGPL v3](https://img.shields.io/badge/license-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
+<!-- scitex-badges:end -->
+
+
 MS Word (.docx) reader/writer with journal-style profiles, extracted from the [SciTeX](https://github.com/ywatanabe1989/scitex-python) ecosystem as a standalone package.
 
 ## Install
