@@ -249,6 +249,7 @@ def convert_docx_to_tex(
 
 
 __all__ = [
+    "__version__",
     "load_docx",
     "save_docx",
     "convert_docx_to_tex",
