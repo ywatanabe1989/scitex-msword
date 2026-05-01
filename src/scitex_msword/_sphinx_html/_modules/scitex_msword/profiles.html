@@ -1,0 +1,477 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scitex_msword.profiles &mdash; scitex-msword 0.1.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=92734c54"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            scitex-msword
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/scitex_msword.html">scitex_msword</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">scitex-msword</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../scitex_msword.html">scitex_msword</a></li>
+      <li class="breadcrumb-item active">scitex_msword.profiles</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scitex_msword.profiles</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1"># Timestamp: 2025-12-11 15:15:00</span>
+<span class="c1"># File: /home/ywatanabe/proj/scitex-code/src/scitex/msword/profiles.py</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Profiles for mapping MS Word styles to SciTeX writer structures.</span>
+
+<span class="sd">Each profile corresponds to a journal / conference template, such as:</span>
+<span class="sd">- &quot;generic&quot;</span>
+<span class="sd">- &quot;mdpi-ijerph&quot;</span>
+<span class="sd">- &quot;resna-2025&quot;</span>
+<span class="sd">- &quot;iop-double-anonymous&quot;</span>
+
+<span class="sd">The profiles define:</span>
+<span class="sd">- Which Word style names correspond to section headings</span>
+<span class="sd">- How to detect captions for figures and tables</span>
+<span class="sd">- How to handle references, lists, equations, etc.</span>
+<span class="sd">- Layout settings (columns, margins, fonts)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+
+
+<div class="viewcode-block" id="BaseWordProfile">
+<a class="viewcode-back" href="../../api/scitex_msword.profiles.html#scitex_msword.BaseWordProfile">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BaseWordProfile</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base configuration for mapping between DOCX and SciTeX writer documents.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name : str</span>
+<span class="sd">        Profile identifier (e.g., &quot;mdpi-ijerph&quot;).</span>
+<span class="sd">    description : str</span>
+<span class="sd">        Human-readable description.</span>
+<span class="sd">    heading_styles : dict[int, str]</span>
+<span class="sd">        Mapping from section depth (1, 2, 3...) to Word style names</span>
+<span class="sd">        (e.g., {1: &quot;Heading 1&quot;, 2: &quot;Heading 2&quot;}).</span>
+<span class="sd">    caption_style : str</span>
+<span class="sd">        Word style name used for figure/table captions.</span>
+<span class="sd">    normal_style : str</span>
+<span class="sd">        Default paragraph style.</span>
+<span class="sd">    reference_section_titles : list[str]</span>
+<span class="sd">        Titles that indicate the start of the reference section.</span>
+<span class="sd">    figure_caption_prefixes : list[str]</span>
+<span class="sd">        Prefixes that identify figure captions (e.g., [&quot;Figure&quot;, &quot;Fig.&quot;]).</span>
+<span class="sd">    table_caption_prefixes : list[str]</span>
+<span class="sd">        Prefixes that identify table captions (e.g., [&quot;Table&quot;]).</span>
+<span class="sd">    list_styles : dict[str, str]</span>
+<span class="sd">        Mapping for list styles (bullet, numbered).</span>
+<span class="sd">    equation_style : str | None</span>
+<span class="sd">        Style name for equations, if any.</span>
+<span class="sd">    columns : int</span>
+<span class="sd">        Number of columns in the layout (1 or 2).</span>
+<span class="sd">    double_anonymous : bool</span>
+<span class="sd">        Whether this profile requires double-anonymous formatting.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">heading_styles</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+    <span class="n">caption_style</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Caption&quot;</span>
+    <span class="n">normal_style</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Normal&quot;</span>
+    <span class="n">reference_section_titles</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
+        <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;References&quot;</span><span class="p">,</span> <span class="s2">&quot;REFERENCES&quot;</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">figure_caption_prefixes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
+        <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Figure&quot;</span><span class="p">,</span> <span class="s2">&quot;Fig.&quot;</span><span class="p">,</span> <span class="s2">&quot;Fig&quot;</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">table_caption_prefixes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
+        <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Table&quot;</span><span class="p">,</span> <span class="s2">&quot;Tab.&quot;</span><span class="p">,</span> <span class="s2">&quot;Tab&quot;</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">list_styles</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
+        <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;bullet&quot;</span><span class="p">:</span> <span class="s2">&quot;List Bullet&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;numbered&quot;</span><span class="p">:</span> <span class="s2">&quot;List Number&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+    <span class="n">equation_style</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">columns</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">double_anonymous</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="c1"># Post-processing hooks</span>
+    <span class="n">post_import_hooks</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">pre_export_hooks</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># --- Concrete profiles ------------------------------------------------------</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_generic_profile</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">BaseWordProfile</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generic Word template profile.</span>
+
+<span class="sd">    This profile is intentionally conservative and assumes that:</span>
+<span class="sd">    - &quot;Heading 1/2/3&quot; are used for section headings.</span>
+<span class="sd">    - &quot;Caption&quot; is used for figure/table captions.</span>
+<span class="sd">    - &quot;Normal&quot; is the default body text.</span>
+
+<span class="sd">    This should work reasonably well for many simple manuscripts.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">BaseWordProfile</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;generic&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Generic Word mapping with standard Heading styles.&quot;</span><span class="p">,</span>
+        <span class="n">heading_styles</span><span class="o">=</span><span class="p">{</span>
+            <span class="mi">1</span><span class="p">:</span> <span class="s2">&quot;Heading 1&quot;</span><span class="p">,</span>
+            <span class="mi">2</span><span class="p">:</span> <span class="s2">&quot;Heading 2&quot;</span><span class="p">,</span>
+            <span class="mi">3</span><span class="p">:</span> <span class="s2">&quot;Heading 3&quot;</span><span class="p">,</span>
+            <span class="mi">4</span><span class="p">:</span> <span class="s2">&quot;Heading 4&quot;</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="n">caption_style</span><span class="o">=</span><span class="s2">&quot;Caption&quot;</span><span class="p">,</span>
+        <span class="n">normal_style</span><span class="o">=</span><span class="s2">&quot;Normal&quot;</span><span class="p">,</span>
+        <span class="n">reference_section_titles</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;References&quot;</span><span class="p">,</span> <span class="s2">&quot;REFERENCES&quot;</span><span class="p">,</span> <span class="s2">&quot;Bibliography&quot;</span><span class="p">],</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_mdpi_ijerph_profile</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">BaseWordProfile</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    MDPI IJERPH template profile.</span>
+
+<span class="sd">    Based on the MDPI Word template structure:</span>
+<span class="sd">    - Section headings use built-in heading styles.</span>
+<span class="sd">    - References section is titled &quot;References&quot;.</span>
+<span class="sd">    - Single column layout.</span>
+<span class="sd">    - Specific section order: Introduction, Materials and Methods,</span>
+<span class="sd">      Results, Discussion, Conclusions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">BaseWordProfile</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;mdpi-ijerph&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;MDPI IJERPH (Int. J. Environ. Res. Public Health) Word template.&quot;</span><span class="p">,</span>
+        <span class="n">heading_styles</span><span class="o">=</span><span class="p">{</span>
+            <span class="mi">1</span><span class="p">:</span> <span class="s2">&quot;Heading 1&quot;</span><span class="p">,</span>
+            <span class="mi">2</span><span class="p">:</span> <span class="s2">&quot;Heading 2&quot;</span><span class="p">,</span>
+            <span class="mi">3</span><span class="p">:</span> <span class="s2">&quot;Heading 3&quot;</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="n">caption_style</span><span class="o">=</span><span class="s2">&quot;Caption&quot;</span><span class="p">,</span>
+        <span class="n">normal_style</span><span class="o">=</span><span class="s2">&quot;Normal&quot;</span><span class="p">,</span>
+        <span class="n">reference_section_titles</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;References&quot;</span><span class="p">],</span>
+        <span class="n">columns</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_resna_2025_profile</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">BaseWordProfile</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    RESNA 2025 scientific paper template profile.</span>
+
+<span class="sd">    The RESNA template:</span>
+<span class="sd">    - Uses all-caps section headings (INTRODUCTION, METHODS, etc.)</span>
+<span class="sd">    - Strict 4-page layout</span>
+<span class="sd">    - Two-column format</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">BaseWordProfile</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;resna-2025&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;RESNA 2025 Scientific Paper Word template.&quot;</span><span class="p">,</span>
+        <span class="n">heading_styles</span><span class="o">=</span><span class="p">{</span>
+            <span class="mi">1</span><span class="p">:</span> <span class="s2">&quot;Heading 1&quot;</span><span class="p">,</span>  <span class="c1"># INTRODUCTION, METHODS, etc.</span>
+            <span class="mi">2</span><span class="p">:</span> <span class="s2">&quot;Heading 2&quot;</span><span class="p">,</span>  <span class="c1"># First-level sub-heading</span>
+        <span class="p">},</span>
+        <span class="n">caption_style</span><span class="o">=</span><span class="s2">&quot;Caption&quot;</span><span class="p">,</span>
+        <span class="n">normal_style</span><span class="o">=</span><span class="s2">&quot;Normal&quot;</span><span class="p">,</span>
+        <span class="n">reference_section_titles</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;References&quot;</span><span class="p">,</span> <span class="s2">&quot;REFERENCES&quot;</span><span class="p">],</span>
+        <span class="n">columns</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_iop_double_anonymous_profile</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">BaseWordProfile</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    IOP double-anonymous Word template profile.</span>
+
+<span class="sd">    The IOP template uses custom styles:</span>
+<span class="sd">    - IOPH1, IOPH2, IOPH3 for headings</span>
+<span class="sd">    - IOPTitle for title</span>
+<span class="sd">    - IOPAbsText for abstract</span>
+<span class="sd">    - IOPAff for affiliations</span>
+<span class="sd">    - Requires removal of author-identifying information</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">BaseWordProfile</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;iop-double-anonymous&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;IOP double-anonymous Word template.&quot;</span><span class="p">,</span>
+        <span class="n">heading_styles</span><span class="o">=</span><span class="p">{</span>
+            <span class="mi">1</span><span class="p">:</span> <span class="s2">&quot;IOPH1&quot;</span><span class="p">,</span>
+            <span class="mi">2</span><span class="p">:</span> <span class="s2">&quot;IOPH2&quot;</span><span class="p">,</span>
+            <span class="mi">3</span><span class="p">:</span> <span class="s2">&quot;IOPH3&quot;</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="n">caption_style</span><span class="o">=</span><span class="s2">&quot;Caption&quot;</span><span class="p">,</span>
+        <span class="n">normal_style</span><span class="o">=</span><span class="s2">&quot;Normal&quot;</span><span class="p">,</span>
+        <span class="n">reference_section_titles</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;References&quot;</span><span class="p">],</span>
+        <span class="n">double_anonymous</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_ieee_profile</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">BaseWordProfile</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    IEEE conference/journal template profile.</span>
+
+<span class="sd">    The IEEE template:</span>
+<span class="sd">    - Two-column format</span>
+<span class="sd">    - Roman numeral section numbering</span>
+<span class="sd">    - Specific citation style</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">BaseWordProfile</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;ieee&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;IEEE conference/journal Word template.&quot;</span><span class="p">,</span>
+        <span class="n">heading_styles</span><span class="o">=</span><span class="p">{</span>
+            <span class="mi">1</span><span class="p">:</span> <span class="s2">&quot;Heading 1&quot;</span><span class="p">,</span>
+            <span class="mi">2</span><span class="p">:</span> <span class="s2">&quot;Heading 2&quot;</span><span class="p">,</span>
+            <span class="mi">3</span><span class="p">:</span> <span class="s2">&quot;Heading 3&quot;</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="n">caption_style</span><span class="o">=</span><span class="s2">&quot;Caption&quot;</span><span class="p">,</span>
+        <span class="n">normal_style</span><span class="o">=</span><span class="s2">&quot;Normal&quot;</span><span class="p">,</span>
+        <span class="n">reference_section_titles</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;References&quot;</span><span class="p">,</span> <span class="s2">&quot;REFERENCES&quot;</span><span class="p">],</span>
+        <span class="n">columns</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_springer_profile</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">BaseWordProfile</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Springer Nature journal template profile.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">BaseWordProfile</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;springer&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Springer Nature journal Word template.&quot;</span><span class="p">,</span>
+        <span class="n">heading_styles</span><span class="o">=</span><span class="p">{</span>
+            <span class="mi">1</span><span class="p">:</span> <span class="s2">&quot;Heading 1&quot;</span><span class="p">,</span>
+            <span class="mi">2</span><span class="p">:</span> <span class="s2">&quot;Heading 2&quot;</span><span class="p">,</span>
+            <span class="mi">3</span><span class="p">:</span> <span class="s2">&quot;Heading 3&quot;</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="n">caption_style</span><span class="o">=</span><span class="s2">&quot;Caption&quot;</span><span class="p">,</span>
+        <span class="n">normal_style</span><span class="o">=</span><span class="s2">&quot;Normal&quot;</span><span class="p">,</span>
+        <span class="n">reference_section_titles</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;References&quot;</span><span class="p">],</span>
+        <span class="n">columns</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_elsevier_profile</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">BaseWordProfile</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Elsevier journal template profile.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">BaseWordProfile</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;elsevier&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Elsevier journal Word template.&quot;</span><span class="p">,</span>
+        <span class="n">heading_styles</span><span class="o">=</span><span class="p">{</span>
+            <span class="mi">1</span><span class="p">:</span> <span class="s2">&quot;Heading 1&quot;</span><span class="p">,</span>
+            <span class="mi">2</span><span class="p">:</span> <span class="s2">&quot;Heading 2&quot;</span><span class="p">,</span>
+            <span class="mi">3</span><span class="p">:</span> <span class="s2">&quot;Heading 3&quot;</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="n">caption_style</span><span class="o">=</span><span class="s2">&quot;Caption&quot;</span><span class="p">,</span>
+        <span class="n">normal_style</span><span class="o">=</span><span class="s2">&quot;Normal&quot;</span><span class="p">,</span>
+        <span class="n">reference_section_titles</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;References&quot;</span><span class="p">],</span>
+        <span class="n">columns</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<span class="c1"># Registry of known profiles</span>
+<span class="n">_PROFILES</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">BaseWordProfile</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;generic&quot;</span><span class="p">:</span> <span class="n">_generic_profile</span><span class="p">(),</span>
+    <span class="s2">&quot;mdpi-ijerph&quot;</span><span class="p">:</span> <span class="n">_mdpi_ijerph_profile</span><span class="p">(),</span>
+    <span class="s2">&quot;mdpi&quot;</span><span class="p">:</span> <span class="n">_mdpi_ijerph_profile</span><span class="p">(),</span>  <span class="c1"># Alias</span>
+    <span class="s2">&quot;resna-2025&quot;</span><span class="p">:</span> <span class="n">_resna_2025_profile</span><span class="p">(),</span>
+    <span class="s2">&quot;resna&quot;</span><span class="p">:</span> <span class="n">_resna_2025_profile</span><span class="p">(),</span>  <span class="c1"># Alias</span>
+    <span class="s2">&quot;iop-double-anonymous&quot;</span><span class="p">:</span> <span class="n">_iop_double_anonymous_profile</span><span class="p">(),</span>
+    <span class="s2">&quot;iop&quot;</span><span class="p">:</span> <span class="n">_iop_double_anonymous_profile</span><span class="p">(),</span>  <span class="c1"># Alias</span>
+    <span class="s2">&quot;ieee&quot;</span><span class="p">:</span> <span class="n">_ieee_profile</span><span class="p">(),</span>
+    <span class="s2">&quot;springer&quot;</span><span class="p">:</span> <span class="n">_springer_profile</span><span class="p">(),</span>
+    <span class="s2">&quot;elsevier&quot;</span><span class="p">:</span> <span class="n">_elsevier_profile</span><span class="p">(),</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="list_profiles">
+<a class="viewcode-back" href="../../api/scitex_msword.profiles.html#scitex_msword.list_profiles">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">list_profiles</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    List available MS Word profiles.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list[str]</span>
+<span class="sd">        List of profile names (e.g., [&quot;generic&quot;, &quot;mdpi-ijerph&quot;, ...]).</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from scitex.msword import list_profiles</span>
+<span class="sd">    &gt;&gt;&gt; profiles = list_profiles()</span>
+<span class="sd">    &gt;&gt;&gt; &quot;generic&quot; in profiles</span>
+<span class="sd">    True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">_PROFILES</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span></div>
+
+
+
+<div class="viewcode-block" id="get_profile">
+<a class="viewcode-back" href="../../api/scitex_msword.profiles.html#scitex_msword.get_profile">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_profile</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseWordProfile</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get a Word profile by name.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name : str | None</span>
+<span class="sd">        Profile name. If None, &quot;generic&quot; is used.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    BaseWordProfile</span>
+<span class="sd">        The requested profile.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    KeyError</span>
+<span class="sd">        If the profile name is unknown.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from scitex.msword import get_profile</span>
+<span class="sd">    &gt;&gt;&gt; profile = get_profile(&quot;mdpi-ijerph&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; profile.columns</span>
+<span class="sd">    1</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_PROFILES</span><span class="p">[</span><span class="s2">&quot;generic&quot;</span><span class="p">]</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_PROFILES</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+        <span class="n">available</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">list_profiles</span><span class="p">())</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Unknown MS Word profile: </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2">. &quot;</span> <span class="sa">f</span><span class="s2">&quot;Available profiles: </span><span class="si">{</span><span class="n">available</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span></div>
+
+
+
+<div class="viewcode-block" id="register_profile">
+<a class="viewcode-back" href="../../api/scitex_msword.profiles.html#scitex_msword.register_profile">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">register_profile</span><span class="p">(</span><span class="n">profile</span><span class="p">:</span> <span class="n">BaseWordProfile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Register a custom Word profile.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    profile : BaseWordProfile</span>
+<span class="sd">        The profile to register.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from scitex.msword import BaseWordProfile, register_profile</span>
+<span class="sd">    &gt;&gt;&gt; custom = BaseWordProfile(</span>
+<span class="sd">    ...     name=&quot;my-journal&quot;,</span>
+<span class="sd">    ...     description=&quot;My custom journal template&quot;,</span>
+<span class="sd">    ...     heading_styles={1: &quot;Title&quot;, 2: &quot;Subtitle&quot;},</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &gt;&gt;&gt; register_profile(custom)</span>
+<span class="sd">    &gt;&gt;&gt; &quot;my-journal&quot; in list_profiles()</span>
+<span class="sd">    True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_PROFILES</span><span class="p">[</span><span class="n">profile</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">profile</span></div>
+
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;BaseWordProfile&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;list_profiles&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;get_profile&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;register_profile&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Yusuke Watanabe.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

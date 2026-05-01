@@ -1,0 +1,150 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scitex-msword &mdash; scitex-msword 0.1.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=92734c54"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API" href="api.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            scitex-msword
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api/scitex_msword.html">scitex_msword</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">scitex-msword</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">scitex-msword</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="scitex-msword">
+<h1>scitex-msword<a class="headerlink" href="#scitex-msword" title="Link to this heading"></a></h1>
+<p>Small linear-algebra helpers (distance, geometric median, cosine, nannorm)
+extracted from the SciTeX ecosystem as a standalone package.</p>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api.html#strategy">Strategy:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#typical-usage">Typical usage:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#available-profiles">Available profiles:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#scitex_msword.load_docx"><code class="docutils literal notranslate"><span class="pre">load_docx()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#scitex_msword.save_docx"><code class="docutils literal notranslate"><span class="pre">save_docx()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#scitex_msword.convert_docx_to_tex"><code class="docutils literal notranslate"><span class="pre">convert_docx_to_tex()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#scitex_msword.list_profiles"><code class="docutils literal notranslate"><span class="pre">list_profiles()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#scitex_msword.get_profile"><code class="docutils literal notranslate"><span class="pre">get_profile()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#scitex_msword.register_profile"><code class="docutils literal notranslate"><span class="pre">register_profile()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#scitex_msword.BaseWordProfile"><code class="docutils literal notranslate"><span class="pre">BaseWordProfile</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#scitex_msword.WordReader"><code class="docutils literal notranslate"><span class="pre">WordReader</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#scitex_msword.WordWriter"><code class="docutils literal notranslate"><span class="pre">WordWriter</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#scitex_msword.link_captions_to_images"><code class="docutils literal notranslate"><span class="pre">link_captions_to_images()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#scitex_msword.link_captions_to_images_by_proximity"><code class="docutils literal notranslate"><span class="pre">link_captions_to_images_by_proximity()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#scitex_msword.normalize_section_headings"><code class="docutils literal notranslate"><span class="pre">normalize_section_headings()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#scitex_msword.validate_document"><code class="docutils literal notranslate"><span class="pre">validate_document()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#scitex_msword.create_post_import_hook"><code class="docutils literal notranslate"><span class="pre">create_post_import_hook()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="api-reference">
+<h2>API Reference<a class="headerlink" href="#api-reference" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/scitex_msword.html#module-scitex_msword" title="scitex_msword"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scitex_msword</span></code></a></p></td>
+<td><p>MS Word (DOCX) import/export utilities for SciTeX.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="api.html" class="btn btn-neutral float-right" title="API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Yusuke Watanabe.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

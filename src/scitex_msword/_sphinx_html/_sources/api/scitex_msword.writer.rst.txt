@@ -1,0 +1,12 @@
+scitex\_msword.writer
+=====================
+
+.. automodule:: scitex_msword.writer
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      WordWriter
+   

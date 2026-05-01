@@ -1,0 +1,16 @@
+scitex\_msword.utils
+====================
+
+.. automodule:: scitex_msword.utils
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      create_post_import_hook
+      link_captions_to_images
+      link_captions_to_images_by_proximity
+      normalize_section_headings
+      validate_document
+   

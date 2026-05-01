@@ -1,0 +1,193 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scitex_msword.reader &mdash; scitex-msword 0.1.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=92734c54"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="scitex_msword.utils" href="scitex_msword.utils.html" />
+    <link rel="prev" title="scitex_msword.profiles" href="scitex_msword.profiles.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            scitex-msword
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="scitex_msword.html">scitex_msword</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#strategy">Strategy:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#typical-usage">Typical usage:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#available-profiles">Available profiles:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.load_docx"><code class="docutils literal notranslate"><span class="pre">load_docx()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.save_docx"><code class="docutils literal notranslate"><span class="pre">save_docx()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.convert_docx_to_tex"><code class="docutils literal notranslate"><span class="pre">convert_docx_to_tex()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.list_profiles"><code class="docutils literal notranslate"><span class="pre">list_profiles()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.get_profile"><code class="docutils literal notranslate"><span class="pre">get_profile()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.register_profile"><code class="docutils literal notranslate"><span class="pre">register_profile()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.BaseWordProfile"><code class="docutils literal notranslate"><span class="pre">BaseWordProfile</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.WordReader"><code class="docutils literal notranslate"><span class="pre">WordReader</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.WordWriter"><code class="docutils literal notranslate"><span class="pre">WordWriter</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.link_captions_to_images"><code class="docutils literal notranslate"><span class="pre">link_captions_to_images()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.link_captions_to_images_by_proximity"><code class="docutils literal notranslate"><span class="pre">link_captions_to_images_by_proximity()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.normalize_section_headings"><code class="docutils literal notranslate"><span class="pre">normalize_section_headings()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.validate_document"><code class="docutils literal notranslate"><span class="pre">validate_document()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.create_post_import_hook"><code class="docutils literal notranslate"><span class="pre">create_post_import_hook()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="scitex_msword.profiles.html">scitex_msword.profiles</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">scitex_msword.reader</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#scitex_msword.reader.WordReader"><code class="docutils literal notranslate"><span class="pre">WordReader</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#scitex_msword.reader.WordReader.read"><code class="docutils literal notranslate"><span class="pre">WordReader.read()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="scitex_msword.utils.html">scitex_msword.utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scitex_msword.writer.html">scitex_msword.writer</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">scitex-msword</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="scitex_msword.html">scitex_msword</a></li>
+      <li class="breadcrumb-item active">scitex_msword.reader</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/scitex_msword.reader.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-scitex_msword.reader">
+<span id="scitex-msword-reader"></span><h1>scitex_msword.reader<a class="headerlink" href="#module-scitex_msword.reader" title="Link to this heading"></a></h1>
+<p>DOCX -&gt; SciTeX writer document converter.</p>
+<p>This module reads MS Word .docx files and converts them into
+SciTeX’s intermediate document format for further processing.</p>
+<p class="rubric">Classes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#scitex_msword.reader.WordReader" title="scitex_msword.reader.WordReader"><code class="xref py py-obj docutils literal notranslate"><span class="pre">WordReader</span></code></a>(profile[, extract_images])</p></td>
+<td><p>Read a DOCX file and convert it into a SciTeX writer document.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="scitex_msword.reader.WordReader">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">scitex_msword.reader.</span></span><span class="sig-name descname"><span class="pre">WordReader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extract_images</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scitex_msword/reader.html#WordReader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scitex_msword.reader.WordReader" title="Link to this definition"></a></dt>
+<dd><p>Read a DOCX file and convert it into a SciTeX writer document.</p>
+<p>This reader focuses on:
+- Sections (via heading styles)
+- Plain paragraphs
+- Figure/table captions (via caption style)
+- Embedded images extraction
+- References section boundary detection
+- Basic formatting (bold, italic)</p>
+<p>The output is a structured intermediate representation that can be
+easily fed into <cite>scitex.writer</cite> or exported to LaTeX/other formats.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="scitex_msword.reader.WordReader.read">
+<span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scitex_msword/reader.html#WordReader.read"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scitex_msword.reader.WordReader.read" title="Link to this definition"></a></dt>
+<dd><p>Read a DOCX file and return a SciTeX writer document.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>Path</em>) – Path to the DOCX file.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>SciTeX writer document structure with keys:
+- blocks: List of document blocks
+- metadata: Profile and source information
+- images: Extracted image data (if extract_images=True)
+- references: Parsed reference entries
+- warnings: List of conversion warnings</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="scitex_msword.profiles.html" class="btn btn-neutral float-left" title="scitex_msword.profiles" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="scitex_msword.utils.html" class="btn btn-neutral float-right" title="scitex_msword.utils" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Yusuke Watanabe.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

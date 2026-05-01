@@ -1,0 +1,20 @@
+scitex\_msword.profiles
+=======================
+
+.. automodule:: scitex_msword.profiles
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      get_profile
+      list_profiles
+      register_profile
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      BaseWordProfile
+   

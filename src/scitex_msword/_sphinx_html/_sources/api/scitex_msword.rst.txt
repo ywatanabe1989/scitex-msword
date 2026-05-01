@@ -1,0 +1,24 @@
+﻿scitex\_msword
+==============
+
+.. automodule:: scitex_msword
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      convert_docx_to_tex
+      load_docx
+      save_docx
+   
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   profiles
+   reader
+   utils
+   writer

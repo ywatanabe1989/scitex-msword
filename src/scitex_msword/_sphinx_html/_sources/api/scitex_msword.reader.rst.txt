@@ -1,0 +1,12 @@
+scitex\_msword.reader
+=====================
+
+.. automodule:: scitex_msword.reader
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      WordReader
+   
