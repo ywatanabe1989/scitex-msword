@@ -91,7 +91,7 @@ when the umbrella package is also installed.
 
 `scitex-msword` is part of [**SciTeX**](https://scitex.ai). Install via
 the umbrella with `pip install scitex[msword]` to use as
-`scitex.msword` (Python).
+`scitex.msword` (Python) or `scitex msword ...` (CLI).
 
 >Four Freedoms for Research
 >
