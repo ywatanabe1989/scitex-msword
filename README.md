@@ -50,7 +50,7 @@ sxm.convert_docx_to_tex(
 
 ## 1 Interfaces
 
-<details>
+<details open>
 <summary><strong>Python API</strong></summary>
 
 <br>
