@@ -17,7 +17,7 @@ Strategy:
 
 Typical usage:
 --------------
-    from scitex.msword import load_docx, save_docx, list_profiles
+    from scitex_msword import load_docx, save_docx, list_profiles
 
     # Import from Word
     doc = load_docx("input.docx", profile="generic")
@@ -218,7 +218,7 @@ def convert_docx_to_tex(
     # Lazy import: convert_docx_to_tex requires scitex (or scitex-tex) for the
     # final .tex serialization step. Other scitex_msword functions don't need it.
     try:
-        from scitex.tex import export_tex
+        from scitex_tex import export_tex
     except ImportError as _e:
         raise ImportError(
             "convert_docx_to_tex requires the 'scitex' package (provides scitex.tex). "
