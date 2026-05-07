@@ -89,6 +89,43 @@ umbrella `scitex.msword` import path is preserved via a `sys.modules`-alias
 bridge. `convert_docx_to_tex` lazily imports `scitex.tex`, so it works only
 when the umbrella package is also installed.
 
+## Architecture
+
+```
+scitex_msword/
+├── _load.py              ← `load_docx` — DOCX → JSON-like document
+├── _save.py              ← `save_docx` — apply profile, write DOCX
+├── _convert.py           ← `convert_docx_to_tex` (lazy scitex.tex import)
+├── profiles/             ← built-in journal styles
+│   ├── generic.py        ← default
+│   ├── ieee.py
+│   ├── mdpi_ijerph.py
+│   ├── resna_2025.py
+│   ├── springer.py
+│   └── elsevier.py
+├── helpers/              ← caption-image linking, heading normalization
+└── _registry.py          ← `register_profile` for user styles
+```
+
+## Demo
+
+```mermaid
+flowchart LR
+    A[draft.docx] -->|load_docx| B[JSON-like doc]
+    B -->|save_docx<br/>profile=ieee| C[submission.docx]
+    B -->|convert_docx_to_tex| D[manuscript.tex]
+```
+
+```python
+import scitex_msword as sxm
+
+doc = sxm.load_docx("draft.docx", profile="generic")
+sxm.save_docx(doc, "submission.docx", profile="ieee")
+```
+
+Round-trips DOCX through a JSON-like intermediate, then re-renders with IEEE
+column widths, fonts, and heading numbering applied automatically.
+
 ## Part of SciTeX
 
 `scitex-msword` is part of [**SciTeX**](https://scitex.ai). Install via
