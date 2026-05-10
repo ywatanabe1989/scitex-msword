@@ -9,7 +9,7 @@
 <p align="center"><b>MS Word (.docx) reader/writer with journal-style profiles.</b></p>
 
 <p align="center">
-  <a href="https://scitex-msword.readthedocs.io/">Full Documentation</a> · <code>pip install scitex-msword</code>
+  <a href="https://scitex-msword.readthedocs.io/">Full Documentation</a> · <code>uv pip install scitex-msword[all]</code>
 </p>
 
 <!-- scitex-badges:start -->
