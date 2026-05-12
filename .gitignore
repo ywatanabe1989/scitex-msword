@@ -14,6 +14,12 @@ htmlcov/
 .python-version
 .venv/
 venv/
+
+# scitex-dev local state: track only the user-curated config.yaml.
+.scitex/*
+!.scitex/dev/
+.scitex/dev/*
+!.scitex/dev/config.yaml
 docs/sphinx/_build/
 docs/sphinx/api/
 *.swp

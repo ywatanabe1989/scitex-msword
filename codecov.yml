@@ -1,0 +1,18 @@
+coverage:
+  status:
+    project:
+      default:
+        # Package is still ramping up coverage; allow auto baseline until
+        # the §0 subprocess-coverage push lands real numbers. Bump to 90%
+        # once `coverage report` from `.[dev]` clears that threshold.
+        target: auto
+        threshold: 1%
+    patch:
+      default:
+        target: auto
+        threshold: 1%
+
+ignore:
+  - "tests/**"
+  - "examples/**"
+  - "docs/**"
