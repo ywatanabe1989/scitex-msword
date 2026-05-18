@@ -16,12 +16,15 @@ import shutil
 import pytest
 
 
-def test_audit_all_clean():
-    if shutil.which("scitex-dev") is None:
-        pytest.skip(
-            "scitex-dev not installed — add `scitex-dev[cli-audit]` "
-            "to [project.optional-dependencies.dev]"
-        )
+@pytest.mark.skipif(
+    shutil.which("scitex-dev") is None,
+    reason="scitex-dev not installed — add `scitex-dev[cli-audit]` to [project.optional-dependencies.dev]",
+)
+def test_audit_all_for_msword_completes_without_raising():
+    """`audit_all_for_package('scitex-msword')` returns cleanly when audit passes."""
+    # Arrange
     from scitex_dev.testing import audit_all_for_package
-
-    audit_all_for_package('scitex-msword')
+    # Act
+    result = audit_all_for_package("scitex-msword")
+    # Assert
+    assert result is None

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-# Timestamp: 2025-12-11 16:00:00
-# File: /home/ywatanabe/proj/scitex-code/tests/scitex/msword/test_writer.py
+# Timestamp: 2026-05-18 00:00:00
+# File: tests/scitex_msword/test_writer.py
 
 """Tests for scitex_msword.writer module."""
 
@@ -16,42 +16,58 @@ pytestmark = pytest.mark.skipif(
 )
 
 
+@pytest.fixture
+def generic_writer():
+    """Build a WordWriter on the generic profile."""
+    from scitex_msword import get_profile
+    from scitex_msword.writer import WordWriter
+
+    return WordWriter(profile=get_profile("generic"))
+
+
 class TestWordWriterInit:
     """Tests for WordWriter initialization."""
 
-    def test_word_writer_init_with_generic_profile(self):
-        """WordWriter should initialize with generic profile."""
+    def test_word_writer_init_profile_name_matches_input(self):
+        """WordWriter.profile.name should match the supplied profile name."""
+        # Arrange
         from scitex_msword import get_profile
         from scitex_msword.writer import WordWriter
-
         profile = get_profile("generic")
+        # Act
         writer = WordWriter(profile=profile)
-
+        # Assert
         assert writer.profile.name == "generic"
+
+    def test_word_writer_init_template_path_defaults_to_none(self):
+        """WordWriter.template_path should default to None."""
+        # Arrange
+        from scitex_msword import get_profile
+        from scitex_msword.writer import WordWriter
+        profile = get_profile("generic")
+        # Act
+        writer = WordWriter(profile=profile)
+        # Assert
         assert writer.template_path is None
 
-    def test_word_writer_init_with_template(self):
-        """WordWriter should accept template path."""
+    def test_word_writer_init_template_path_overridable(self):
+        """WordWriter.template_path should accept an explicit override."""
+        # Arrange
         from scitex_msword import get_profile
         from scitex_msword.writer import WordWriter
-
         profile = get_profile("generic")
+        # Act
         writer = WordWriter(profile=profile, template_path="/some/path.docx")
-
+        # Assert
         assert writer.template_path == "/some/path.docx"
 
 
 class TestWordWriterWrite:
     """Tests for WordWriter.write method."""
 
-    def test_write_simple_document(self):
-        """Should write a simple document with paragraphs."""
-        from scitex_msword import get_profile
-        from scitex_msword.writer import WordWriter
-
-        profile = get_profile("generic")
-        writer = WordWriter(profile=profile)
-
+    def test_write_simple_document_file_created(self, generic_writer, tmp_path):
+        """write() should create the output file for a simple document."""
+        # Arrange
         doc = {
             "blocks": [
                 {"type": "heading", "level": 1, "text": "Introduction"},
@@ -61,22 +77,33 @@ class TestWordWriterWrite:
             "images": [],
             "references": [],
         }
+        output_path = tmp_path / "test_output.docx"
+        # Act
+        generic_writer.write(doc, output_path)
+        # Assert
+        assert output_path.exists()
 
-        with tempfile.TemporaryDirectory() as tmpdir:
-            output_path = Path(tmpdir) / "test_output.docx"
-            writer.write(doc, output_path)
+    def test_write_simple_document_file_non_empty(self, generic_writer, tmp_path):
+        """write() should produce a non-empty file for a simple document."""
+        # Arrange
+        doc = {
+            "blocks": [
+                {"type": "heading", "level": 1, "text": "Introduction"},
+                {"type": "paragraph", "text": "This is a test paragraph."},
+            ],
+            "metadata": {},
+            "images": [],
+            "references": [],
+        }
+        output_path = tmp_path / "test_output.docx"
+        # Act
+        generic_writer.write(doc, output_path)
+        # Assert
+        assert output_path.stat().st_size > 0
 
-            assert output_path.exists()
-            assert output_path.stat().st_size > 0
-
-    def test_write_document_with_headings(self):
-        """Should write document with multiple heading levels."""
-        from scitex_msword import get_profile
-        from scitex_msword.writer import WordWriter
-
-        profile = get_profile("generic")
-        writer = WordWriter(profile=profile)
-
+    def test_write_document_with_headings_file_created(self, generic_writer, tmp_path):
+        """write() should produce a file when blocks include multiple heading levels."""
+        # Arrange
         doc = {
             "blocks": [
                 {"type": "heading", "level": 1, "text": "Section 1"},
@@ -89,21 +116,15 @@ class TestWordWriterWrite:
             "images": [],
             "references": [],
         }
+        output_path = tmp_path / "test_headings.docx"
+        # Act
+        generic_writer.write(doc, output_path)
+        # Assert
+        assert output_path.exists()
 
-        with tempfile.TemporaryDirectory() as tmpdir:
-            output_path = Path(tmpdir) / "test_headings.docx"
-            writer.write(doc, output_path)
-
-            assert output_path.exists()
-
-    def test_write_document_with_table(self):
-        """Should write document with a table."""
-        from scitex_msword import get_profile
-        from scitex_msword.writer import WordWriter
-
-        profile = get_profile("generic")
-        writer = WordWriter(profile=profile)
-
+    def test_write_document_with_table_file_created(self, generic_writer, tmp_path):
+        """write() should produce a file when blocks include a table."""
+        # Arrange
         doc = {
             "blocks": [
                 {"type": "heading", "level": 1, "text": "Results"},
@@ -120,56 +141,34 @@ class TestWordWriterWrite:
             "images": [],
             "references": [],
         }
+        output_path = tmp_path / "test_table.docx"
+        # Act
+        generic_writer.write(doc, output_path)
+        # Assert
+        assert output_path.exists()
 
-        with tempfile.TemporaryDirectory() as tmpdir:
-            output_path = Path(tmpdir) / "test_table.docx"
-            writer.write(doc, output_path)
-
-            assert output_path.exists()
-
-    def test_write_document_with_captions(self):
-        """Should write document with figure/table captions."""
-        from scitex_msword import get_profile
-        from scitex_msword.writer import WordWriter
-
-        profile = get_profile("generic")
-        writer = WordWriter(profile=profile)
-
+    def test_write_document_with_captions_file_created(self, generic_writer, tmp_path):
+        """write() should produce a file when blocks include figure/table captions."""
+        # Arrange
         doc = {
             "blocks": [
                 {"type": "heading", "level": 1, "text": "Figures"},
-                {
-                    "type": "caption",
-                    "caption_type": "figure",
-                    "number": 1,
-                    "caption_text": "Sample figure caption",
-                },
-                {
-                    "type": "caption",
-                    "caption_type": "table",
-                    "number": 1,
-                    "caption_text": "Sample table caption",
-                },
+                {"type": "caption", "caption_type": "figure", "number": 1, "caption_text": "Sample figure caption"},
+                {"type": "caption", "caption_type": "table", "number": 1, "caption_text": "Sample table caption"},
             ],
             "metadata": {},
             "images": [],
             "references": [],
         }
+        output_path = tmp_path / "test_captions.docx"
+        # Act
+        generic_writer.write(doc, output_path)
+        # Assert
+        assert output_path.exists()
 
-        with tempfile.TemporaryDirectory() as tmpdir:
-            output_path = Path(tmpdir) / "test_captions.docx"
-            writer.write(doc, output_path)
-
-            assert output_path.exists()
-
-    def test_write_document_with_formatted_runs(self):
-        """Should write document with bold/italic formatting."""
-        from scitex_msword import get_profile
-        from scitex_msword.writer import WordWriter
-
-        profile = get_profile("generic")
-        writer = WordWriter(profile=profile)
-
+    def test_write_document_with_formatted_runs_file_created(self, generic_writer, tmp_path):
+        """write() should produce a file when paragraphs carry formatted runs."""
+        # Arrange
         doc = {
             "blocks": [
                 {
@@ -188,62 +187,42 @@ class TestWordWriterWrite:
             "images": [],
             "references": [],
         }
-
-        with tempfile.TemporaryDirectory() as tmpdir:
-            output_path = Path(tmpdir) / "test_formatting.docx"
-            writer.write(doc, output_path)
-
-            assert output_path.exists()
+        output_path = tmp_path / "test_formatting.docx"
+        # Act
+        generic_writer.write(doc, output_path)
+        # Assert
+        assert output_path.exists()
 
 
 class TestWordWriterReferences:
     """Tests for reference writing functionality."""
 
-    def test_write_references(self):
-        """Should write reference entries."""
-        from scitex_msword import get_profile
-        from scitex_msword.writer import WordWriter
-
-        profile = get_profile("generic")
-        writer = WordWriter(profile=profile)
-
+    def test_write_references_file_created(self, generic_writer, tmp_path):
+        """write() should produce a file for documents that include references."""
+        # Arrange
         doc = {
             "blocks": [
                 {"type": "heading", "level": 1, "text": "References"},
-                {
-                    "type": "reference-paragraph",
-                    "ref_number": 1,
-                    "ref_text": "Author A. Title A. Journal 2024.",
-                },
-                {
-                    "type": "reference-paragraph",
-                    "ref_number": 2,
-                    "ref_text": "Author B. Title B. Journal 2023.",
-                },
+                {"type": "reference-paragraph", "ref_number": 1, "ref_text": "Author A. Title A. Journal 2024."},
+                {"type": "reference-paragraph", "ref_number": 2, "ref_text": "Author B. Title B. Journal 2023."},
             ],
             "metadata": {},
             "images": [],
             "references": [],
         }
-
-        with tempfile.TemporaryDirectory() as tmpdir:
-            output_path = Path(tmpdir) / "test_refs.docx"
-            writer.write(doc, output_path)
-
-            assert output_path.exists()
+        output_path = tmp_path / "test_refs.docx"
+        # Act
+        generic_writer.write(doc, output_path)
+        # Assert
+        assert output_path.exists()
 
 
 class TestWordWriterListItems:
     """Tests for list item writing functionality."""
 
-    def test_write_bullet_list(self):
-        """Should write bullet list items."""
-        from scitex_msword import get_profile
-        from scitex_msword.writer import WordWriter
-
-        profile = get_profile("generic")
-        writer = WordWriter(profile=profile)
-
+    def test_write_bullet_list_file_created(self, generic_writer, tmp_path):
+        """write() should produce a file containing bullet-list items."""
+        # Arrange
         doc = {
             "blocks": [
                 {"type": "heading", "level": 1, "text": "Bullet Points"},
@@ -255,22 +234,35 @@ class TestWordWriterListItems:
             "images": [],
             "references": [],
         }
+        output_path = tmp_path / "test_bullets.docx"
+        # Act
+        generic_writer.write(doc, output_path)
+        # Assert
+        assert output_path.exists()
 
-        with tempfile.TemporaryDirectory() as tmpdir:
-            output_path = Path(tmpdir) / "test_bullets.docx"
-            writer.write(doc, output_path)
+    def test_write_bullet_list_file_non_empty(self, generic_writer, tmp_path):
+        """write() bullet-list output should be non-empty on disk."""
+        # Arrange
+        doc = {
+            "blocks": [
+                {"type": "heading", "level": 1, "text": "Bullet Points"},
+                {"type": "list-item", "text": "First item", "list_type": "bullet"},
+                {"type": "list-item", "text": "Second item", "list_type": "bullet"},
+                {"type": "list-item", "text": "Third item", "list_type": "bullet"},
+            ],
+            "metadata": {},
+            "images": [],
+            "references": [],
+        }
+        output_path = tmp_path / "test_bullets_nonempty.docx"
+        # Act
+        generic_writer.write(doc, output_path)
+        # Assert
+        assert output_path.stat().st_size > 0
 
-            assert output_path.exists()
-            assert output_path.stat().st_size > 0
-
-    def test_write_numbered_list(self):
-        """Should write numbered list items."""
-        from scitex_msword import get_profile
-        from scitex_msword.writer import WordWriter
-
-        profile = get_profile("generic")
-        writer = WordWriter(profile=profile)
-
+    def test_write_numbered_list_file_created(self, generic_writer, tmp_path):
+        """write() should produce a file containing numbered-list items."""
+        # Arrange
         doc = {
             "blocks": [
                 {"type": "heading", "level": 1, "text": "Numbered Steps"},
@@ -281,98 +273,79 @@ class TestWordWriterListItems:
             "images": [],
             "references": [],
         }
-
-        with tempfile.TemporaryDirectory() as tmpdir:
-            output_path = Path(tmpdir) / "test_numbered.docx"
-            writer.write(doc, output_path)
-
-            assert output_path.exists()
+        output_path = tmp_path / "test_numbered.docx"
+        # Act
+        generic_writer.write(doc, output_path)
+        # Assert
+        assert output_path.exists()
 
 
 class TestWordWriterDoubleAnonymous:
     """Tests for double-anonymous processing."""
 
-    def test_double_anonymous_profile(self):
-        """Should apply double-anonymous formatting."""
+    def test_double_anonymous_profile_file_created(self, tmp_path):
+        """write() with IOP double-anonymous profile should produce a file."""
+        # Arrange
         from scitex_msword import get_profile
         from scitex_msword.writer import WordWriter
-
         profile = get_profile("iop-double-anonymous")
         writer = WordWriter(profile=profile)
-
         doc = {
             "blocks": [
                 {"type": "heading", "level": 1, "text": "Introduction"},
                 {"type": "paragraph", "text": "This is text by John Smith."},
             ],
-            "metadata": {
-                "author": "John Smith",
-            },
+            "metadata": {"author": "John Smith"},
             "images": [],
             "references": [],
         }
-
-        with tempfile.TemporaryDirectory() as tmpdir:
-            output_path = Path(tmpdir) / "test_anon.docx"
-            writer.write(doc, output_path)
-
-            assert output_path.exists()
+        output_path = tmp_path / "test_anon.docx"
+        # Act
+        writer.write(doc, output_path)
+        # Assert
+        assert output_path.exists()
 
 
 class TestWordWriterStyleExists:
     """Tests for _style_exists method."""
 
-    def test_style_exists_checks_document(self):
-        """Should check if style exists in document."""
+    def test_style_exists_returns_true_for_normal(self, generic_writer):
+        """_style_exists should return True for the built-in Normal style."""
+        # Arrange
         import docx
-
-        from scitex_msword import get_profile
-        from scitex_msword.writer import WordWriter
-
-        profile = get_profile("generic")
-        writer = WordWriter(profile=profile)
-
         doc = docx.Document()
+        # Act
+        result = generic_writer._style_exists(doc, "Normal")
+        # Assert
+        assert result is True
 
-        # Normal style should exist
-        assert writer._style_exists(doc, "Normal") is True
-
-        # Random style should not exist
-        assert writer._style_exists(doc, "NonExistentStyleXYZ123") is False
+    def test_style_exists_returns_false_for_unknown(self, generic_writer):
+        """_style_exists should return False for an unknown style name."""
+        # Arrange
+        import docx
+        doc = docx.Document()
+        # Act
+        result = generic_writer._style_exists(doc, "NonExistentStyleXYZ123")
+        # Assert
+        assert result is False
 
 
 class TestWordWriterEmptyDocument:
     """Tests for handling empty documents."""
 
-    def test_write_empty_blocks(self):
-        """Should handle document with no blocks."""
-        from scitex_msword import get_profile
-        from scitex_msword.writer import WordWriter
+    def test_write_empty_blocks_file_created(self, generic_writer, tmp_path):
+        """write() should produce a file even when blocks is empty."""
+        # Arrange
+        doc = {"blocks": [], "metadata": {}, "images": [], "references": []}
+        output_path = tmp_path / "test_empty.docx"
+        # Act
+        generic_writer.write(doc, output_path)
+        # Assert
+        assert output_path.exists()
 
-        profile = get_profile("generic")
-        writer = WordWriter(profile=profile)
-
-        doc = {
-            "blocks": [],
-            "metadata": {},
-            "images": [],
-            "references": [],
-        }
-
-        with tempfile.TemporaryDirectory() as tmpdir:
-            output_path = Path(tmpdir) / "test_empty.docx"
-            writer.write(doc, output_path)
-
-            assert output_path.exists()
-
-    def test_write_blocks_with_empty_text(self):
-        """Should skip blocks with empty text."""
-        from scitex_msword import get_profile
-        from scitex_msword.writer import WordWriter
-
-        profile = get_profile("generic")
-        writer = WordWriter(profile=profile)
-
+    def test_write_blocks_with_empty_text_file_created(self, generic_writer, tmp_path):
+        """write() should produce a file when some blocks have empty text."""
+        # Arrange
         doc = {
             "blocks": [
                 {"type": "paragraph", "text": ""},
@@ -383,27 +356,32 @@ class TestWordWriterEmptyDocument:
             "images": [],
             "references": [],
         }
-
-        with tempfile.TemporaryDirectory() as tmpdir:
-            output_path = Path(tmpdir) / "test_empty_text.docx"
-            writer.write(doc, output_path)
-
-            assert output_path.exists()
+        output_path = tmp_path / "test_empty_text.docx"
+        # Act
+        generic_writer.write(doc, output_path)
+        # Assert
+        assert output_path.exists()
 
 
 class TestWordWriterProfileSettings:
     """Tests for profile-specific writer settings."""
 
-    def test_write_with_resna_profile(self):
-        """Should write with RESNA 2-column profile."""
+    def test_resna_profile_uses_two_columns(self):
+        """RESNA 2025 profile should declare two columns."""
+        # Arrange
         from scitex_msword import get_profile
-        from scitex_msword.writer import WordWriter
-
+        # Act
         profile = get_profile("resna-2025")
-        writer = WordWriter(profile=profile)
-
+        # Assert
         assert profile.columns == 2
 
+    def test_write_with_resna_profile_file_created(self, tmp_path):
+        """write() with RESNA profile should produce a file."""
+        # Arrange
+        from scitex_msword import get_profile
+        from scitex_msword.writer import WordWriter
+        profile = get_profile("resna-2025")
+        writer = WordWriter(profile=profile)
         doc = {
             "blocks": [
                 {"type": "heading", "level": 1, "text": "INTRODUCTION"},
@@ -413,23 +391,28 @@ class TestWordWriterProfileSettings:
             "images": [],
             "references": [],
         }
+        output_path = tmp_path / "test_resna.docx"
+        # Act
+        writer.write(doc, output_path)
+        # Assert
+        assert output_path.exists()
 
-        with tempfile.TemporaryDirectory() as tmpdir:
-            output_path = Path(tmpdir) / "test_resna.docx"
-            writer.write(doc, output_path)
-
-            assert output_path.exists()
-
-    def test_write_with_ieee_profile(self):
-        """Should write with IEEE profile."""
+    def test_ieee_profile_uses_two_columns(self):
+        """IEEE profile should declare two columns."""
+        # Arrange
         from scitex_msword import get_profile
-        from scitex_msword.writer import WordWriter
-
+        # Act
         profile = get_profile("ieee")
-        writer = WordWriter(profile=profile)
-
+        # Assert
         assert profile.columns == 2
 
+    def test_write_with_ieee_profile_file_created(self, tmp_path):
+        """write() with IEEE profile should produce a file."""
+        # Arrange
+        from scitex_msword import get_profile
+        from scitex_msword.writer import WordWriter
+        profile = get_profile("ieee")
+        writer = WordWriter(profile=profile)
         doc = {
             "blocks": [
                 {"type": "heading", "level": 1, "text": "Introduction"},
@@ -439,23 +422,28 @@ class TestWordWriterProfileSettings:
             "images": [],
             "references": [],
         }
+        output_path = tmp_path / "test_ieee.docx"
+        # Act
+        writer.write(doc, output_path)
+        # Assert
+        assert output_path.exists()
 
-        with tempfile.TemporaryDirectory() as tmpdir:
-            output_path = Path(tmpdir) / "test_ieee.docx"
-            writer.write(doc, output_path)
-
-            assert output_path.exists()
-
-    def test_write_with_springer_profile(self):
-        """Should write with Springer profile."""
+    def test_springer_profile_uses_single_column(self):
+        """Springer profile should declare one column."""
+        # Arrange
         from scitex_msword import get_profile
-        from scitex_msword.writer import WordWriter
-
+        # Act
         profile = get_profile("springer")
-        writer = WordWriter(profile=profile)
-
+        # Assert
         assert profile.columns == 1
 
+    def test_write_with_springer_profile_file_created(self, tmp_path):
+        """write() with Springer profile should produce a file."""
+        # Arrange
+        from scitex_msword import get_profile
+        from scitex_msword.writer import WordWriter
+        profile = get_profile("springer")
+        writer = WordWriter(profile=profile)
         doc = {
             "blocks": [
                 {"type": "heading", "level": 1, "text": "Methods"},
@@ -465,22 +453,21 @@ class TestWordWriterProfileSettings:
             "images": [],
             "references": [],
         }
-
-        with tempfile.TemporaryDirectory() as tmpdir:
-            output_path = Path(tmpdir) / "test_springer.docx"
-            writer.write(doc, output_path)
-
-            assert output_path.exists()
+        output_path = tmp_path / "test_springer.docx"
+        # Act
+        writer.write(doc, output_path)
+        # Assert
+        assert output_path.exists()
 
 
 class TestWordWriterPreExportHooks:
     """Tests for pre-export hooks."""
 
-    def test_pre_export_hooks_called(self):
-        """Should call pre-export hooks."""
+    def test_pre_export_hooks_called_once(self, tmp_path):
+        """Pre-export hook should be invoked exactly once during write()."""
+        # Arrange
         from scitex_msword import BaseWordProfile
         from scitex_msword.writer import WordWriter
-
         hook_called = []
 
         def my_hook(doc):
@@ -493,22 +480,21 @@ class TestWordWriterPreExportHooks:
             pre_export_hooks=[my_hook],
         )
         writer = WordWriter(profile=profile)
-
         doc = {
             "blocks": [{"type": "paragraph", "text": "Test"}],
             "metadata": {},
             "images": [],
             "references": [],
         }
+        output_path = tmp_path / "test_hooks.docx"
+        # Act
+        writer.write(doc, output_path)
+        # Assert
+        assert len(hook_called) == 1
 
-        with tempfile.TemporaryDirectory() as tmpdir:
-            output_path = Path(tmpdir) / "test_hooks.docx"
-            writer.write(doc, output_path)
-
-            assert len(hook_called) == 1
-
-    def test_pre_export_hooks_can_modify_doc(self):
-        """Should allow hooks to modify document."""
+    def test_pre_export_hooks_can_modify_doc(self, tmp_path):
+        """Pre-export hook should be free to mutate doc, write() still succeeds."""
+        # Arrange
         from scitex_msword import BaseWordProfile
         from scitex_msword.writer import WordWriter
 
@@ -522,19 +508,17 @@ class TestWordWriterPreExportHooks:
             pre_export_hooks=[add_footer],
         )
         writer = WordWriter(profile=profile)
-
         doc = {
             "blocks": [{"type": "paragraph", "text": "Content"}],
             "metadata": {},
             "images": [],
             "references": [],
         }
-
-        with tempfile.TemporaryDirectory() as tmpdir:
-            output_path = Path(tmpdir) / "test_modify.docx"
-            writer.write(doc, output_path)
-
-            assert output_path.exists()
+        output_path = tmp_path / "test_modify.docx"
+        # Act
+        writer.write(doc, output_path)
+        # Assert
+        assert output_path.exists()
 
 
 class TestWordWriterRoundTrip:
@@ -549,8 +533,8 @@ class TestWordWriterRoundTrip:
             / "MSWORD_MANUSCTIPS"
         )
 
-    def test_read_modify_write(self, sample_docs_path):
-        """Should be able to read a document, modify it, and write it back."""
+    def _do_round_trip(self, sample_docs_path, tmp_path):
+        """Helper: perform a read-modify-write round-trip on the RESNA template."""
         from scitex_msword import get_profile
         from scitex_msword.reader import WordReader
         from scitex_msword.writer import WordWriter
@@ -559,37 +543,42 @@ class TestWordWriterRoundTrip:
         if not docx_path.exists():
             pytest.skip(f"Sample file not found: {docx_path}")
 
-        # Read
         profile = get_profile("generic")
         reader = WordReader(profile=profile, extract_images=False)
         doc = reader.read(docx_path)
-
-        # Modify
         doc["blocks"].append({"type": "paragraph", "text": "Added by test"})
 
-        # Write
         writer = WordWriter(profile=profile)
+        output_path = tmp_path / "modified.docx"
+        writer.write(doc, output_path)
+        return output_path
 
-        with tempfile.TemporaryDirectory() as tmpdir:
-            output_path = Path(tmpdir) / "modified.docx"
-            writer.write(doc, output_path)
+    def test_read_modify_write_file_created(self, sample_docs_path, tmp_path):
+        """Round-trip read-modify-write should produce a file."""
+        # Arrange
+        # (fixture supplies docs and tmp paths)
+        # Act
+        output_path = self._do_round_trip(sample_docs_path, tmp_path)
+        # Assert
+        assert output_path.exists()
 
-            assert output_path.exists()
-            assert output_path.stat().st_size > 0
+    def test_read_modify_write_file_non_empty(self, sample_docs_path, tmp_path):
+        """Round-trip read-modify-write should produce a non-empty file."""
+        # Arrange
+        # (fixture supplies docs and tmp paths)
+        # Act
+        output_path = self._do_round_trip(sample_docs_path, tmp_path)
+        # Assert
+        assert output_path.stat().st_size > 0
 
 
 class TestWordWriterComplexDocument:
     """Tests for complex document structures."""
 
-    def test_write_complete_manuscript(self):
-        """Should write a complete manuscript with all sections."""
-        from scitex_msword import get_profile
-        from scitex_msword.writer import WordWriter
-
-        profile = get_profile("generic")
-        writer = WordWriter(profile=profile)
-
-        doc = {
+    @pytest.fixture
+    def complete_manuscript(self):
+        """A complete-looking manuscript document for write() tests."""
+        return {
             "blocks": [
                 {"type": "heading", "level": 1, "text": "Abstract"},
                 {"type": "paragraph", "text": "This is the abstract."},
@@ -602,18 +591,8 @@ class TestWordWriterComplexDocument:
                 {"type": "paragraph", "text": "Statistics were..."},
                 {"type": "heading", "level": 1, "text": "Results"},
                 {"type": "paragraph", "text": "We found that..."},
-                {
-                    "type": "caption",
-                    "caption_type": "figure",
-                    "number": 1,
-                    "caption_text": "Results overview",
-                },
-                {
-                    "type": "caption",
-                    "caption_type": "table",
-                    "number": 1,
-                    "caption_text": "Summary statistics",
-                },
+                {"type": "caption", "caption_type": "figure", "number": 1, "caption_text": "Results overview"},
+                {"type": "caption", "caption_type": "table", "number": 1, "caption_text": "Summary statistics"},
                 {
                     "type": "table",
                     "rows": [
@@ -627,403 +606,36 @@ class TestWordWriterComplexDocument:
                 {"type": "heading", "level": 1, "text": "Conclusions"},
                 {"type": "paragraph", "text": "In conclusion..."},
                 {"type": "heading", "level": 1, "text": "References"},
-                {
-                    "type": "reference-paragraph",
-                    "ref_number": 1,
-                    "ref_text": "Author A. Title. Journal 2024.",
-                },
-                {
-                    "type": "reference-paragraph",
-                    "ref_number": 2,
-                    "ref_text": "Author B. Title. Journal 2023.",
-                },
+                {"type": "reference-paragraph", "ref_number": 1, "ref_text": "Author A. Title. Journal 2024."},
+                {"type": "reference-paragraph", "ref_number": 2, "ref_text": "Author B. Title. Journal 2023."},
             ],
             "metadata": {},
             "images": [],
             "references": [],
         }
 
-        with tempfile.TemporaryDirectory() as tmpdir:
-            output_path = Path(tmpdir) / "test_complete.docx"
-            writer.write(doc, output_path)
+    def test_write_complete_manuscript_file_created(self, generic_writer, complete_manuscript, tmp_path):
+        """write() of a complete manuscript should produce a file."""
+        # Arrange
+        output_path = tmp_path / "test_complete.docx"
+        # Act
+        generic_writer.write(complete_manuscript, output_path)
+        # Assert
+        assert output_path.exists()
 
-            assert output_path.exists()
-            assert output_path.stat().st_size > 5000  # Should be a reasonable size
+    def test_write_complete_manuscript_file_above_size_threshold(
+        self, generic_writer, complete_manuscript, tmp_path
+    ):
+        """write() of a complete manuscript should yield a file above ~5kB."""
+        # Arrange
+        output_path = tmp_path / "test_complete_size.docx"
+        # Act
+        generic_writer.write(complete_manuscript, output_path)
+        # Assert
+        assert output_path.stat().st_size > 5000
 
 
 if __name__ == "__main__":
     import os
 
-    import pytest
-
     pytest.main([os.path.abspath(__file__)])
-
-# --------------------------------------------------------------------------------
-# Start of Source Code from: /home/ywatanabe/proj/scitex-code/src/scitex/msword/writer.py
-# --------------------------------------------------------------------------------
-# #!/usr/bin/env python3
-# # -*- coding: utf-8 -*-
-# # Timestamp: 2025-12-11 15:15:00
-# # File: /home/ywatanabe/proj/scitex-code/src/scitex/msword/writer.py
-#
-# """
-# SciTeX writer document -> DOCX converter.
-#
-# This module exports SciTeX documents to MS Word .docx files,
-# applying journal-specific styles and formatting.
-# """
-#
-# from __future__ import annotations
-#
-# from pathlib import Path
-# from typing import Any, Dict, List, Optional
-#
-# from .profiles import BaseWordProfile
-#
-# # Lazy import for python-docx
-# try:
-#     import docx
-#     from docx.document import Document as DocxDocument
-#     from docx.shared import Inches, Pt, Cm
-#     from docx.enum.text import WD_ALIGN_PARAGRAPH
-#     from docx.enum.style import WD_STYLE_TYPE
-#
-#     DOCX_AVAILABLE = True
-#     _DOCX_IMPORT_ERROR = None
-# except ImportError as exc:
-#     DOCX_AVAILABLE = False
-#     _DOCX_IMPORT_ERROR = exc
-#
-#
-# class WordWriter:
-#     """
-#     Export a SciTeX writer document to a DOCX file.
-#
-#     This writer handles:
-#     - Section headings with proper styles
-#     - Paragraphs with formatting
-#     - Figure and table captions
-#     - References section
-#     - Image embedding
-#     - Journal-specific template application
-#     """
-#
-#     def __init__(
-#         self,
-#         profile: BaseWordProfile,
-#         template_path: Optional[Path] = None,
-#     ):
-#         """
-#         Parameters
-#         ----------
-#         profile : BaseWordProfile
-#             Mapping from writer structures to Word styles.
-#         template_path : Path | None
-#             Optional path to a Word template (.dotx/.docx) to use as base.
-#         """
-#         if not DOCX_AVAILABLE:
-#             raise ImportError(
-#                 "python-docx is required for scitex_msword.WordWriter. "
-#                 "Install it via `pip install python-docx`."
-#             ) from _DOCX_IMPORT_ERROR
-#         self.profile = profile
-#         self.template_path = template_path
-#
-#     def write(
-#         self,
-#         writer_doc: Dict[str, Any] | Any,
-#         path: Path,
-#     ) -> None:
-#         """
-#         Write a SciTeX writer document to a DOCX file.
-#
-#         Parameters
-#         ----------
-#         writer_doc : dict | Any
-#             Writer document or intermediate structure.
-#         path : Path
-#             Output path for the DOCX file.
-#         """
-#         # Create document (from template if specified)
-#         if self.template_path and Path(self.template_path).exists():
-#             doc = docx.Document(str(self.template_path))
-#             # Clear existing content but keep styles
-#             self._clear_document_content(doc)
-#         else:
-#             doc = docx.Document()
-#
-#         # Run pre-export hooks
-#         for hook in self.profile.pre_export_hooks:
-#             writer_doc = hook(writer_doc)
-#
-#         # Extract blocks from writer_doc
-#         if isinstance(writer_doc, dict) and "blocks" in writer_doc:
-#             blocks = writer_doc["blocks"]
-#             images = writer_doc.get("images", [])
-#         else:
-#             blocks = list(writer_doc)
-#             images = []
-#
-#         # Build image lookup by hash
-#         image_lookup = {img.get("hash"): img for img in images if "hash" in img}
-#
-#         # Process each block
-#         for block in blocks:
-#             self._add_block(doc, block, image_lookup)
-#
-#         # Apply double-anonymous processing if needed
-#         if self.profile.double_anonymous:
-#             self._apply_double_anonymous(doc, writer_doc)
-#
-#         # Save document
-#         doc.save(str(path))
-#
-#     def _clear_document_content(self, doc: DocxDocument) -> None:
-#         """Clear document content while preserving styles."""
-#         for element in doc.element.body[:]:
-#             doc.element.body.remove(element)
-#
-#     def _add_block(
-#         self,
-#         doc: DocxDocument,
-#         block: Dict[str, Any],
-#         image_lookup: Dict[str, Any],
-#     ) -> None:
-#         """Add a single block to the document."""
-#         btype = block.get("type", "paragraph")
-#         text = block.get("text", "")
-#
-#         if not text and btype not in ("table", "image"):
-#             return
-#
-#         if btype == "heading":
-#             level = block.get("level", 1)
-#             self._add_heading(doc, text, level)
-#
-#         elif btype == "caption":
-#             self._add_caption(doc, block)
-#
-#         elif btype == "reference-paragraph":
-#             self._add_reference(doc, block)
-#
-#         elif btype == "table":
-#             self._add_table(doc, block)
-#
-#         elif btype == "image":
-#             self._add_image(doc, block, image_lookup)
-#
-#         elif btype == "list-item":
-#             self._add_list_item(doc, block)
-#
-#         else:
-#             # Default: paragraph
-#             self._add_paragraph(doc, text, block.get("runs"))
-#
-#     def _add_heading(
-#         self,
-#         doc: DocxDocument,
-#         text: str,
-#         level: int,
-#     ) -> None:
-#         """Add a heading paragraph at the given logical level."""
-#         style_name = self.profile.heading_styles.get(level)
-#
-#         if style_name and self._style_exists(doc, style_name):
-#             p = doc.add_paragraph(text)
-#             p.style = style_name
-#         else:
-#             # Fallback to built-in heading
-#             doc.add_heading(text, level=min(level, 9))
-#
-#     def _add_paragraph(
-#         self,
-#         doc: DocxDocument,
-#         text: str,
-#         runs: Optional[List[Dict[str, Any]]] = None,
-#     ) -> None:
-#         """Add a paragraph with optional formatted runs."""
-#         p = doc.add_paragraph()
-#
-#         if runs:
-#             # Add formatted runs
-#             for run_data in runs:
-#                 run = p.add_run(run_data.get("text", ""))
-#                 if run_data.get("bold"):
-#                     run.bold = True
-#                 if run_data.get("italic"):
-#                     run.italic = True
-#                 if run_data.get("underline"):
-#                     run.underline = True
-#                 if run_data.get("font_size"):
-#                     run.font.size = Pt(run_data["font_size"])
-#                 if run_data.get("font_name"):
-#                     run.font.name = run_data["font_name"]
-#         else:
-#             p.add_run(text)
-#
-#         # Apply normal style
-#         if self._style_exists(doc, self.profile.normal_style):
-#             try:
-#                 p.style = self.profile.normal_style
-#             except Exception:
-#                 pass
-#
-#     def _add_caption(
-#         self,
-#         doc: DocxDocument,
-#         block: Dict[str, Any],
-#     ) -> None:
-#         """Add a figure or table caption."""
-#         caption_type = block.get("caption_type", "")
-#         number = block.get("number", "")
-#         caption_text = block.get("caption_text", block.get("text", ""))
-#
-#         # Build caption text
-#         if caption_type == "figure" and number:
-#             full_text = f"Figure {number}. {caption_text}"
-#         elif caption_type == "table" and number:
-#             full_text = f"Table {number}. {caption_text}"
-#         else:
-#             full_text = block.get("text", caption_text)
-#
-#         p = doc.add_paragraph(full_text)
-#
-#         if self._style_exists(doc, self.profile.caption_style):
-#             try:
-#                 p.style = self.profile.caption_style
-#             except Exception:
-#                 pass
-#
-#     def _add_reference(
-#         self,
-#         doc: DocxDocument,
-#         block: Dict[str, Any],
-#     ) -> None:
-#         """Add a reference entry."""
-#         ref_number = block.get("ref_number")
-#         ref_text = block.get("ref_text", block.get("text", ""))
-#
-#         if ref_number is not None:
-#             full_text = f"[{ref_number}] {ref_text}"
-#         else:
-#             full_text = ref_text
-#
-#         p = doc.add_paragraph(full_text)
-#
-#         if self._style_exists(doc, self.profile.normal_style):
-#             try:
-#                 p.style = self.profile.normal_style
-#             except Exception:
-#                 pass
-#
-#     def _add_table(
-#         self,
-#         doc: DocxDocument,
-#         block: Dict[str, Any],
-#     ) -> None:
-#         """Add a table."""
-#         rows = block.get("rows", [])
-#         if not rows:
-#             return
-#
-#         num_rows = len(rows)
-#         num_cols = len(rows[0]) if rows else 0
-#
-#         table = doc.add_table(rows=num_rows, cols=num_cols)
-#         table.style = "Table Grid"
-#
-#         for i, row_data in enumerate(rows):
-#             row = table.rows[i]
-#             for j, cell_text in enumerate(row_data):
-#                 if j < len(row.cells):
-#                     row.cells[j].text = str(cell_text)
-#
-#     def _add_image(
-#         self,
-#         doc: DocxDocument,
-#         block: Dict[str, Any],
-#         image_lookup: Dict[str, Any],
-#     ) -> None:
-#         """Add an image."""
-#         image_hash = block.get("image_hash")
-#         image_data = block.get("data")
-#
-#         if image_hash and image_hash in image_lookup:
-#             image_info = image_lookup[image_hash]
-#             image_data = image_info.get("data")
-#
-#         if image_data:
-#             from io import BytesIO
-#
-#             image_stream = BytesIO(image_data)
-#             width = block.get("width_inches", 5.0)
-#             doc.add_picture(image_stream, width=Inches(width))
-#
-#     def _add_list_item(
-#         self,
-#         doc: DocxDocument,
-#         block: Dict[str, Any],
-#     ) -> None:
-#         """Add a list item (bullet or numbered)."""
-#         text = block.get("text", "")
-#         list_type = block.get("list_type", "bullet")
-#
-#         p = doc.add_paragraph(text)
-#
-#         style_key = "bullet" if list_type == "bullet" else "numbered"
-#         style_name = self.profile.list_styles.get(style_key)
-#
-#         if style_name and self._style_exists(doc, style_name):
-#             try:
-#                 p.style = style_name
-#             except Exception:
-#                 pass
-#
-#     def _style_exists(self, doc: DocxDocument, style_name: str) -> bool:
-#         """Check if a style exists in the document."""
-#         try:
-#             _ = doc.styles[style_name]
-#             return True
-#         except KeyError:
-#             return False
-#
-#     def _apply_double_anonymous(
-#         self,
-#         doc: DocxDocument,
-#         writer_doc: Dict[str, Any],
-#     ) -> None:
-#         """
-#         Apply double-anonymous formatting.
-#
-#         This removes or masks author-identifying information.
-#         """
-#         # Get author info to mask
-#         metadata = writer_doc.get("metadata", {})
-#         author = metadata.get("author", "")
-#
-#         if not author:
-#             return
-#
-#         # Search and replace author names with placeholder
-#         # This is a simple implementation; more sophisticated
-#         # masking may be needed for real use
-#         for para in doc.paragraphs:
-#             if author.lower() in para.text.lower():
-#                 for run in para.runs:
-#                     if author.lower() in run.text.lower():
-#                         # Mask author name
-#                         import re
-#
-#                         run.text = re.sub(
-#                             re.escape(author),
-#                             "[Author]",
-#                             run.text,
-#                             flags=re.IGNORECASE,
-#                         )
-#
-#
-# __all__ = ["WordWriter"]
-
-# --------------------------------------------------------------------------------
-# End of Source Code from: /home/ywatanabe/proj/scitex-code/src/scitex/msword/writer.py
-# --------------------------------------------------------------------------------

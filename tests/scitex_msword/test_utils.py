@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-# Timestamp: 2026-01-05 14:00:00
-# File: /home/ywatanabe/proj/scitex-code/tests/scitex/msword/test_utils.py
+# Timestamp: 2026-05-18 00:00:00
+# File: tests/scitex_msword/test_utils.py
 
 """Tests for scitex_msword.utils module."""
 
@@ -10,10 +10,10 @@ import pytest
 class TestLinkCaptionsToImages:
     """Tests for link_captions_to_images function."""
 
-    def test_link_captions_to_images_basic(self):
-        """Should link figure captions to images by number."""
+    def test_link_captions_to_images_basic_first_caption(self):
+        """First figure caption should be linked to first image."""
+        # Arrange
         from scitex_msword.utils import link_captions_to_images
-
         doc = {
             "blocks": [
                 {
@@ -34,16 +34,44 @@ class TestLinkCaptionsToImages:
                 {"hash": "hash_img_2"},
             ],
         }
-
+        # Act
         result = link_captions_to_images(doc)
-
+        # Assert
         assert result["blocks"][0]["image_hash"] == "hash_img_1"
+
+    def test_link_captions_to_images_basic_second_caption(self):
+        """Second figure caption should be linked to second image."""
+        # Arrange
+        from scitex_msword.utils import link_captions_to_images
+        doc = {
+            "blocks": [
+                {
+                    "type": "caption",
+                    "caption_type": "figure",
+                    "number": 1,
+                    "caption_text": "First figure",
+                },
+                {
+                    "type": "caption",
+                    "caption_type": "figure",
+                    "number": 2,
+                    "caption_text": "Second figure",
+                },
+            ],
+            "images": [
+                {"hash": "hash_img_1"},
+                {"hash": "hash_img_2"},
+            ],
+        }
+        # Act
+        result = link_captions_to_images(doc)
+        # Assert
         assert result["blocks"][1]["image_hash"] == "hash_img_2"
 
-    def test_link_captions_to_images_with_more_images(self):
-        """Should handle more images than captions."""
+    def test_link_captions_to_images_with_more_images_links_first(self):
+        """With more images than captions, the lone caption links to first image."""
+        # Arrange
         from scitex_msword.utils import link_captions_to_images
-
         doc = {
             "blocks": [
                 {
@@ -59,66 +87,81 @@ class TestLinkCaptionsToImages:
                 {"hash": "hash_3"},
             ],
         }
-
+        # Act
         result = link_captions_to_images(doc)
-
+        # Assert
         assert result["blocks"][0]["image_hash"] == "hash_1"
 
-    def test_link_captions_to_images_with_more_captions(self):
-        """Should handle more captions than images gracefully."""
+    def test_link_captions_to_images_with_more_captions_links_first(self):
+        """With more captions than images, the first caption gets the only image."""
+        # Arrange
         from scitex_msword.utils import link_captions_to_images
-
         doc = {
             "blocks": [
-                {
-                    "type": "caption",
-                    "caption_type": "figure",
-                    "number": 1,
-                    "caption_text": "First",
-                },
-                {
-                    "type": "caption",
-                    "caption_type": "figure",
-                    "number": 2,
-                    "caption_text": "Second",
-                },
-                {
-                    "type": "caption",
-                    "caption_type": "figure",
-                    "number": 3,
-                    "caption_text": "Third",
-                },
+                {"type": "caption", "caption_type": "figure", "number": 1, "caption_text": "First"},
+                {"type": "caption", "caption_type": "figure", "number": 2, "caption_text": "Second"},
+                {"type": "caption", "caption_type": "figure", "number": 3, "caption_text": "Third"},
             ],
-            "images": [
-                {"hash": "hash_only"},
-            ],
+            "images": [{"hash": "hash_only"}],
         }
-
+        # Act
         result = link_captions_to_images(doc)
-
+        # Assert
         assert result["blocks"][0]["image_hash"] == "hash_only"
+
+    def test_link_captions_to_images_with_more_captions_skips_second(self):
+        """Second caption should receive no image_hash when only one image exists."""
+        # Arrange
+        from scitex_msword.utils import link_captions_to_images
+        doc = {
+            "blocks": [
+                {"type": "caption", "caption_type": "figure", "number": 1, "caption_text": "First"},
+                {"type": "caption", "caption_type": "figure", "number": 2, "caption_text": "Second"},
+                {"type": "caption", "caption_type": "figure", "number": 3, "caption_text": "Third"},
+            ],
+            "images": [{"hash": "hash_only"}],
+        }
+        # Act
+        result = link_captions_to_images(doc)
+        # Assert
         assert "image_hash" not in result["blocks"][1]
+
+    def test_link_captions_to_images_with_more_captions_skips_third(self):
+        """Third caption should receive no image_hash when only one image exists."""
+        # Arrange
+        from scitex_msword.utils import link_captions_to_images
+        doc = {
+            "blocks": [
+                {"type": "caption", "caption_type": "figure", "number": 1, "caption_text": "First"},
+                {"type": "caption", "caption_type": "figure", "number": 2, "caption_text": "Second"},
+                {"type": "caption", "caption_type": "figure", "number": 3, "caption_text": "Third"},
+            ],
+            "images": [{"hash": "hash_only"}],
+        }
+        # Act
+        result = link_captions_to_images(doc)
+        # Assert
         assert "image_hash" not in result["blocks"][2]
 
-    def test_link_captions_to_images_empty_images(self):
-        """Should handle empty images list."""
+    def test_link_captions_to_images_empty_images_no_link(self):
+        """With no images present, no caption should gain image_hash."""
+        # Arrange
         from scitex_msword.utils import link_captions_to_images
-
         doc = {
             "blocks": [
                 {"type": "caption", "caption_type": "figure", "number": 1},
             ],
             "images": [],
         }
-
+        # Act
         result = link_captions_to_images(doc)
-
+        # Assert
         assert "image_hash" not in result["blocks"][0]
 
-    def test_link_captions_to_images_no_figure_captions(self):
-        """Should handle documents with no figure captions."""
+    def test_link_captions_to_images_no_figure_captions_skips_table(self):
+        """Table captions should not gain image_hash."""
+        # Arrange
         from scitex_msword.utils import link_captions_to_images
-
         doc = {
             "blocks": [
                 {"type": "caption", "caption_type": "table", "number": 1},
@@ -126,91 +169,123 @@ class TestLinkCaptionsToImages:
             ],
             "images": [{"hash": "hash_1"}],
         }
-
+        # Act
         result = link_captions_to_images(doc)
-
-        # Table captions should not be linked
+        # Assert
         assert "image_hash" not in result["blocks"][0]
 
-    def test_link_captions_to_images_mixed_blocks(self):
-        """Should correctly link captions in mixed block types."""
+    def test_link_captions_to_images_mixed_blocks_first_figure(self):
+        """In mixed blocks, the first figure caption should link to the first image."""
+        # Arrange
         from scitex_msword.utils import link_captions_to_images
-
         doc = {
             "blocks": [
                 {"type": "heading", "level": 1, "text": "Figures"},
-                {
-                    "type": "caption",
-                    "caption_type": "figure",
-                    "number": 1,
-                    "caption_text": "Fig 1",
-                },
+                {"type": "caption", "caption_type": "figure", "number": 1, "caption_text": "Fig 1"},
                 {"type": "paragraph", "text": "Description"},
-                {
-                    "type": "caption",
-                    "caption_type": "table",
-                    "number": 1,
-                    "caption_text": "Table 1",
-                },
-                {
-                    "type": "caption",
-                    "caption_type": "figure",
-                    "number": 2,
-                    "caption_text": "Fig 2",
-                },
+                {"type": "caption", "caption_type": "table", "number": 1, "caption_text": "Table 1"},
+                {"type": "caption", "caption_type": "figure", "number": 2, "caption_text": "Fig 2"},
             ],
             "images": [
                 {"hash": "img_hash_1"},
                 {"hash": "img_hash_2"},
             ],
         }
-
+        # Act
         result = link_captions_to_images(doc)
-
-        # Only figure captions should have image_hash
+        # Assert
         assert result["blocks"][1]["image_hash"] == "img_hash_1"
-        assert "image_hash" not in result["blocks"][3]  # table caption
-        assert result["blocks"][4]["image_hash"] == "img_hash_2"
 
-    def test_link_captions_to_images_non_sequential_numbers(self):
-        """Should link by figure number, not block order."""
+    def test_link_captions_to_images_mixed_blocks_table_unlinked(self):
+        """Table captions in mixed blocks should remain unlinked."""
+        # Arrange
         from scitex_msword.utils import link_captions_to_images
-
         doc = {
             "blocks": [
-                {
-                    "type": "caption",
-                    "caption_type": "figure",
-                    "number": 2,
-                    "caption_text": "Second",
-                },
-                {
-                    "type": "caption",
-                    "caption_type": "figure",
-                    "number": 1,
-                    "caption_text": "First",
-                },
+                {"type": "heading", "level": 1, "text": "Figures"},
+                {"type": "caption", "caption_type": "figure", "number": 1, "caption_text": "Fig 1"},
+                {"type": "paragraph", "text": "Description"},
+                {"type": "caption", "caption_type": "table", "number": 1, "caption_text": "Table 1"},
+                {"type": "caption", "caption_type": "figure", "number": 2, "caption_text": "Fig 2"},
+            ],
+            "images": [
+                {"hash": "img_hash_1"},
+                {"hash": "img_hash_2"},
+            ],
+        }
+        # Act
+        result = link_captions_to_images(doc)
+        # Assert
+        assert "image_hash" not in result["blocks"][3]
+
+    def test_link_captions_to_images_mixed_blocks_second_figure(self):
+        """The second figure caption in mixed blocks should link to the second image."""
+        # Arrange
+        from scitex_msword.utils import link_captions_to_images
+        doc = {
+            "blocks": [
+                {"type": "heading", "level": 1, "text": "Figures"},
+                {"type": "caption", "caption_type": "figure", "number": 1, "caption_text": "Fig 1"},
+                {"type": "paragraph", "text": "Description"},
+                {"type": "caption", "caption_type": "table", "number": 1, "caption_text": "Table 1"},
+                {"type": "caption", "caption_type": "figure", "number": 2, "caption_text": "Fig 2"},
+            ],
+            "images": [
+                {"hash": "img_hash_1"},
+                {"hash": "img_hash_2"},
+            ],
+        }
+        # Act
+        result = link_captions_to_images(doc)
+        # Assert
+        assert result["blocks"][4]["image_hash"] == "img_hash_2"
+
+    def test_link_captions_to_images_non_sequential_first_block(self):
+        """A figure-numbered-2 caption listed first should link by its number."""
+        # Arrange
+        from scitex_msword.utils import link_captions_to_images
+        doc = {
+            "blocks": [
+                {"type": "caption", "caption_type": "figure", "number": 2, "caption_text": "Second"},
+                {"type": "caption", "caption_type": "figure", "number": 1, "caption_text": "First"},
             ],
             "images": [
                 {"hash": "hash_0"},
                 {"hash": "hash_1"},
             ],
         }
-
+        # Act
         result = link_captions_to_images(doc)
+        # Assert
+        assert result["blocks"][0]["image_hash"] == "hash_1"
 
-        # Figure 2 -> images[1], Figure 1 -> images[0]
-        assert result["blocks"][0]["image_hash"] == "hash_1"  # Figure 2
-        assert result["blocks"][1]["image_hash"] == "hash_0"  # Figure 1
+    def test_link_captions_to_images_non_sequential_second_block(self):
+        """A figure-numbered-1 caption listed second should link by its number."""
+        # Arrange
+        from scitex_msword.utils import link_captions_to_images
+        doc = {
+            "blocks": [
+                {"type": "caption", "caption_type": "figure", "number": 2, "caption_text": "Second"},
+                {"type": "caption", "caption_type": "figure", "number": 1, "caption_text": "First"},
+            ],
+            "images": [
+                {"hash": "hash_0"},
+                {"hash": "hash_1"},
+            ],
+        }
+        # Act
+        result = link_captions_to_images(doc)
+        # Assert
+        assert result["blocks"][1]["image_hash"] == "hash_0"
 
 
 class TestLinkCaptionsToImagesByProximity:
     """Tests for link_captions_to_images_by_proximity function."""
 
-    def test_link_by_proximity_basic(self):
-        """Should link captions to nearest preceding images."""
+    def test_link_by_proximity_basic_first_pair(self):
+        """First caption should link to nearest preceding image."""
+        # Arrange
         from scitex_msword.utils import link_captions_to_images_by_proximity
-
         doc = {
             "blocks": [
                 {"type": "image", "image_hash": "img_1"},
@@ -220,16 +295,33 @@ class TestLinkCaptionsToImagesByProximity:
             ],
             "images": [],
         }
-
+        # Act
         result = link_captions_to_images_by_proximity(doc)
-
+        # Assert
         assert result["blocks"][1]["image_hash"] == "img_1"
+
+    def test_link_by_proximity_basic_second_pair(self):
+        """Second caption should link to its nearest preceding image."""
+        # Arrange
+        from scitex_msword.utils import link_captions_to_images_by_proximity
+        doc = {
+            "blocks": [
+                {"type": "image", "image_hash": "img_1"},
+                {"type": "caption", "caption_type": "figure", "number": 1},
+                {"type": "image", "image_hash": "img_2"},
+                {"type": "caption", "caption_type": "figure", "number": 2},
+            ],
+            "images": [],
+        }
+        # Act
+        result = link_captions_to_images_by_proximity(doc)
+        # Assert
         assert result["blocks"][3]["image_hash"] == "img_2"
 
-    def test_link_by_proximity_fallback_to_images_list(self):
-        """Should fall back to images list when no image blocks."""
+    def test_link_by_proximity_fallback_first_caption(self):
+        """When no image blocks exist, fall back to images list for first caption."""
+        # Arrange
         from scitex_msword.utils import link_captions_to_images_by_proximity
-
         doc = {
             "blocks": [
                 {"type": "caption", "caption_type": "figure", "number": 1},
@@ -240,31 +332,49 @@ class TestLinkCaptionsToImagesByProximity:
                 {"hash": "fallback_2"},
             ],
         }
-
+        # Act
         result = link_captions_to_images_by_proximity(doc)
-
+        # Assert
         assert result["blocks"][0]["image_hash"] == "fallback_1"
+
+    def test_link_by_proximity_fallback_second_caption(self):
+        """When no image blocks exist, fall back to images list for second caption."""
+        # Arrange
+        from scitex_msword.utils import link_captions_to_images_by_proximity
+        doc = {
+            "blocks": [
+                {"type": "caption", "caption_type": "figure", "number": 1},
+                {"type": "caption", "caption_type": "figure", "number": 2},
+            ],
+            "images": [
+                {"hash": "fallback_1"},
+                {"hash": "fallback_2"},
+            ],
+        }
+        # Act
+        result = link_captions_to_images_by_proximity(doc)
+        # Assert
         assert result["blocks"][1]["image_hash"] == "fallback_2"
 
     def test_link_by_proximity_no_images_at_all(self):
-        """Should handle case with no images."""
+        """With no images anywhere, captions should have no image_hash."""
+        # Arrange
         from scitex_msword.utils import link_captions_to_images_by_proximity
-
         doc = {
             "blocks": [
                 {"type": "caption", "caption_type": "figure", "number": 1},
             ],
             "images": [],
         }
-
+        # Act
         result = link_captions_to_images_by_proximity(doc)
-
+        # Assert
         assert "image_hash" not in result["blocks"][0]
 
     def test_link_by_proximity_prefers_preceding_image(self):
-        """Should prefer preceding images over following images."""
+        """Captions should prefer preceding images over following images."""
+        # Arrange
         from scitex_msword.utils import link_captions_to_images_by_proximity
-
         doc = {
             "blocks": [
                 {"type": "image", "image_hash": "before_img"},
@@ -275,16 +385,15 @@ class TestLinkCaptionsToImagesByProximity:
             ],
             "images": [],
         }
-
+        # Act
         result = link_captions_to_images_by_proximity(doc)
-
-        # Caption at index 2, image at index 0 is closer than image at index 4
+        # Assert
         assert result["blocks"][2]["image_hash"] == "before_img"
 
     def test_link_by_proximity_uses_following_if_no_preceding(self):
-        """Should use following image if no preceding image available."""
+        """When no preceding image exists, use the following image."""
+        # Arrange
         from scitex_msword.utils import link_captions_to_images_by_proximity
-
         doc = {
             "blocks": [
                 {"type": "caption", "caption_type": "figure", "number": 1},
@@ -293,15 +402,15 @@ class TestLinkCaptionsToImagesByProximity:
             ],
             "images": [],
         }
-
+        # Act
         result = link_captions_to_images_by_proximity(doc)
-
+        # Assert
         assert result["blocks"][0]["image_hash"] == "only_img"
 
-    def test_link_by_proximity_avoids_reusing_images(self):
-        """Should not reuse already linked images."""
+    def test_link_by_proximity_avoids_reusing_images_first(self):
+        """First caption claims nearest image; second must not reuse it."""
+        # Arrange
         from scitex_msword.utils import link_captions_to_images_by_proximity
-
         doc = {
             "blocks": [
                 {"type": "image", "image_hash": "shared_img"},
@@ -311,189 +420,211 @@ class TestLinkCaptionsToImagesByProximity:
             ],
             "images": [],
         }
-
+        # Act
         result = link_captions_to_images_by_proximity(doc)
-
-        # First caption gets nearest (shared_img)
+        # Assert
         assert result["blocks"][1]["image_hash"] == "shared_img"
-        # Second caption gets the remaining one (second_img)
+
+    def test_link_by_proximity_avoids_reusing_images_second(self):
+        """Second caption should receive the remaining unused image."""
+        # Arrange
+        from scitex_msword.utils import link_captions_to_images_by_proximity
+        doc = {
+            "blocks": [
+                {"type": "image", "image_hash": "shared_img"},
+                {"type": "caption", "caption_type": "figure", "number": 1},
+                {"type": "caption", "caption_type": "figure", "number": 2},
+                {"type": "image", "image_hash": "second_img"},
+            ],
+            "images": [],
+        }
+        # Act
+        result = link_captions_to_images_by_proximity(doc)
+        # Assert
         assert result["blocks"][2]["image_hash"] == "second_img"
 
 
 class TestNormalizeSectionHeadings:
     """Tests for normalize_section_headings function."""
 
-    def test_normalize_intro(self):
+    def test_normalize_intro_becomes_introduction(self):
         """Should normalize 'intro' to 'Introduction'."""
+        # Arrange
         from scitex_msword.utils import normalize_section_headings
-
-        doc = {
-            "blocks": [
-                {"type": "heading", "level": 1, "text": "intro"},
-            ]
-        }
-
+        doc = {"blocks": [{"type": "heading", "level": 1, "text": "intro"}]}
+        # Act
         result = normalize_section_headings(doc)
-
+        # Assert
         assert result["blocks"][0]["text"] == "Introduction"
 
-    def test_normalize_introduction(self):
+    def test_normalize_introduction_stays_introduction(self):
         """Should normalize 'introduction' to 'Introduction'."""
+        # Arrange
         from scitex_msword.utils import normalize_section_headings
-
-        doc = {
-            "blocks": [
-                {"type": "heading", "level": 1, "text": "introduction"},
-            ]
-        }
-
+        doc = {"blocks": [{"type": "heading", "level": 1, "text": "introduction"}]}
+        # Act
         result = normalize_section_headings(doc)
-
+        # Assert
         assert result["blocks"][0]["text"] == "Introduction"
 
-    def test_normalize_methods(self):
+    def test_normalize_method_becomes_methods(self):
         """Should normalize 'method' to 'Methods'."""
+        # Arrange
         from scitex_msword.utils import normalize_section_headings
-
-        doc = {
-            "blocks": [
-                {"type": "heading", "level": 1, "text": "method"},
-            ]
-        }
-
+        doc = {"blocks": [{"type": "heading", "level": 1, "text": "method"}]}
+        # Act
         result = normalize_section_headings(doc)
-
+        # Assert
         assert result["blocks"][0]["text"] == "Methods"
 
-    def test_normalize_results(self):
+    def test_normalize_result_becomes_results(self):
         """Should normalize 'result' to 'Results'."""
+        # Arrange
         from scitex_msword.utils import normalize_section_headings
-
-        doc = {
-            "blocks": [
-                {"type": "heading", "level": 1, "text": "result"},
-            ]
-        }
-
+        doc = {"blocks": [{"type": "heading", "level": 1, "text": "result"}]}
+        # Act
         result = normalize_section_headings(doc)
-
+        # Assert
         assert result["blocks"][0]["text"] == "Results"
 
-    def test_normalize_conclusions(self):
+    def test_normalize_conclusion_becomes_conclusions(self):
         """Should normalize 'conclusion' to 'Conclusions'."""
+        # Arrange
         from scitex_msword.utils import normalize_section_headings
-
-        doc = {
-            "blocks": [
-                {"type": "heading", "level": 1, "text": "conclusion"},
-            ]
-        }
-
+        doc = {"blocks": [{"type": "heading", "level": 1, "text": "conclusion"}]}
+        # Act
         result = normalize_section_headings(doc)
-
+        # Assert
         assert result["blocks"][0]["text"] == "Conclusions"
 
-    def test_normalize_acknowledgements(self):
+    def test_normalize_acknowledgement_becomes_acknowledgements(self):
         """Should normalize 'acknowledgement' to 'Acknowledgements'."""
+        # Arrange
         from scitex_msword.utils import normalize_section_headings
-
-        doc = {
-            "blocks": [
-                {"type": "heading", "level": 1, "text": "acknowledgement"},
-            ]
-        }
-
+        doc = {"blocks": [{"type": "heading", "level": 1, "text": "acknowledgement"}]}
+        # Act
         result = normalize_section_headings(doc)
-
+        # Assert
         assert result["blocks"][0]["text"] == "Acknowledgements"
 
-    def test_normalize_bibliography_to_references(self):
+    def test_normalize_bibliography_becomes_references(self):
         """Should normalize 'bibliography' to 'References'."""
+        # Arrange
         from scitex_msword.utils import normalize_section_headings
-
-        doc = {
-            "blocks": [
-                {"type": "heading", "level": 1, "text": "bibliography"},
-            ]
-        }
-
+        doc = {"blocks": [{"type": "heading", "level": 1, "text": "bibliography"}]}
+        # Act
         result = normalize_section_headings(doc)
-
+        # Assert
         assert result["blocks"][0]["text"] == "References"
 
-    def test_normalize_only_level1_headings(self):
-        """Should only normalize level 1 headings."""
+    def test_normalize_skips_level2_headings(self):
+        """Level 2 headings should not be normalised."""
+        # Arrange
         from scitex_msword.utils import normalize_section_headings
-
         doc = {
             "blocks": [
                 {"type": "heading", "level": 2, "text": "intro"},
                 {"type": "heading", "level": 3, "text": "method"},
             ]
         }
-
+        # Act
         result = normalize_section_headings(doc)
-
-        # Level 2 and 3 headings should not be normalized
+        # Assert
         assert result["blocks"][0]["text"] == "intro"
+
+    def test_normalize_skips_level3_headings(self):
+        """Level 3 headings should not be normalised."""
+        # Arrange
+        from scitex_msword.utils import normalize_section_headings
+        doc = {
+            "blocks": [
+                {"type": "heading", "level": 2, "text": "intro"},
+                {"type": "heading", "level": 3, "text": "method"},
+            ]
+        }
+        # Act
+        result = normalize_section_headings(doc)
+        # Assert
         assert result["blocks"][1]["text"] == "method"
 
-    def test_normalize_case_insensitive(self):
-        """Should handle different cases."""
+    def test_normalize_case_insensitive_all_caps(self):
+        """All-caps text should normalise to canonical case."""
+        # Arrange
         from scitex_msword.utils import normalize_section_headings
-
         doc = {
             "blocks": [
                 {"type": "heading", "level": 1, "text": "INTRODUCTION"},
                 {"type": "heading", "level": 1, "text": "Methods"},
             ]
         }
-
+        # Act
         result = normalize_section_headings(doc)
-
-        # Both should be normalized
+        # Assert
         assert result["blocks"][0]["text"] == "Introduction"
+
+    def test_normalize_case_insensitive_title_case(self):
+        """Title-case text matching a known section should normalise canonically."""
+        # Arrange
+        from scitex_msword.utils import normalize_section_headings
+        doc = {
+            "blocks": [
+                {"type": "heading", "level": 1, "text": "INTRODUCTION"},
+                {"type": "heading", "level": 1, "text": "Methods"},
+            ]
+        }
+        # Act
+        result = normalize_section_headings(doc)
+        # Assert
         assert result["blocks"][1]["text"] == "Methods"
 
-    def test_normalize_preserves_other_blocks(self):
-        """Should preserve non-heading blocks."""
+    def test_normalize_preserves_paragraph_blocks(self):
+        """Paragraph blocks should be left untouched."""
+        # Arrange
         from scitex_msword.utils import normalize_section_headings
-
         doc = {
             "blocks": [
                 {"type": "paragraph", "text": "intro"},
                 {"type": "caption", "text": "method"},
             ]
         }
-
+        # Act
         result = normalize_section_headings(doc)
-
-        # Paragraphs and captions should not be changed
+        # Assert
         assert result["blocks"][0]["text"] == "intro"
-        assert result["blocks"][1]["text"] == "method"
 
-    def test_normalize_materials_and_methods(self):
-        """Should normalize 'materials and methods'."""
+    def test_normalize_preserves_caption_blocks(self):
+        """Caption blocks should be left untouched."""
+        # Arrange
         from scitex_msword.utils import normalize_section_headings
-
         doc = {
             "blocks": [
-                {"type": "heading", "level": 1, "text": "materials and methods"},
+                {"type": "paragraph", "text": "intro"},
+                {"type": "caption", "text": "method"},
             ]
         }
-
+        # Act
         result = normalize_section_headings(doc)
+        # Assert
+        assert result["blocks"][1]["text"] == "method"
 
+    def test_normalize_materials_and_methods_to_canonical(self):
+        """Should normalize 'materials and methods' to canonical case."""
+        # Arrange
+        from scitex_msword.utils import normalize_section_headings
+        doc = {"blocks": [{"type": "heading", "level": 1, "text": "materials and methods"}]}
+        # Act
+        result = normalize_section_headings(doc)
+        # Assert
         assert result["blocks"][0]["text"] == "Materials and Methods"
 
 
 class TestValidateDocument:
     """Tests for validate_document function."""
 
-    def test_validate_complete_document(self):
-        """Should not add warnings for complete document."""
+    def test_validate_complete_document_no_warnings(self):
+        """A complete document should yield zero warnings."""
+        # Arrange
         from scitex_msword.utils import validate_document
-
         doc = {
             "blocks": [
                 {"type": "heading", "level": 1, "text": "Introduction"},
@@ -505,15 +636,15 @@ class TestValidateDocument:
             "references": [{"number": 1, "text": "Ref 1"}],
             "warnings": [],
         }
-
+        # Act
         result = validate_document(doc)
-
+        # Assert
         assert len(result["warnings"]) == 0
 
-    def test_validate_missing_introduction(self):
-        """Should warn about missing Introduction."""
+    def test_validate_missing_introduction_warns(self):
+        """Should warn when Introduction section is missing."""
+        # Arrange
         from scitex_msword.utils import validate_document
-
         doc = {
             "blocks": [
                 {"type": "heading", "level": 1, "text": "Methods"},
@@ -524,15 +655,15 @@ class TestValidateDocument:
             "references": [{"number": 1, "text": "Ref"}],
             "warnings": [],
         }
-
+        # Act
         result = validate_document(doc)
-
+        # Assert
         assert any("Introduction" in w for w in result["warnings"])
 
-    def test_validate_missing_methods(self):
-        """Should warn about missing Methods."""
+    def test_validate_missing_methods_warns(self):
+        """Should warn when Methods section is missing."""
+        # Arrange
         from scitex_msword.utils import validate_document
-
         doc = {
             "blocks": [
                 {"type": "heading", "level": 1, "text": "Introduction"},
@@ -543,15 +674,15 @@ class TestValidateDocument:
             "references": [{"number": 1, "text": "Ref"}],
             "warnings": [],
         }
-
+        # Act
         result = validate_document(doc)
-
+        # Assert
         assert any("Methods" in w for w in result["warnings"])
 
-    def test_validate_missing_results(self):
-        """Should warn about missing Results."""
+    def test_validate_missing_results_warns(self):
+        """Should warn when Results section is missing."""
+        # Arrange
         from scitex_msword.utils import validate_document
-
         doc = {
             "blocks": [
                 {"type": "heading", "level": 1, "text": "Introduction"},
@@ -562,15 +693,15 @@ class TestValidateDocument:
             "references": [{"number": 1, "text": "Ref"}],
             "warnings": [],
         }
-
+        # Act
         result = validate_document(doc)
-
+        # Assert
         assert any("Results" in w for w in result["warnings"])
 
-    def test_validate_missing_discussion(self):
-        """Should warn about missing Discussion."""
+    def test_validate_missing_discussion_warns(self):
+        """Should warn when Discussion section is missing."""
+        # Arrange
         from scitex_msword.utils import validate_document
-
         doc = {
             "blocks": [
                 {"type": "heading", "level": 1, "text": "Introduction"},
@@ -581,15 +712,15 @@ class TestValidateDocument:
             "references": [{"number": 1, "text": "Ref"}],
             "warnings": [],
         }
-
+        # Act
         result = validate_document(doc)
-
+        # Assert
         assert any("Discussion" in w for w in result["warnings"])
 
-    def test_validate_missing_references_section(self):
-        """Should warn about missing References section."""
+    def test_validate_missing_references_section_warns(self):
+        """Should warn when References section is missing."""
+        # Arrange
         from scitex_msword.utils import validate_document
-
         doc = {
             "blocks": [
                 {"type": "heading", "level": 1, "text": "Introduction"},
@@ -600,15 +731,15 @@ class TestValidateDocument:
             "references": [{"number": 1, "text": "Ref"}],
             "warnings": [],
         }
-
+        # Act
         result = validate_document(doc)
-
+        # Assert
         assert any("References" in w for w in result["warnings"])
 
-    def test_validate_duplicate_figure_numbers(self):
+    def test_validate_duplicate_figure_numbers_warns(self):
         """Should warn about duplicate figure numbers."""
+        # Arrange
         from scitex_msword.utils import validate_document
-
         doc = {
             "blocks": [
                 {"type": "heading", "level": 1, "text": "Introduction"},
@@ -617,24 +748,20 @@ class TestValidateDocument:
                 {"type": "heading", "level": 1, "text": "Discussion"},
                 {"type": "heading", "level": 1, "text": "References"},
                 {"type": "caption", "caption_type": "figure", "number": 1},
-                {
-                    "type": "caption",
-                    "caption_type": "figure",
-                    "number": 1,
-                },  # Duplicate!
+                {"type": "caption", "caption_type": "figure", "number": 1},  # Duplicate!
             ],
             "references": [{"number": 1, "text": "Ref"}],
             "warnings": [],
         }
-
+        # Act
         result = validate_document(doc)
-
+        # Assert
         assert any("Duplicate figure number: 1" in w for w in result["warnings"])
 
-    def test_validate_no_references(self):
-        """Should warn about missing references."""
+    def test_validate_no_references_warns(self):
+        """Should warn when references list is empty."""
+        # Arrange
         from scitex_msword.utils import validate_document
-
         doc = {
             "blocks": [
                 {"type": "heading", "level": 1, "text": "Introduction"},
@@ -646,15 +773,15 @@ class TestValidateDocument:
             "references": [],
             "warnings": [],
         }
-
+        # Act
         result = validate_document(doc)
-
+        # Assert
         assert any("No references found" in w for w in result["warnings"])
 
-    def test_validate_reference_paragraphs_count_as_references(self):
-        """Should not warn if reference-paragraphs exist."""
+    def test_validate_reference_paragraphs_suppress_warning(self):
+        """Presence of reference-paragraph blocks should suppress the missing-references warning."""
+        # Arrange
         from scitex_msword.utils import validate_document
-
         doc = {
             "blocks": [
                 {"type": "heading", "level": 1, "text": "Introduction"},
@@ -664,18 +791,18 @@ class TestValidateDocument:
                 {"type": "heading", "level": 1, "text": "References"},
                 {"type": "reference-paragraph", "ref_number": 1, "text": "Ref 1"},
             ],
-            "references": [],  # Empty list but we have reference-paragraph blocks
+            "references": [],
             "warnings": [],
         }
-
+        # Act
         result = validate_document(doc)
-
+        # Assert
         assert not any("No references found" in w for w in result["warnings"])
 
     def test_validate_preserves_existing_warnings(self):
-        """Should preserve existing warnings."""
+        """Existing warnings on input should be retained on output."""
+        # Arrange
         from scitex_msword.utils import validate_document
-
         doc = {
             "blocks": [
                 {"type": "heading", "level": 1, "text": "Introduction"},
@@ -687,17 +814,18 @@ class TestValidateDocument:
             "references": [{"number": 1, "text": "Ref"}],
             "warnings": ["Existing warning"],
         }
-
+        # Act
         result = validate_document(doc)
-
+        # Assert
         assert "Existing warning" in result["warnings"]
 
 
 class TestCreatePostImportHook:
     """Tests for create_post_import_hook function."""
 
-    def test_create_hook_single_function(self):
-        """Should create hook from single function."""
+    def test_create_hook_single_function_applies_mutation(self):
+        """A single-function hook should apply that function's mutation."""
+        # Arrange
         from scitex_msword.utils import create_post_import_hook
 
         def add_marker(doc):
@@ -705,12 +833,14 @@ class TestCreatePostImportHook:
             return doc
 
         hook = create_post_import_hook(add_marker)
+        # Act
         result = hook({"blocks": []})
-
+        # Assert
         assert result["marker"] is True
 
-    def test_create_hook_multiple_functions(self):
-        """Should chain multiple functions."""
+    def test_create_hook_multi_function_applies_first(self):
+        """A multi-function hook should apply the first function's mutation."""
+        # Arrange
         from scitex_msword.utils import create_post_import_hook
 
         def add_first(doc):
@@ -722,13 +852,33 @@ class TestCreatePostImportHook:
             return doc
 
         hook = create_post_import_hook(add_first, add_second)
+        # Act
         result = hook({"blocks": []})
-
+        # Assert
         assert result["first"] is True
+
+    def test_create_hook_multi_function_applies_second(self):
+        """A multi-function hook should apply the second function's mutation."""
+        # Arrange
+        from scitex_msword.utils import create_post_import_hook
+
+        def add_first(doc):
+            doc["first"] = True
+            return doc
+
+        def add_second(doc):
+            doc["second"] = True
+            return doc
+
+        hook = create_post_import_hook(add_first, add_second)
+        # Act
+        result = hook({"blocks": []})
+        # Assert
         assert result["second"] is True
 
-    def test_create_hook_order_preserved(self):
-        """Should apply functions in order."""
+    def test_create_hook_order_preserved_left_to_right(self):
+        """Functions should run in the order they are passed."""
+        # Arrange
         from scitex_msword.utils import create_post_import_hook
 
         def append_a(doc):
@@ -740,20 +890,20 @@ class TestCreatePostImportHook:
             return doc
 
         hook = create_post_import_hook(append_a, append_b)
+        # Act
         result = hook({"blocks": []})
-
+        # Assert
         assert result["order"] == "AB"
 
-    def test_create_hook_with_real_utils(self):
-        """Should work with actual utility functions."""
+    def test_create_hook_with_real_utils_normalizes_first(self):
+        """Real-utility chain should normalise the first heading."""
+        # Arrange
         from scitex_msword.utils import (
             create_post_import_hook,
             normalize_section_headings,
             validate_document,
         )
-
         hook = create_post_import_hook(normalize_section_headings, validate_document)
-
         doc = {
             "blocks": [
                 {"type": "heading", "level": 1, "text": "intro"},
@@ -762,326 +912,68 @@ class TestCreatePostImportHook:
             "references": [],
             "warnings": [],
         }
-
+        # Act
         result = hook(doc)
-
-        # Check normalize_section_headings was applied
+        # Assert
         assert result["blocks"][0]["text"] == "Introduction"
+
+    def test_create_hook_with_real_utils_normalizes_second(self):
+        """Real-utility chain should normalise the second heading."""
+        # Arrange
+        from scitex_msword.utils import (
+            create_post_import_hook,
+            normalize_section_headings,
+            validate_document,
+        )
+        hook = create_post_import_hook(normalize_section_headings, validate_document)
+        doc = {
+            "blocks": [
+                {"type": "heading", "level": 1, "text": "intro"},
+                {"type": "heading", "level": 1, "text": "method"},
+            ],
+            "references": [],
+            "warnings": [],
+        }
+        # Act
+        result = hook(doc)
+        # Assert
         assert result["blocks"][1]["text"] == "Methods"
-        # Check validate_document was applied
+
+    def test_create_hook_with_real_utils_attaches_warnings(self):
+        """Real-utility chain should leave a warnings list on the document."""
+        # Arrange
+        from scitex_msword.utils import (
+            create_post_import_hook,
+            normalize_section_headings,
+            validate_document,
+        )
+        hook = create_post_import_hook(normalize_section_headings, validate_document)
+        doc = {
+            "blocks": [
+                {"type": "heading", "level": 1, "text": "intro"},
+                {"type": "heading", "level": 1, "text": "method"},
+            ],
+            "references": [],
+            "warnings": [],
+        }
+        # Act
+        result = hook(doc)
+        # Assert
         assert "warnings" in result
 
-    def test_create_hook_empty_functions(self):
-        """Should handle no functions gracefully."""
+    def test_create_hook_no_functions_passes_doc_through(self):
+        """An empty-hook chain should pass the document through unchanged."""
+        # Arrange
         from scitex_msword.utils import create_post_import_hook
-
         hook = create_post_import_hook()
         doc = {"blocks": [], "test": "value"}
+        # Act
         result = hook(doc)
-
+        # Assert
         assert result["test"] == "value"
 
 
 if __name__ == "__main__":
     import os
 
-    import pytest
-
     pytest.main([os.path.abspath(__file__)])
-
-# --------------------------------------------------------------------------------
-# Start of Source Code from: /home/ywatanabe/proj/scitex-code/src/scitex/msword/utils.py
-# --------------------------------------------------------------------------------
-# #!/usr/bin/env python3
-# # -*- coding: utf-8 -*-
-# # Timestamp: 2025-12-11 16:45:00
-# # File: /home/ywatanabe/proj/scitex-code/src/scitex/msword/utils.py
-#
-# """
-# Utility functions for processing MS Word documents.
-#
-# These functions can be used as post_import_hooks or called directly
-# to process document structures.
-# """
-#
-# from __future__ import annotations
-#
-# from typing import Any, Dict, List
-#
-#
-# def link_captions_to_images(doc: Dict[str, Any]) -> Dict[str, Any]:
-#     """
-#     Link figure captions to images by matching order.
-#
-#     This function pairs figure captions with images based on their
-#     sequential order in the document. Each figure caption is assigned
-#     an `image_hash` that corresponds to the image at the same position.
-#
-#     Parameters
-#     ----------
-#     doc : dict
-#         SciTeX writer document with 'blocks' and 'images' keys.
-#
-#     Returns
-#     -------
-#     dict
-#         The same document with image_hash added to figure captions.
-#
-#     Examples
-#     --------
-#     >>> from scitex_msword import load_docx
-#     >>> from scitex_msword.utils import link_captions_to_images
-#     >>> doc = load_docx("manuscript.docx")
-#     >>> doc = link_captions_to_images(doc)
-#     >>> # Now captions have image_hash for LaTeX export
-#     """
-#     blocks = doc.get("blocks", [])
-#     images = doc.get("images", [])
-#
-#     # Find all figure captions
-#     figure_captions = [
-#         b for b in blocks
-#         if b.get("type") == "caption" and b.get("caption_type") == "figure"
-#     ]
-#
-#     # Link by order (figure 1 -> image 0, figure 2 -> image 1, etc.)
-#     for caption in figure_captions:
-#         fig_num = caption.get("number")
-#         if fig_num is not None and isinstance(fig_num, int):
-#             # Figure numbers are typically 1-indexed
-#             img_idx = fig_num - 1
-#             if 0 <= img_idx < len(images):
-#                 caption["image_hash"] = images[img_idx].get("hash")
-#
-#     return doc
-#
-#
-# def link_captions_to_images_by_proximity(doc: Dict[str, Any]) -> Dict[str, Any]:
-#     """
-#     Link figure captions to images by document proximity.
-#
-#     This function uses the image blocks (type="image") that are inserted
-#     at their actual positions in the document body. It finds the nearest
-#     unlinked image block to each figure caption.
-#
-#     Parameters
-#     ----------
-#     doc : dict
-#         SciTeX writer document.
-#
-#     Returns
-#     -------
-#     dict
-#         Document with image_hash added to captions.
-#     """
-#     blocks = doc.get("blocks", [])
-#
-#     # Collect image blocks and figure captions with their indices
-#     image_blocks = []
-#     figure_captions = []
-#
-#     for i, block in enumerate(blocks):
-#         if block.get("type") == "image":
-#             image_blocks.append((i, block))
-#         elif block.get("type") == "caption" and block.get("caption_type") == "figure":
-#             figure_captions.append((i, block))
-#
-#     if not image_blocks:
-#         # Fallback to old behavior using doc["images"] list
-#         images = doc.get("images", [])
-#         if not images:
-#             return doc
-#         image_hashes = [img.get("hash") for img in images]
-#         for idx, (_, caption) in enumerate(figure_captions):
-#             if idx < len(image_hashes):
-#                 caption["image_hash"] = image_hashes[idx]
-#         return doc
-#
-#     used_images = set()
-#
-#     # For each caption, find the nearest preceding image block
-#     for cap_idx, caption in figure_captions:
-#         best_img_idx = None
-#         best_img_hash = None
-#         best_distance = float("inf")
-#
-#         for img_idx, img_block in image_blocks:
-#             img_hash = img_block.get("image_hash")
-#             if img_hash in used_images:
-#                 continue
-#
-#             # Prefer images that come before the caption (typical layout)
-#             distance = cap_idx - img_idx
-#             if distance >= 0 and distance < best_distance:
-#                 best_distance = distance
-#                 best_img_idx = img_idx
-#                 best_img_hash = img_hash
-#
-#         # If no preceding image, try following images
-#         if best_img_hash is None:
-#             for img_idx, img_block in image_blocks:
-#                 img_hash = img_block.get("image_hash")
-#                 if img_hash in used_images:
-#                     continue
-#
-#                 distance = abs(cap_idx - img_idx)
-#                 if distance < best_distance:
-#                     best_distance = distance
-#                     best_img_idx = img_idx
-#                     best_img_hash = img_hash
-#
-#         if best_img_hash:
-#             caption["image_hash"] = best_img_hash
-#             used_images.add(best_img_hash)
-#
-#     return doc
-#
-#
-# def normalize_section_headings(doc: Dict[str, Any]) -> Dict[str, Any]:
-#     """
-#     Normalize section headings for consistency.
-#
-#     Converts common section titles to standard academic format:
-#     - "intro" -> "Introduction"
-#     - "method" -> "Methods"
-#     - etc.
-#
-#     Parameters
-#     ----------
-#     doc : dict
-#         SciTeX writer document.
-#
-#     Returns
-#     -------
-#     dict
-#         Document with normalized headings.
-#     """
-#     blocks = doc.get("blocks", [])
-#
-#     # Common normalizations
-#     normalizations = {
-#         "intro": "Introduction",
-#         "introduction": "Introduction",
-#         "method": "Methods",
-#         "methods": "Methods",
-#         "materials and methods": "Materials and Methods",
-#         "result": "Results",
-#         "results": "Results",
-#         "discussion": "Discussion",
-#         "conclusion": "Conclusions",
-#         "conclusions": "Conclusions",
-#         "acknowledgement": "Acknowledgements",
-#         "acknowledgements": "Acknowledgements",
-#         "reference": "References",
-#         "references": "References",
-#         "bibliography": "References",
-#     }
-#
-#     for block in blocks:
-#         if block.get("type") == "heading" and block.get("level") == 1:
-#             text = block.get("text", "").strip().lower()
-#             if text in normalizations:
-#                 block["text"] = normalizations[text]
-#
-#     return doc
-#
-#
-# def validate_document(doc: Dict[str, Any]) -> Dict[str, Any]:
-#     """
-#     Validate document structure and add warnings.
-#
-#     Checks for common issues:
-#     - Missing required sections
-#     - Unmatched caption numbers
-#     - Empty references section
-#     - Duplicate figure numbers
-#
-#     Parameters
-#     ----------
-#     doc : dict
-#         SciTeX writer document.
-#
-#     Returns
-#     -------
-#     dict
-#         Document with warnings added.
-#     """
-#     blocks = doc.get("blocks", [])
-#     warnings = doc.get("warnings", [])
-#
-#     # Check for required sections
-#     headings = [b.get("text", "").lower() for b in blocks if b.get("type") == "heading"]
-#
-#     required_sections = ["introduction", "methods", "results", "discussion", "references"]
-#     for section in required_sections:
-#         if not any(section in h for h in headings):
-#             warnings.append(f"Missing section: {section.title()}")
-#
-#     # Check for duplicate figure numbers
-#     figure_numbers = [
-#         b.get("number") for b in blocks
-#         if b.get("type") == "caption" and b.get("caption_type") == "figure"
-#     ]
-#     seen = set()
-#     for num in figure_numbers:
-#         if num in seen:
-#             warnings.append(f"Duplicate figure number: {num}")
-#         seen.add(num)
-#
-#     # Check for missing references
-#     references = doc.get("references", [])
-#     if not references:
-#         ref_blocks = [b for b in blocks if b.get("type") == "reference-paragraph"]
-#         if not ref_blocks:
-#             warnings.append("No references found in document")
-#
-#     doc["warnings"] = warnings
-#     return doc
-#
-#
-# def create_post_import_hook(*functions):
-#     """
-#     Create a composite post_import_hook from multiple functions.
-#
-#     Parameters
-#     ----------
-#     *functions : callable
-#         Functions to apply in sequence.
-#
-#     Returns
-#     -------
-#     callable
-#         A single hook that applies all functions.
-#
-#     Examples
-#     --------
-#     >>> from scitex_msword.utils import (
-#     ...     link_captions_to_images,
-#     ...     normalize_section_headings,
-#     ...     create_post_import_hook,
-#     ... )
-#     >>> hook = create_post_import_hook(
-#     ...     link_captions_to_images,
-#     ...     normalize_section_headings,
-#     ... )
-#     >>> # Use with custom profile
-#     >>> profile.post_import_hooks = [hook]
-#     """
-#     def composite_hook(doc: Dict[str, Any]) -> Dict[str, Any]:
-#         for func in functions:
-#             doc = func(doc)
-#         return doc
-#     return composite_hook
-#
-#
-# __all__ = [
-#     "link_captions_to_images",
-#     "link_captions_to_images_by_proximity",
-#     "normalize_section_headings",
-#     "validate_document",
-#     "create_post_import_hook",
-# ]
-
-# --------------------------------------------------------------------------------
-# End of Source Code from: /home/ywatanabe/proj/scitex-code/src/scitex/msword/utils.py
-# --------------------------------------------------------------------------------
