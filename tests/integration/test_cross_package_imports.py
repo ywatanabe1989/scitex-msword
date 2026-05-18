@@ -25,6 +25,11 @@ CROSS_PACKAGE_IMPORTS = [
 
 
 @pytest.mark.parametrize("module_name", CROSS_PACKAGE_IMPORTS)
-def test_cross_package_import(module_name):
+def test_cross_package_import_exposes_module_attribute(module_name):
     """Importing scitex-msword's declared cross-package dependency must succeed."""
-    pytest.importorskip(module_name)
+    # Arrange
+    name = module_name
+    # Act
+    module = pytest.importorskip(name)
+    # Assert
+    assert getattr(module, "__name__", "") == name
