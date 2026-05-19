@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "scitex-msword"
-version = "0.1.3"
+version = "0.1.4"
 description = "MS Word (.docx) reader/writer with journal-style profiles (MDPI, IEEE, Springer, Elsevier, RESNA, IOP) — standalone module from the SciTeX ecosystem"
 readme = "README.md"
 license = "AGPL-3.0-only"
