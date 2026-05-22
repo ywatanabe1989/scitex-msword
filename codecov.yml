@@ -16,3 +16,5 @@ ignore:
   - "tests/**"
   - "examples/**"
   - "docs/**"
+
+comment: false
