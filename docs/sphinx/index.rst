@@ -1,8 +1,9 @@
 scitex-msword
 =============
 
-Small linear-algebra helpers (distance, geometric median, cosine, nannorm)
-extracted from the SciTeX ecosystem as a standalone package.
+MS Word (.docx) reader/writer with journal-style profiles (MDPI, IEEE,
+Springer, Elsevier, RESNA, IOP) — a standalone package from the SciTeX
+ecosystem.
 
 .. toctree::
    :maxdepth: 2

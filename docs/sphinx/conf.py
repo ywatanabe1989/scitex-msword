@@ -35,7 +35,7 @@ autodoc_default_options = {
 }
 
 # Heavy/optional deps mocked so RTD can build without installing them.
-autodoc_mock_imports = [""]
+autodoc_mock_imports = ["scitex_tex"]
 
 autosummary_generate = True
 
@@ -52,7 +52,4 @@ html_static_path = ["_static"]
 
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
-    "numpy": ("https://numpy.org/doc/stable/", None),
-    "scipy": ("https://docs.scipy.org/doc/scipy/", None),
-    "torch": ("https://pytorch.org/docs/stable/", None),
 }

@@ -63,15 +63,27 @@ import scitex_msword as sxm
 doc = sxm.load_docx("paper.docx", profile="generic")
 sxm.save_docx(doc, "paper-styled.docx", profile="ieee")
 
-# Helpers
-sxm.link_captions_to_images(doc)
-sxm.link_captions_to_images_by_proximity(doc)
-sxm.normalize_section_headings(doc)
-sxm.validate_document(doc)
-sxm.create_post_import_hook(doc)
+# Helpers (all take and return a doc dict)
+doc = sxm.link_captions_to_images(doc)
+doc = sxm.link_captions_to_images_by_proximity(doc)
+doc = sxm.normalize_section_headings(doc)
+doc = sxm.validate_document(doc)
+
+# Composite post-import hook from multiple helpers
+from scitex_msword.utils import create_post_import_hook
+hook = create_post_import_hook(
+    sxm.link_captions_to_images,
+    sxm.normalize_section_headings,
+)
 
 # Register custom profile
-sxm.register_profile("my-style", {...})
+from scitex_msword import BaseWordProfile, register_profile
+custom = BaseWordProfile(
+    name="my-style",
+    description="My custom journal template",
+    heading_styles={1: "Title", 2: "Subtitle"},
+)
+register_profile(custom)
 ```
 
 ### Built-in profiles
@@ -92,18 +104,11 @@ when the umbrella package is also installed.
 
 ```
 scitex_msword/
-├── _load.py              ← `load_docx` — DOCX → JSON-like document
-├── _save.py              ← `save_docx` — apply profile, write DOCX
-├── _convert.py           ← `convert_docx_to_tex` (lazy scitex.tex import)
-├── profiles/             ← built-in journal styles
-│   ├── generic.py        ← default
-│   ├── ieee.py
-│   ├── mdpi_ijerph.py
-│   ├── resna_2025.py
-│   ├── springer.py
-│   └── elsevier.py
-├── helpers/              ← caption-image linking, heading normalization
-└── _registry.py          ← `register_profile` for user styles
+├── __init__.py     ← public API: load_docx, save_docx, convert_docx_to_tex
+├── profiles.py     ← BaseWordProfile + built-in journal profiles
+├── reader.py       ← WordReader — DOCX → JSON-like document
+├── writer.py       ← WordWriter — JSON-like document → DOCX
+└── utils.py        ← helpers: caption-image linking, heading normalization, validation
 ```
 
 ## Demo

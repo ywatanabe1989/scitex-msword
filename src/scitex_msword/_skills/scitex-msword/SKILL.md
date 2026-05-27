@@ -1,6 +1,6 @@
 ---
 name: scitex-msword
-description: MS Word (.docx) ↔ SciTeX writer document model. `import_docx(path)` parses Word paragraphs into the writer schema; `export_docx(doc, path)` writes back. Strategy: Word users write text only; figures/tables/refs/LaTeX stay in SciTeX. Drop-in replacement for `python-docx` boilerplate when round-tripping with the manuscript pipeline.
+description: MS Word (.docx) ↔ SciTeX writer document model. `load_docx(path)` parses Word paragraphs into the writer schema; `save_docx(doc, path)` writes back with journal-specific profiles (MDPI, IEEE, Springer, Elsevier, RESNA, IOP). Strategy: Word users write text only; figures/tables/refs/LaTeX stay in SciTeX. Drop-in replacement for `python-docx` boilerplate when round-tripping with the manuscript pipeline.
 primary_interface: python
 interfaces:
   python: 2
@@ -17,7 +17,7 @@ tags: [scitex-msword, scitex-package]
 
 # scitex-msword
 
-MS Word (.docx) ↔ SciTeX writer document model. `import_docx(path)` parses Word paragraphs into the writer schema; `export_docx(doc, path)` writes back. Strategy: Word users write text only; figures/tables/refs/LaTeX stay in SciTeX. Drop-in replacement for `python-docx` boilerplate when round-tripping with the manuscript pipeline.
+MS Word (.docx) ↔ SciTeX writer document model. `load_docx(path)` parses Word paragraphs into the writer schema; `save_docx(doc, path)` writes back with journal-specific profiles (MDPI, IEEE, Springer, Elsevier, RESNA, IOP). Strategy: Word users write text only; figures/tables/refs/LaTeX stay in SciTeX. Drop-in replacement for `python-docx` boilerplate when round-tripping with the manuscript pipeline.
 
 See README.md and the package's public `__init__.py` for the full
 function list. This skill leaf exists so agents discover the package
