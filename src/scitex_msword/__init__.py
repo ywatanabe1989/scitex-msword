@@ -39,7 +39,9 @@ Available profiles:
 from __future__ import annotations
 
 try:
-    from importlib.metadata import version as _v, PackageNotFoundError
+    from importlib.metadata import PackageNotFoundError
+    from importlib.metadata import version as _v
+
     try:
         __version__ = _v("scitex-msword")
     except PackageNotFoundError:
@@ -188,10 +190,10 @@ def convert_docx_to_tex(
         Whether to link figure captions to extracted images so that
         LaTeX can generate \\includegraphics inside figure environments.
     link_mode : {"by-number", "by-proximity"}, default "by-number"
-        Strategy for linking captions to images:
-        - "by-number": Figure 1 -> first image, Figure 2 -> second image...
-        - "by-proximity": assign images in document order, useful when
-          figure numbers and image order don't match.
+        Strategy for linking captions to images. ``"by-number"`` links
+        each Figure *N* to the N-th image. ``"by-proximity"`` assigns
+        images in document order (for when figure numbers and image
+        order differ).
     normalize_headings : bool, default True
         If True, apply common heading normalizations
         (e.g., "intro" -> "Introduction").
