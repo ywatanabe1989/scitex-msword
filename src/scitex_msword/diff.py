@@ -85,8 +85,10 @@ def _extract_run_info(run) -> Dict[str, Any]:
     try:
         hl = run.font.highlight_color
         if hl is not None:
-            # WD_COLOR_INDEX enum -> human-readable lowercase name
-            info["highlight"] = str(hl).split(".")[-1].lower()
+            # WD_COLOR_INDEX enum -> human-readable lowercase name.
+            # str(hl) is e.g. "TURQUOISE (3)"; .name is "TURQUOISE".
+            name = getattr(hl, "name", str(hl)).split(".")[-1].split(" ")[0]
+            info["highlight"] = name.lower()
     except Exception:
         pass
     return info

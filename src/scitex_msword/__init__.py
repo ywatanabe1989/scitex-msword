@@ -52,6 +52,12 @@ from pathlib import Path
 from typing import Any, Optional
 
 from .diff import diff_docx, summarize_diff
+from .highlights import (
+    clear_highlights,
+    extract_highlights,
+    mark_additions,
+    mark_modifications,
+)
 from .profiles import BaseWordProfile, get_profile, list_profiles, register_profile
 from .reader import WordReader
 from .utils import (
@@ -269,4 +275,9 @@ __all__ = [
     # Diff API (BOOST v16 dogfooding)
     "diff_docx",
     "summarize_diff",
+    # Highlight API (BOOST v16 visual marking)
+    "mark_additions",
+    "mark_modifications",
+    "extract_highlights",
+    "clear_highlights",
 ]
