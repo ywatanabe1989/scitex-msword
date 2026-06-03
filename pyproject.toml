@@ -25,6 +25,13 @@ dependencies = [
 
 [project.optional-dependencies]
 tex = []
+# MCP server scaffold (priority 8 of the BOOST v16 dogfooding sprint).
+# The Anthropic MCP Python SDK is only needed when running
+# scitex_msword.mcp_server.serve(); the module imports successfully
+# without it (raising a clear error only at server-startup time).
+mcp = [
+    "mcp>=1.0",
+]
 dev = [
     "pytest",
     "pytest-cov",
@@ -39,7 +46,7 @@ docs = [
     "sphinx-autodoc-typehints>=1.25",
 ]
 all = [
-    "scitex-msword[tex]",
+    "scitex-msword[tex,mcp]",
 ]
 
 [project.urls]
