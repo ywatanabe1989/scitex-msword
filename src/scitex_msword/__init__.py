@@ -52,6 +52,7 @@ from pathlib import Path
 from typing import Any, Optional
 
 from .bold import preserve_bold_tokens
+from .comments import apply_comments_as_edits, extract_comments
 from .diff import diff_docx, summarize_diff
 from .highlights import (
     clear_highlights,
@@ -283,4 +284,7 @@ __all__ = [
     "clear_highlights",
     # Bold-token preservation (BOOST v16 Japanese keyword emphasis)
     "preserve_bold_tokens",
+    # Comment extraction (+ narrow REPLACE-grammar application)
+    "extract_comments",
+    "apply_comments_as_edits",
 ]
