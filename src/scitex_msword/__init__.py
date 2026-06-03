@@ -51,6 +51,7 @@ except ImportError:  # pragma: no cover — only on ancient Pythons
 from pathlib import Path
 from typing import Any, Optional
 
+from .diff import diff_docx, summarize_diff
 from .profiles import BaseWordProfile, get_profile, list_profiles, register_profile
 from .reader import WordReader
 from .utils import (
@@ -265,4 +266,7 @@ __all__ = [
     "normalize_section_headings",
     "validate_document",
     "create_post_import_hook",
+    # Diff API (BOOST v16 dogfooding)
+    "diff_docx",
+    "summarize_diff",
 ]
