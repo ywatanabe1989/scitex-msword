@@ -23,10 +23,9 @@ formatting of the surrounding text.
 from __future__ import annotations
 
 import re
-from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
+from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 try:
-    import docx  # type: ignore[import-untyped]
     from docx.document import Document as DocxDocument  # type: ignore[import-untyped]
     from docx.oxml.ns import qn  # type: ignore[import-untyped]
 
@@ -134,7 +133,9 @@ def _find_token_spans(
         return []
     pattern = "|".join(re.escape(t) for t in sorted_tokens)
     flags = 0 if case_sensitive else re.IGNORECASE
-    spans = [(m.start(), m.end(), m.group(0)) for m in re.finditer(pattern, text, flags)]
+    spans = [
+        (m.start(), m.end(), m.group(0)) for m in re.finditer(pattern, text, flags)
+    ]
     return spans
 
 

@@ -30,27 +30,33 @@ class TestImportSurface:
 
     def test_mark_additions_is_importable(self):
         """mark_additions should be importable from the module."""
-        # Arrange / Act
-        from scitex_msword.highlights import mark_additions
+        # Arrange
+        import importlib
 
+        # Act
+        mod = importlib.import_module("scitex_msword.highlights")
         # Assert
-        assert callable(mark_additions)
+        assert callable(mod.mark_additions)
 
     def test_mark_modifications_is_importable(self):
         """mark_modifications should be importable from the module."""
-        # Arrange / Act
-        from scitex_msword.highlights import mark_modifications
+        # Arrange
+        import importlib
 
+        # Act
+        mod = importlib.import_module("scitex_msword.highlights")
         # Assert
-        assert callable(mark_modifications)
+        assert callable(mod.mark_modifications)
 
     def test_extract_highlights_is_importable(self):
         """extract_highlights should be importable from the module."""
-        # Arrange / Act
-        from scitex_msword.highlights import extract_highlights
+        # Arrange
+        import importlib
 
+        # Act
+        mod = importlib.import_module("scitex_msword.highlights")
         # Assert
-        assert callable(extract_highlights)
+        assert callable(mod.extract_highlights)
 
 
 class TestMarkAdditions:
@@ -74,8 +80,10 @@ class TestMarkAdditions:
         # Arrange
         from scitex_msword.highlights import ADDITION_COLOR
 
-        # Act / Assert
-        assert ADDITION_COLOR == "turquoise"
+        # Act
+        value = ADDITION_COLOR
+        # Assert
+        assert value == "turquoise"
 
     def test_mark_additions_accepts_custom_color(self):
         """mark_additions should accept a custom color name."""
@@ -118,16 +126,18 @@ class TestMarkAdditions:
         from scitex_msword.highlights import mark_additions
 
         doc = _doc_with_paragraphs([["hello"]])
-        # Act / Assert
-        with pytest.raises(ValueError):
+        ctx = pytest.raises(ValueError)
+        # Act
+        # Assert
+        with ctx:
             mark_additions(doc, [(0, 0)], color="not-a-color")
 
 
 class TestMarkModifications:
     """Tests for mark_modifications."""
 
-    def test_mark_modifications_sets_magenta_by_default(self):
-        """The default modification color should be magenta."""
+    def test_mark_modifications_sets_pink_alias_magenta_by_default(self):
+        """The default modification color should map to Word's PINK enum."""
         # Arrange
         from docx.enum.text import WD_COLOR_INDEX
 
@@ -137,8 +147,7 @@ class TestMarkModifications:
         # Act
         mark_modifications(doc, [(0, 0)])
         # Assert
-        assert doc.paragraphs[0].runs[0].font.highlight_color == WD_COLOR_INDEX.PINK or \
-               doc.paragraphs[0].runs[0].font.highlight_color.name.lower() == "magenta"
+        assert doc.paragraphs[0].runs[0].font.highlight_color == WD_COLOR_INDEX.PINK
 
 
 class TestExtractHighlights:

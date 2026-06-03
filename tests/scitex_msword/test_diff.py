@@ -35,19 +35,23 @@ class TestDiffDocxImport:
 
     def test_diff_docx_is_importable_from_module(self):
         """diff_docx should be importable from scitex_msword.diff."""
-        # Arrange / Act
-        from scitex_msword.diff import diff_docx
+        # Arrange
+        import importlib
 
+        # Act
+        mod = importlib.import_module("scitex_msword.diff")
         # Assert
-        assert callable(diff_docx)
+        assert callable(mod.diff_docx)
 
     def test_summarize_diff_is_importable_from_module(self):
         """summarize_diff should be importable from scitex_msword.diff."""
-        # Arrange / Act
-        from scitex_msword.diff import summarize_diff
+        # Arrange
+        import importlib
 
+        # Act
+        mod = importlib.import_module("scitex_msword.diff")
         # Assert
-        assert callable(summarize_diff)
+        assert callable(mod.summarize_diff)
 
 
 class TestDiffDocxIdentical:
@@ -141,8 +145,8 @@ class TestDiffDocxModify:
         # Assert
         assert any(op["op"] == "modify" for op in ops)
 
-    def test_modify_op_includes_both_texts(self, tmp_path):
-        """A 'modify' op should expose text_a and text_b for the changed paragraph."""
+    def test_modify_op_exposes_text_a(self, tmp_path):
+        """A 'modify' op should expose text_a for the changed paragraph."""
         # Arrange
         from scitex_msword.diff import diff_docx
 
@@ -153,14 +157,26 @@ class TestDiffDocxModify:
         modify_ops = [op for op in ops if op["op"] == "modify"]
         # Assert
         assert modify_ops[0]["text_a"] == "original text"
+
+    def test_modify_op_exposes_text_b(self, tmp_path):
+        """A 'modify' op should expose text_b for the changed paragraph."""
+        # Arrange
+        from scitex_msword.diff import diff_docx
+
+        a = _build_docx(tmp_path, "a.docx", [("original text", False)])
+        b = _build_docx(tmp_path, "b.docx", [("edited text", False)])
+        # Act
+        ops = diff_docx(a, b)
+        modify_ops = [op for op in ops if op["op"] == "modify"]
+        # Assert
         assert modify_ops[0]["text_b"] == "edited text"
 
 
 class TestDiffDocxRunDelta:
     """Bold-only changes should be captured in runs_changed."""
 
-    def test_bold_change_reported_in_runs_changed(self, tmp_path):
-        """A bold toggle on the same text should show up in runs_changed."""
+    def test_bold_change_produces_modify_op(self, tmp_path):
+        """A bold toggle on changed text should produce a modify op."""
         # Arrange
         from scitex_msword.diff import diff_docx
 
@@ -170,7 +186,19 @@ class TestDiffDocxRunDelta:
         ops = diff_docx(a, b)
         modify_ops = [op for op in ops if op["op"] == "modify"]
         # Assert
-        assert modify_ops, "expected at least one modify op"
+        assert modify_ops
+
+    def test_bold_change_modify_op_carries_runs_changed_key(self, tmp_path):
+        """The modify op for a bold-toggled paragraph should expose runs_changed."""
+        # Arrange
+        from scitex_msword.diff import diff_docx
+
+        a = _build_docx(tmp_path, "a.docx", [("same text", False)])
+        b = _build_docx(tmp_path, "b.docx", [("same text changed", True)])
+        # Act
+        ops = diff_docx(a, b)
+        modify_ops = [op for op in ops if op["op"] == "modify"]
+        # Assert
         assert "runs_changed" in modify_ops[0]
 
 
@@ -215,8 +243,10 @@ class TestDiffDocxErrors:
 
         good = _build_docx(tmp_path, "ok.docx", [("hello", False)])
         bad = tmp_path / "does_not_exist.docx"
-        # Act / Assert
-        with pytest.raises(Exception):
+        ctx = pytest.raises(Exception)
+        # Act
+        # Assert
+        with ctx:
             diff_docx(good, bad)
 
 

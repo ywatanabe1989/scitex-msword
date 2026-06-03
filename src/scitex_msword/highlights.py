@@ -34,7 +34,6 @@ from collections import defaultdict
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 try:
-    import docx  # type: ignore[import-untyped]
     from docx.document import Document as DocxDocument  # type: ignore[import-untyped]
     from docx.enum.text import WD_COLOR_INDEX  # type: ignore[import-untyped]
 
@@ -99,9 +98,7 @@ def _resolve_color(color):
     return color
 
 
-def _iter_target_runs(
-    document: "DocxDocument", targets: Iterable[Tuple[int, int]]
-):
+def _iter_target_runs(document: "DocxDocument", targets: Iterable[Tuple[int, int]]):
     """Yield (run_obj, (paragraph_idx, run_idx)) pairs for valid targets."""
     paragraphs = list(document.paragraphs)
     for pi, ri in targets:

@@ -28,11 +28,13 @@ class TestImportSurface:
 
     def test_preserve_bold_tokens_is_importable(self):
         """preserve_bold_tokens should be importable from the module."""
-        # Arrange / Act
-        from scitex_msword.bold import preserve_bold_tokens
+        # Arrange
+        import importlib
 
+        # Act
+        mod = importlib.import_module("scitex_msword.bold")
         # Assert
-        assert callable(preserve_bold_tokens)
+        assert callable(mod.preserve_bold_tokens)
 
 
 class TestPreserveBoldTokensSplitting:
@@ -61,8 +63,8 @@ class TestPreserveBoldTokensSplitting:
         # Assert
         assert runs[1].bold is True
 
-    def test_non_token_runs_are_not_bold(self):
-        """Surrounding text runs should not be bold."""
+    def test_first_non_token_run_is_not_bold(self):
+        """The leading non-token run should not be bold."""
         # Arrange
         from scitex_msword.bold import preserve_bold_tokens
 
@@ -72,6 +74,17 @@ class TestPreserveBoldTokensSplitting:
         runs = doc.paragraphs[0].runs
         # Assert
         assert runs[0].bold is False
+
+    def test_trailing_non_token_run_is_not_bold(self):
+        """The trailing non-token run should not be bold."""
+        # Arrange
+        from scitex_msword.bold import preserve_bold_tokens
+
+        doc = _doc_with_text(["foo BAR baz"])
+        # Act
+        preserve_bold_tokens(doc, ["BAR"])
+        runs = doc.paragraphs[0].runs
+        # Assert
         assert runs[2].bold is False
 
     def test_token_run_text_matches_token(self):
@@ -144,8 +157,8 @@ class TestPreserveBoldTokensMultiple:
         # Assert
         assert bold_texts == ["BOOST", "JST"]
 
-    def test_longer_token_wins_over_shorter_overlap(self):
-        """If tokens overlap, the longer one should be the one bolded."""
+    def test_longer_token_wins_over_shorter_overlap_count(self):
+        """If tokens overlap, exactly one bold run should be produced."""
         # Arrange
         from scitex_msword.bold import preserve_bold_tokens
 
@@ -156,6 +169,18 @@ class TestPreserveBoldTokensMultiple:
         bold_runs = [r for r in runs if r.bold]
         # Assert
         assert len(bold_runs) == 1
+
+    def test_longer_token_wins_over_shorter_overlap_text(self):
+        """If tokens overlap, the longer token's text should be the one bolded."""
+        # Arrange
+        from scitex_msword.bold import preserve_bold_tokens
+
+        doc = _doc_with_text(["abcdef in text"])
+        # Act
+        preserve_bold_tokens(doc, ["abc", "abcdef"])
+        runs = doc.paragraphs[0].runs
+        bold_runs = [r for r in runs if r.bold]
+        # Assert
         assert bold_runs[0].text == "abcdef"
 
 

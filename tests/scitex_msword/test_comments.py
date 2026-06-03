@@ -132,15 +132,23 @@ class TestImportSurface:
 
     def test_extract_comments_is_importable(self):
         """extract_comments should import cleanly."""
-        from scitex_msword.comments import extract_comments
+        # Arrange
+        import importlib
 
-        assert callable(extract_comments)
+        # Act
+        mod = importlib.import_module("scitex_msword.comments")
+        # Assert
+        assert callable(mod.extract_comments)
 
     def test_apply_comments_as_edits_is_importable(self):
         """apply_comments_as_edits should import cleanly."""
-        from scitex_msword.comments import apply_comments_as_edits
+        # Arrange
+        import importlib
 
-        assert callable(apply_comments_as_edits)
+        # Act
+        mod = importlib.import_module("scitex_msword.comments")
+        # Assert
+        assert callable(mod.apply_comments_as_edits)
 
 
 class TestExtractCommentsBasic:
@@ -287,8 +295,10 @@ class TestApplyCommentsAsEdits:
 
         path = _build_docx_with_comments(tmp_path)
         doc = docx.Document(str(path))
-        # Act / Assert
-        with pytest.raises(ValueError):
+        ctx = pytest.raises(ValueError)
+        # Act
+        # Assert
+        with ctx:
             apply_comments_as_edits(doc, comments=[], grammar="natural-language")
 
 
