@@ -51,6 +51,7 @@ except ImportError:  # pragma: no cover — only on ancient Pythons
 from pathlib import Path
 from typing import Any, Optional
 
+from .bold import preserve_bold_tokens
 from .diff import diff_docx, summarize_diff
 from .highlights import (
     clear_highlights,
@@ -280,4 +281,6 @@ __all__ = [
     "mark_modifications",
     "extract_highlights",
     "clear_highlights",
+    # Bold-token preservation (BOOST v16 Japanese keyword emphasis)
+    "preserve_bold_tokens",
 ]
