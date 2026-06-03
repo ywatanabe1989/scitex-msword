@@ -83,6 +83,14 @@ class BaseWordProfile:
     columns: int = 1
     double_anonymous: bool = False
 
+    # Optional layout / typography hints (used by profiles like boost-2026).
+    # These are advisory: writer code may consult them to customize fonts,
+    # heading shading, and line spacing without hard-coding per-profile logic.
+    body_font: Optional[str] = None
+    body_font_size_pt: Optional[float] = None
+    heading_background_hex: Optional[str] = None
+    line_spacing: Optional[float] = None
+
     # Post-processing hooks
     post_import_hooks: List[Callable] = field(default_factory=list)
     pre_export_hooks: List[Callable] = field(default_factory=list)
@@ -254,6 +262,41 @@ def _elsevier_profile() -> BaseWordProfile:
     )
 
 
+def _boost_2026_profile() -> BaseWordProfile:
+    """
+    JST BOOST 2026 grant application template profile.
+
+    Layout convention (per BOOST v16 dogfooding):
+
+    - Body text: 10.5pt MS Gothic
+    - Headings: bold, with light-grey (#D9D9D9) background shading
+    - Line spacing: 1.0 (single)
+    - Single column
+
+    The advisory ``body_font`` / ``body_font_size_pt`` /
+    ``heading_background_hex`` / ``line_spacing`` fields let the writer
+    layer (or downstream tooling such as the BOOST v16 builder) pick
+    these up without hard-coding per-document logic.
+    """
+    return BaseWordProfile(
+        name="boost-2026",
+        description="JST BOOST 2026 grant application Word template.",
+        heading_styles={
+            1: "Heading 1",
+            2: "Heading 2",
+            3: "Heading 3",
+        },
+        caption_style="Caption",
+        normal_style="Normal",
+        reference_section_titles=["参考文献", "References"],
+        columns=1,
+        body_font="MS Gothic",
+        body_font_size_pt=10.5,
+        heading_background_hex="D9D9D9",
+        line_spacing=1.0,
+    )
+
+
 # Registry of known profiles
 _PROFILES: Dict[str, BaseWordProfile] = {
     "generic": _generic_profile(),
@@ -266,6 +309,8 @@ _PROFILES: Dict[str, BaseWordProfile] = {
     "ieee": _ieee_profile(),
     "springer": _springer_profile(),
     "elsevier": _elsevier_profile(),
+    "boost-2026": _boost_2026_profile(),
+    "boost": _boost_2026_profile(),  # Alias
 }
 
 
