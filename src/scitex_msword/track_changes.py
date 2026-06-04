@@ -163,37 +163,46 @@ def enable_track_changes(
     document: "DocxDocument",
     enabled: bool = True,
 ) -> "DocxDocument":
-    """
-    Toggle Word's "Track Changes" switch on the document.
+    """Toggle Word's Track Changes switch on the document.
 
-    Inserts ``<w:trackChanges/>`` into ``word/settings.xml`` when
-    ``enabled=True`` (idempotent) or removes it when ``enabled=False``.
+    Inserts ``<w:trackRevisions/>`` (the actual ECMA-376 §17.15.1.92
+    Track Changes toggle in ``CT_Settings``) when ``enabled=True``
+    and ensures a matching ``<w:documentProtection w:edit="trackedChanges"
+    w:enforcement="0"/>`` (state-only). ``enabled=False`` removes both.
 
-    Placement obeys the ECMA-376 §17.15.1 ``CT_Settings`` child order
-    (see ``_settings_order``): ``<w:trackChanges/>`` lands after the
-    last present predecessor and before the first present successor.
-    Word silently ignores out-of-order elements in some files, so this
-    is required for the BOOST v37 dogfood workflow.
+    v0.3.1 fix: ≤v0.3.0 wrote ``<w:trackChanges/>``, a different element
+    (``CT_HdrFtr`` §17.10.1.84) that desktop Word silently ignores as a
+    ``CT_Settings`` child — Track Changes was never actually toggled.
+    Files written by older sxm need re-saving.
     """
     _ensure_docx_available()
-    from ._settings_order import insert_in_settings_order
+    from ._settings_order import (
+        ensure_document_protection_for_tracked_changes,
+        insert_in_settings_order,
+    )
 
     settings_el = _settings_element(document)
-    existing = settings_el.findall(qn("w:trackChanges"))
+    existing = settings_el.findall(qn("w:trackRevisions"))
 
     if enabled:
         if not existing:
             insert_in_settings_order(
                 settings_el,
-                _make_w_element("trackChanges"),
-                "trackChanges",
+                _make_w_element("trackRevisions"),
+                "trackRevisions",
             )
         else:
             for dup in existing[1:]:
                 settings_el.remove(dup)
+        ensure_document_protection_for_tracked_changes(
+            settings_el, _make_w_element
+        )
     else:
         for el in existing:
             settings_el.remove(el)
+        for el in settings_el.findall(qn("w:documentProtection")):
+            if el.get(qn("w:edit")) == "trackedChanges":
+                settings_el.remove(el)
     return document
 
 
@@ -201,13 +210,11 @@ def save_with_track_changes_on(
     document: "DocxDocument",
     path,
 ) -> "DocxDocument":
-    """
-    Enable Track Changes (in ECMA-376 order) and save the Document.
+    """Enable Track Changes (correct element, ECMA-376 ordered) and save.
 
-    Canonical helper for the BOOST v37 dogfood workflow: guarantees that
-    the saved ``.docx`` has ``<w:trackChanges/>`` in a position Word
-    will honour, then writes the file via ``document.save(path)``.
-    Returns the Document for chaining.
+    Canonical helper for the BOOST workflow. Returns the Document for
+    chaining. See :func:`enable_track_changes` for the v0.3.1
+    trackChanges→trackRevisions fix note.
     """
     _ensure_docx_available()
     enable_track_changes(document, enabled=True)
@@ -216,9 +223,19 @@ def save_with_track_changes_on(
 
 
 def is_track_changes_enabled(document: "DocxDocument") -> bool:
-    """Return True iff ``<w:trackChanges/>`` is present in settings.xml."""
+    """Return True iff ``<w:trackRevisions/>`` is present in settings.xml.
+
+    v0.3.1 fix: previous releases pattern-matched against
+    ``<w:trackChanges/>`` (a different element entirely — see
+    :func:`enable_track_changes`) and so returned False for documents
+    created by Word itself or by sxm v0.3.1+. Now reads the correct
+    ECMA-376 §17.15.1.92 ``<w:trackRevisions/>`` toggle.
+    """
     _ensure_docx_available()
-    return _settings_element(document).find(qn("w:trackChanges")) is not None
+    return (
+        _settings_element(document).find(qn("w:trackRevisions"))
+        is not None
+    )
 
 
 # ---------------------------------------------------------------------------
