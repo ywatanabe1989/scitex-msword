@@ -8,10 +8,18 @@
 """
 MCP server scaffold exposing scitex-msword as a tool surface.
 
-This is a *scaffold*: only the most useful BOOST v16 dogfooding tools
-are wired up (diff_docx, mark_additions, mark_modifications,
-preserve_bold_tokens, extract_highlights, extract_comments). Further
-tools can be added by following the ``_tool`` helper pattern.
+This is a *scaffold*: a focused tool surface is wired up, covering
+
+- legacy BOOST v16 dogfooding tools (diff_docx, mark_additions,
+  mark_modifications, preserve_bold_tokens, extract_highlights,
+  extract_comments, list_profiles), and
+- the full Track-Changes (revision) API surface from PR #8
+  (enable_track_changes, is_track_changes_enabled,
+  wrap_as_tracked_insertion, wrap_as_tracked_deletion,
+  extract_tracked_changes, accept_all_tracked_changes,
+  reject_all_tracked_changes).
+
+Further tools can be added by following the ``_tool`` helper pattern.
 
 Install requirements (optional)::
 
@@ -160,6 +168,140 @@ def build_server():  # pragma: no cover — exercised by `serve()` integration
         from .profiles import list_profiles as _list_profiles
 
         return _list_profiles()
+
+    # -- Tool: enable_track_changes --------------------------------------
+    @server.tool()
+    def enable_track_changes_tool(
+        path: str,
+        out: str,
+        enabled: bool = True,
+    ) -> str:
+        """Toggle Word's Track Changes switch in ``path``, save to ``out``.
+
+        Idempotent — repeated calls with ``enabled=True`` leave a single
+        ``<w:trackChanges/>`` in word/settings.xml. Returns ``out``.
+        """
+        import docx as _docx
+
+        from .track_changes import enable_track_changes as _enable
+
+        doc = _docx.Document(path)
+        _enable(doc, enabled=enabled)
+        doc.save(out)
+        return out
+
+    # -- Tool: is_track_changes_enabled ----------------------------------
+    @server.tool()
+    def is_track_changes_enabled_tool(path: str) -> bool:
+        """Return True iff Track Changes is on in ``path`` (read-only)."""
+        import docx as _docx
+
+        from .track_changes import is_track_changes_enabled as _is_enabled
+
+        doc = _docx.Document(path)
+        return _is_enabled(doc)
+
+    # -- Tool: wrap_as_tracked_insertion ---------------------------------
+    @server.tool()
+    def wrap_as_tracked_insertion_tool(
+        path: str,
+        out: str,
+        paragraph_idx: int,
+        run_indices: List[int],
+        author: str = "agent",
+        date: Optional[str] = None,
+    ) -> str:
+        """Wrap selected runs of paragraph[``paragraph_idx``] in ``<w:ins>``.
+
+        ``run_indices`` are 0-based positions within the paragraph's runs.
+        Word will surface the wrapped content as an accept/reject-able
+        insertion authored by ``author``. Returns ``out``.
+        """
+        import docx as _docx
+
+        from .track_changes import wrap_as_tracked_insertion as _wrap_ins
+
+        doc = _docx.Document(path)
+        para = doc.paragraphs[paragraph_idx]
+        _wrap_ins(para, list(run_indices), author=author, date=date)
+        doc.save(out)
+        return out
+
+    # -- Tool: wrap_as_tracked_deletion ----------------------------------
+    @server.tool()
+    def wrap_as_tracked_deletion_tool(
+        path: str,
+        out: str,
+        paragraph_idx: int,
+        run_indices: List[int],
+        author: str = "agent",
+        date: Optional[str] = None,
+    ) -> str:
+        """Wrap selected runs of paragraph[``paragraph_idx``] in ``<w:del>``.
+
+        ``run_indices`` are 0-based positions. The wrapped runs' ``<w:t>``
+        children become ``<w:delText>`` so Word renders strike-through.
+        Returns ``out``.
+        """
+        import docx as _docx
+
+        from .track_changes import wrap_as_tracked_deletion as _wrap_del
+
+        doc = _docx.Document(path)
+        para = doc.paragraphs[paragraph_idx]
+        _wrap_del(para, list(run_indices), author=author, date=date)
+        doc.save(out)
+        return out
+
+    # -- Tool: extract_tracked_changes -----------------------------------
+    @server.tool()
+    def extract_tracked_changes_tool(path: str) -> List[Dict[str, Any]]:
+        """Return every ``<w:ins>``/``<w:del>`` revision as a list of dicts.
+
+        Each entry carries ``{type, paragraph_idx, author, date, id, text}``.
+        Read-only — does not modify ``path``.
+        """
+        import docx as _docx
+
+        from .track_changes import extract_tracked_changes as _extract
+
+        doc = _docx.Document(path)
+        return _extract(doc)
+
+    # -- Tool: accept_all_tracked_changes --------------------------------
+    @server.tool()
+    def accept_all_tracked_changes_tool(path: str, out: str) -> str:
+        """Accept all tracked changes in ``path`` (Word "Accept All"), save to ``out``.
+
+        ``<w:ins>`` wrappers unwrapped (content retained); ``<w:del>``
+        wrappers removed (content discarded). Returns ``out``.
+        """
+        import docx as _docx
+
+        from .track_changes import accept_all_tracked_changes as _accept
+
+        doc = _docx.Document(path)
+        _accept(doc)
+        doc.save(out)
+        return out
+
+    # -- Tool: reject_all_tracked_changes --------------------------------
+    @server.tool()
+    def reject_all_tracked_changes_tool(path: str, out: str) -> str:
+        """Reject all tracked changes in ``path`` (Word "Reject All"), save to ``out``.
+
+        ``<w:ins>`` wrappers removed (content discarded); ``<w:del>``
+        wrappers unwrapped (content retained, ``<w:delText>`` retagged to
+        ``<w:t>``). Returns ``out``.
+        """
+        import docx as _docx
+
+        from .track_changes import reject_all_tracked_changes as _reject
+
+        doc = _docx.Document(path)
+        _reject(doc)
+        doc.save(out)
+        return out
 
     return server
 
