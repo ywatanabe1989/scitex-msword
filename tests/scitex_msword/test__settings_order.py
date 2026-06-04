@@ -6,7 +6,7 @@
 """Tests for ``scitex_msword._settings_order``.
 
 ECMA-376 §17.15.1 ``CT_Settings`` has a fixed child sequence; Word
-silently ignores out-of-order elements (notably ``<w:trackChanges/>``
+silently ignores out-of-order elements (notably ``<w:trackRevisions/>``
 when written before its predecessors on otherwise-sparse settings
 files). The placement helper here owns that decision.
 
@@ -55,55 +55,55 @@ def _local_names(settings_el):
 
 
 class TestInsertInSettingsOrderTrackChanges:
-    """``trackChanges`` placement obeys ECMA-376 §17.15.1 ordering."""
+    """``trackRevisions`` placement obeys ECMA-376 §17.15.1 ordering."""
 
     def test_inserts_after_stylePaneSortMethod_when_present(self):
-        """With ``stylePaneSortMethod`` present, ``trackChanges`` lands after it."""
+        """With ``stylePaneSortMethod`` present, ``trackRevisions`` lands after it."""
         # Arrange
         from scitex_msword._settings_order import insert_in_settings_order
 
         settings_el = _settings_with(["stylePaneSortMethod"])
-        new_el = _w_element("trackChanges")
+        new_el = _w_element("trackRevisions")
         # Act
-        insert_in_settings_order(settings_el, new_el, "trackChanges")
+        insert_in_settings_order(settings_el, new_el, "trackRevisions")
         # Assert
         assert _local_names(settings_el) == [
             "stylePaneSortMethod",
-            "trackChanges",
+            "trackRevisions",
         ]
 
     def test_inserts_before_doNotTrackFormatting_when_only_successor_present(
         self,
     ):
-        """With only ``doNotTrackFormatting`` present, ``trackChanges`` lands before it."""
+        """With only ``doNotTrackFormatting`` present, ``trackRevisions`` lands before it."""
         # Arrange
         from scitex_msword._settings_order import insert_in_settings_order
 
         settings_el = _settings_with(["doNotTrackFormatting"])
-        new_el = _w_element("trackChanges")
+        new_el = _w_element("trackRevisions")
         # Act
-        insert_in_settings_order(settings_el, new_el, "trackChanges")
+        insert_in_settings_order(settings_el, new_el, "trackRevisions")
         # Assert
         assert _local_names(settings_el) == [
-            "trackChanges",
+            "trackRevisions",
             "doNotTrackFormatting",
         ]
 
     def test_lands_between_predecessor_and_successor_when_both_present(self):
-        """Both anchors present → ``trackChanges`` slots in between."""
+        """Both anchors present → ``trackRevisions`` slots in between."""
         # Arrange
         from scitex_msword._settings_order import insert_in_settings_order
 
         settings_el = _settings_with(
             ["stylePaneSortMethod", "doNotTrackFormatting"]
         )
-        new_el = _w_element("trackChanges")
+        new_el = _w_element("trackRevisions")
         # Act
-        insert_in_settings_order(settings_el, new_el, "trackChanges")
+        insert_in_settings_order(settings_el, new_el, "trackRevisions")
         # Assert
         assert _local_names(settings_el) == [
             "stylePaneSortMethod",
-            "trackChanges",
+            "trackRevisions",
             "doNotTrackFormatting",
         ]
 
@@ -114,14 +114,14 @@ class TestInsertInSettingsOrderTrackChanges:
 
         settings_el = _settings_with(["view", "zoom"])
         # Note: "view" + "zoom" are in the "before" set but neither is a
-        # late-position predecessor close to trackChanges; the helper still
+        # late-position predecessor close to trackRevisions; the helper still
         # treats the last one of them as the anchor.
         # Act
         insert_in_settings_order(
-            settings_el, _w_element("trackChanges"), "trackChanges"
+            settings_el, _w_element("trackRevisions"), "trackRevisions"
         )
         # Assert
-        assert _local_names(settings_el)[-1] == "trackChanges"
+        assert _local_names(settings_el)[-1] == "trackRevisions"
 
     def test_falls_back_to_append_for_unknown_tag(self):
         """Asking to place a tag the helper doesn't model falls back to append."""
@@ -143,7 +143,7 @@ class TestEnableTrackChangesOrderedPlacement:
     def test_enable_track_changes_lands_in_ordered_slot_on_real_document(
         self, tmp_path
     ):
-        """A fresh ``Document`` gets ``<w:trackChanges/>`` in the right slot."""
+        """A fresh ``Document`` gets ``<w:trackRevisions/>`` in the right slot."""
         # Arrange
         pytest.importorskip("docx")
         from docx import Document
@@ -156,7 +156,7 @@ class TestEnableTrackChangesOrderedPlacement:
         # Assert
         settings_el = doc.settings.element
         tags = [etree.QName(c).localname for c in settings_el]
-        assert "trackChanges" in tags
+        assert "trackRevisions" in tags
 
 
 class TestSaveWithTrackChangesOnHelper:
@@ -181,7 +181,7 @@ class TestSaveWithTrackChangesOnHelper:
     def test_save_with_track_changes_on_persists_track_changes_in_saved_file(
         self, tmp_path
     ):
-        """Reloading the saved file shows ``<w:trackChanges/>`` is present."""
+        """Reloading the saved file shows ``<w:trackRevisions/>`` is present."""
         # Arrange
         pytest.importorskip("docx")
         from docx import Document
@@ -196,6 +196,98 @@ class TestSaveWithTrackChangesOnHelper:
         # Act
         reloaded = Document(str(out))
         enabled = is_track_changes_enabled(reloaded)
+        # Assert
+        assert enabled is True
+
+    def test_save_with_track_changes_on_emits_documentProtection_state_only(
+        self, tmp_path
+    ):
+        """The saved settings.xml also carries the matching
+        ``<w:documentProtection w:edit="trackedChanges" w:enforcement="0"/>``
+        — informational, NOT enforced. Matches what desktop Word writes.
+        """
+        # Arrange
+        pytest.importorskip("docx")
+        from docx import Document
+        from docx.oxml.ns import qn
+        from scitex_msword.track_changes import save_with_track_changes_on
+
+        doc = Document()
+        out = tmp_path / "tc.docx"
+        save_with_track_changes_on(doc, out)
+        reloaded = Document(str(out))
+        # Act
+        protection = reloaded.settings.element.find(
+            qn("w:documentProtection")
+        )
+        observed = (
+            None if protection is None
+            else (
+                protection.get(qn("w:edit")),
+                protection.get(qn("w:enforcement")),
+            )
+        )
+        # Assert
+        assert observed == ("trackedChanges", "0")
+
+
+def _resolve_draft_v39_reference():
+    """Return the proj-grant draft_v39 reference docx Path or None."""
+    import os
+    from pathlib import Path
+
+    candidates = [
+        os.environ.get("SXM_DRAFT_V39_REFERENCE"),
+        "/home/ywatanabe/proj/grant/2026-06-11---2027-04-2032-03"
+        "---20-PERC---1000---BOOST/"
+        "draft_v39_ywata-turned-on-edit-history.docx",
+    ]
+    for raw in candidates:
+        if not raw:
+            continue
+        p = Path(raw)
+        if p.exists():
+            return p
+    return None
+
+
+_DRAFT_V39 = _resolve_draft_v39_reference()
+
+
+@pytest.mark.skipif(
+    _DRAFT_V39 is None,
+    reason="proj-grant draft_v39 ground-truth reference not available",
+)
+class TestTrackChangesNameGroundTruthRegression:
+    """Pins the v0.3.1 trackChanges→trackRevisions fix against a known-
+    good reference: a docx Word itself wrote after the user toggled
+    Track Changes on. proj-grant draft_v39 was the operator's manual
+    save during BOOST v40 dogfood. Reference is auto-skipped when the
+    file isn't reachable; CI override: ``SXM_DRAFT_V39_REFERENCE``."""
+
+    def test_reference_file_carries_trackRevisions_not_trackChanges(self):
+        """Word's own save uses ``trackRevisions``, NOT ``trackChanges``."""
+        # Arrange
+        from docx import Document
+        from docx.oxml.ns import qn
+
+        doc = Document(str(_DRAFT_V39))
+        # Act
+        has_revisions = (
+            doc.settings.element.find(qn("w:trackRevisions")) is not None
+        )
+        # Assert
+        assert has_revisions is True
+
+    def test_is_track_changes_enabled_returns_true_on_word_reference(self):
+        """The v0.3.1 reader recognises Word's own toggle (≤v0.3.0 returned False)."""
+        # Arrange
+        from docx import Document
+        from scitex_msword.track_changes import is_track_changes_enabled
+
+        doc = Document(str(_DRAFT_V39))
+        # Act
+        enabled = is_track_changes_enabled(doc)
         # Assert
         assert enabled is True
 

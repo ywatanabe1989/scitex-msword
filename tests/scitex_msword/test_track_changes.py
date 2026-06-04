@@ -102,8 +102,8 @@ class TestImportSurface:
 class TestEnableTrackChanges:
     """Tests for enable_track_changes."""
 
-    def test_enable_inserts_trackChanges_element(self):
-        """enable_track_changes(True) should insert <w:trackChanges/>."""
+    def test_enable_inserts_trackRevisions_element(self):
+        """enable_track_changes(True) should insert <w:trackRevisions/>."""
         # Arrange
         from scitex_msword.track_changes import (
             enable_track_changes,
@@ -142,12 +142,12 @@ class TestEnableTrackChanges:
         # Act
         enable_track_changes(doc)
         enable_track_changes(doc)
-        elems = doc.settings.element.findall(qn("w:trackChanges"))
+        elems = doc.settings.element.findall(qn("w:trackRevisions"))
         # Assert
         assert len(elems) == 1
 
-    def test_disable_removes_trackChanges_element(self):
-        """enable_track_changes(False) should remove existing trackChanges."""
+    def test_disable_removes_trackRevisions_element(self):
+        """enable_track_changes(False) should remove existing trackRevisions."""
         # Arrange
         from scitex_msword.track_changes import (
             enable_track_changes,
@@ -162,7 +162,7 @@ class TestEnableTrackChanges:
         assert not is_track_changes_enabled(doc)
 
     def test_disable_when_absent_is_noop(self):
-        """Disabling when no trackChanges is present should not raise."""
+        """Disabling when no trackRevisions is present should not raise."""
         # Arrange
         from scitex_msword.track_changes import (
             enable_track_changes,
