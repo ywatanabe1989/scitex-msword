@@ -9,6 +9,7 @@
 MCP server scaffold exposing scitex-msword as a tool surface.
 
 This is a *scaffold*: a focused tool surface is wired up, covering
+
 - legacy BOOST v16 dogfooding tools (diff_docx, mark_additions,
   mark_modifications, preserve_bold_tokens, extract_highlights,
   extract_comments, list_profiles), and
