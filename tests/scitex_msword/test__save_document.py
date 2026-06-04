@@ -94,10 +94,10 @@ class TestSaveDocumentFileWrite:
 class TestSaveDocumentProfileApplication:
     """When a profile is given, docDefaults are populated from its hints."""
 
-    def test_boost_2026_profile_writes_mincho_body_font_to_docdefaults(
+    def test_boost_2026_profile_writes_mincho_to_docdefaults_ascii_slot(
         self, tmp_path
     ):
-        """boost-2026 lands MS 明朝 in ``rPrDefault/rPr/rFonts @w:ascii``."""
+        """boost-2026 lands ＭＳ 明朝 in ``rPrDefault/rPr/rFonts @w:ascii``."""
         # Arrange
         from docx.oxml.ns import qn
         from scitex_msword import save_document
@@ -109,12 +109,12 @@ class TestSaveDocumentProfileApplication:
         r_fonts = _find_docDefaults(doc).find(
             qn("w:rPrDefault") + "/" + qn("w:rPr") + "/" + qn("w:rFonts")
         )
-        assert r_fonts.get(qn("w:ascii")) == "MS 明朝"
+        assert r_fonts.get(qn("w:ascii")) == "ＭＳ 明朝"
 
-    def test_boost_2026_profile_writes_gothic_eastasia_font_to_docdefaults(
+    def test_boost_2026_profile_writes_mincho_to_docdefaults_hAnsi_slot(
         self, tmp_path
     ):
-        """boost-2026 lands MS ゴシック in ``rPrDefault/rPr/rFonts @w:eastAsia``."""
+        """boost-2026 lands ＭＳ 明朝 in ``rPrDefault/rPr/rFonts @w:hAnsi``."""
         # Arrange
         from docx.oxml.ns import qn
         from scitex_msword import save_document
@@ -126,7 +126,29 @@ class TestSaveDocumentProfileApplication:
         r_fonts = _find_docDefaults(doc).find(
             qn("w:rPrDefault") + "/" + qn("w:rPr") + "/" + qn("w:rFonts")
         )
-        assert r_fonts.get(qn("w:eastAsia")) == "MS ゴシック"
+        assert r_fonts.get(qn("w:hAnsi")) == "ＭＳ 明朝"
+
+    def test_boost_2026_profile_writes_mincho_to_docdefaults_eastAsia_slot(
+        self, tmp_path
+    ):
+        """boost-2026 lands body_font (not bold_font) in ``docDefaults @w:eastAsia``.
+
+        Per the v0.3.1 fix: docDefaults eastAsia carries the body
+        typeface (Mincho), so non-bold Japanese body renders in
+        Mincho. bold_font (Gothic) is applied at run level instead.
+        """
+        # Arrange
+        from docx.oxml.ns import qn
+        from scitex_msword import save_document
+
+        doc = _make_doc()
+        # Act
+        save_document(doc, tmp_path / "out.docx", profile="boost-2026")
+        # Assert
+        r_fonts = _find_docDefaults(doc).find(
+            qn("w:rPrDefault") + "/" + qn("w:rPr") + "/" + qn("w:rFonts")
+        )
+        assert r_fonts.get(qn("w:eastAsia")) == "ＭＳ 明朝"
 
     def test_boost_2026_profile_writes_10_5pt_body_font_size_in_half_points(
         self, tmp_path
@@ -185,6 +207,47 @@ def etree_tostring(el):
     from lxml import etree
 
     return etree.tostring(el)
+
+
+class TestSaveDocumentBoldFontRunOverride:
+    """bold_font is applied at run level to bold runs only (v0.3.1 fix)."""
+
+    def test_bold_run_gets_bold_font_in_eastAsia_slot(self, tmp_path):
+        """A run with ``run.bold=True`` ends up with eastAsia=bold_font."""
+        # Arrange
+        from docx.oxml.ns import qn
+        from scitex_msword import save_document
+
+        doc = _make_doc()
+        para = doc.add_paragraph()
+        run = para.add_run("ボールド文字列")
+        run.bold = True
+        # Act
+        save_document(doc, tmp_path / "out.docx", profile="boost-2026")
+        # Assert
+        rpr = run._r.find(qn("w:rPr"))
+        rfonts = rpr.find(qn("w:rFonts"))
+        assert rfonts.get(qn("w:eastAsia")) == "ＭＳ ゴシック"
+
+    def test_non_bold_run_does_not_get_bold_font_in_eastAsia(self, tmp_path):
+        """A run with ``run.bold=False`` keeps eastAsia at docDefaults (Mincho)."""
+        # Arrange
+        from docx.oxml.ns import qn
+        from scitex_msword import save_document
+
+        doc = _make_doc()
+        para = doc.add_paragraph()
+        run = para.add_run("通常本文")
+        run.bold = False
+        # Act
+        save_document(doc, tmp_path / "out.docx", profile="boost-2026")
+        # Assert
+        rpr = run._r.find(qn("w:rPr"))
+        rfonts = None if rpr is None else rpr.find(qn("w:rFonts"))
+        # Either no rFonts element on the run (inheriting docDefaults Mincho)
+        # OR rFonts exists but eastAsia is unset / not Gothic.
+        eastAsia = None if rfonts is None else rfonts.get(qn("w:eastAsia"))
+        assert eastAsia != "ＭＳ ゴシック"
 
 
 class TestSaveDocumentHookChain:

@@ -6,7 +6,7 @@
 """Tests for ``scitex_msword._settings_order``.
 
 ECMA-376 §17.15.1 ``CT_Settings`` has a fixed child sequence; Word
-silently ignores out-of-order elements (notably ``<w:trackChanges/>``
+silently ignores out-of-order elements (notably ``<w:trackRevisions/>``
 when written before its predecessors on otherwise-sparse settings
 files). The placement helper here owns that decision.
 
@@ -20,6 +20,8 @@ test (STX-TQ007), ≥3-word descriptive names (STX-TQ003), no
 """
 
 from __future__ import annotations
+
+import pathlib
 
 import pytest
 
@@ -55,55 +57,55 @@ def _local_names(settings_el):
 
 
 class TestInsertInSettingsOrderTrackChanges:
-    """``trackChanges`` placement obeys ECMA-376 §17.15.1 ordering."""
+    """``trackRevisions`` placement obeys ECMA-376 §17.15.1 ordering."""
 
     def test_inserts_after_stylePaneSortMethod_when_present(self):
-        """With ``stylePaneSortMethod`` present, ``trackChanges`` lands after it."""
+        """With ``stylePaneSortMethod`` present, ``trackRevisions`` lands after it."""
         # Arrange
         from scitex_msword._settings_order import insert_in_settings_order
 
         settings_el = _settings_with(["stylePaneSortMethod"])
-        new_el = _w_element("trackChanges")
+        new_el = _w_element("trackRevisions")
         # Act
-        insert_in_settings_order(settings_el, new_el, "trackChanges")
+        insert_in_settings_order(settings_el, new_el, "trackRevisions")
         # Assert
         assert _local_names(settings_el) == [
             "stylePaneSortMethod",
-            "trackChanges",
+            "trackRevisions",
         ]
 
     def test_inserts_before_doNotTrackFormatting_when_only_successor_present(
         self,
     ):
-        """With only ``doNotTrackFormatting`` present, ``trackChanges`` lands before it."""
+        """With only ``doNotTrackFormatting`` present, ``trackRevisions`` lands before it."""
         # Arrange
         from scitex_msword._settings_order import insert_in_settings_order
 
         settings_el = _settings_with(["doNotTrackFormatting"])
-        new_el = _w_element("trackChanges")
+        new_el = _w_element("trackRevisions")
         # Act
-        insert_in_settings_order(settings_el, new_el, "trackChanges")
+        insert_in_settings_order(settings_el, new_el, "trackRevisions")
         # Assert
         assert _local_names(settings_el) == [
-            "trackChanges",
+            "trackRevisions",
             "doNotTrackFormatting",
         ]
 
     def test_lands_between_predecessor_and_successor_when_both_present(self):
-        """Both anchors present → ``trackChanges`` slots in between."""
+        """Both anchors present → ``trackRevisions`` slots in between."""
         # Arrange
         from scitex_msword._settings_order import insert_in_settings_order
 
         settings_el = _settings_with(
             ["stylePaneSortMethod", "doNotTrackFormatting"]
         )
-        new_el = _w_element("trackChanges")
+        new_el = _w_element("trackRevisions")
         # Act
-        insert_in_settings_order(settings_el, new_el, "trackChanges")
+        insert_in_settings_order(settings_el, new_el, "trackRevisions")
         # Assert
         assert _local_names(settings_el) == [
             "stylePaneSortMethod",
-            "trackChanges",
+            "trackRevisions",
             "doNotTrackFormatting",
         ]
 
@@ -114,14 +116,14 @@ class TestInsertInSettingsOrderTrackChanges:
 
         settings_el = _settings_with(["view", "zoom"])
         # Note: "view" + "zoom" are in the "before" set but neither is a
-        # late-position predecessor close to trackChanges; the helper still
+        # late-position predecessor close to trackRevisions; the helper still
         # treats the last one of them as the anchor.
         # Act
         insert_in_settings_order(
-            settings_el, _w_element("trackChanges"), "trackChanges"
+            settings_el, _w_element("trackRevisions"), "trackRevisions"
         )
         # Assert
-        assert _local_names(settings_el)[-1] == "trackChanges"
+        assert _local_names(settings_el)[-1] == "trackRevisions"
 
     def test_falls_back_to_append_for_unknown_tag(self):
         """Asking to place a tag the helper doesn't model falls back to append."""
@@ -143,7 +145,7 @@ class TestEnableTrackChangesOrderedPlacement:
     def test_enable_track_changes_lands_in_ordered_slot_on_real_document(
         self, tmp_path
     ):
-        """A fresh ``Document`` gets ``<w:trackChanges/>`` in the right slot."""
+        """A fresh ``Document`` gets ``<w:trackRevisions/>`` in the right slot."""
         # Arrange
         pytest.importorskip("docx")
         from docx import Document
@@ -156,7 +158,7 @@ class TestEnableTrackChangesOrderedPlacement:
         # Assert
         settings_el = doc.settings.element
         tags = [etree.QName(c).localname for c in settings_el]
-        assert "trackChanges" in tags
+        assert "trackRevisions" in tags
 
 
 class TestSaveWithTrackChangesOnHelper:
@@ -181,7 +183,7 @@ class TestSaveWithTrackChangesOnHelper:
     def test_save_with_track_changes_on_persists_track_changes_in_saved_file(
         self, tmp_path
     ):
-        """Reloading the saved file shows ``<w:trackChanges/>`` is present."""
+        """Reloading the saved file shows ``<w:trackRevisions/>`` is present."""
         # Arrange
         pytest.importorskip("docx")
         from docx import Document
@@ -198,6 +200,376 @@ class TestSaveWithTrackChangesOnHelper:
         enabled = is_track_changes_enabled(reloaded)
         # Assert
         assert enabled is True
+
+    def test_save_with_track_changes_on_emits_documentProtection_state_only(
+        self, tmp_path
+    ):
+        """The saved settings.xml also carries the matching
+        ``<w:documentProtection w:edit="trackedChanges" w:enforcement="0"/>``
+        — informational, NOT enforced. Matches what desktop Word writes.
+        """
+        # Arrange
+        pytest.importorskip("docx")
+        from docx import Document
+        from docx.oxml.ns import qn
+        from scitex_msword.track_changes import save_with_track_changes_on
+
+        doc = Document()
+        out = tmp_path / "tc.docx"
+        save_with_track_changes_on(doc, out)
+        reloaded = Document(str(out))
+        # Act
+        protection = reloaded.settings.element.find(
+            qn("w:documentProtection")
+        )
+        observed = (
+            None if protection is None
+            else (
+                protection.get(qn("w:edit")),
+                protection.get(qn("w:enforcement")),
+            )
+        )
+        # Assert
+        assert observed == ("trackedChanges", "0")
+
+
+_VENDORED_WORD_GROUNDTRUTH_SETTINGS = (
+    pathlib.Path(__file__).parent
+    / "fixtures"
+    / "track_changes"
+    / "word_groundtruth_settings.xml"
+)
+
+
+def _seed_stale_trackChanges(doc):
+    """Inject a stale ``<w:trackChanges/>`` at the schema slot.
+
+    Mimics a real-world input produced by sxm ≤v0.3.0 (the wrong-name
+    bug) that a downstream caller now re-saves through v0.3.1.
+    """
+    from lxml import etree
+    from scitex_msword._settings_order import insert_in_settings_order
+
+    stale = etree.Element(
+        f"{{http://schemas.openxmlformats.org/wordprocessingml/2006/main}}"
+        f"trackChanges"
+    )
+    # Place it at the same slot v≤0.3.0 used (the ordering helper
+    # treats trackRevisions and trackChanges interchangeably here
+    # since both are local-name matches against the predecessor set,
+    # but we call with "trackRevisions" so the slot decision is
+    # identical to v0.3.0's mistaken insertion site).
+    insert_in_settings_order(doc.settings.element, stale, "trackRevisions")
+
+
+class TestEnableTrackChangesStripsStaleTrackChanges:
+    """v0.3.1: writer is idempotent + cleans up ≤v0.3.0 stale state."""
+
+    def test_save_strips_stale_trackChanges_from_real_world_input(
+        self, tmp_path
+    ):
+        """Doc with stale ``<w:trackChanges/>`` from old sxm → output has none."""
+        # Arrange
+        pytest.importorskip("docx")
+        from docx import Document
+        from docx.oxml.ns import qn
+        from scitex_msword.track_changes import save_with_track_changes_on
+
+        doc = Document()
+        _seed_stale_trackChanges(doc)
+        out = tmp_path / "v42.docx"
+        # Act
+        save_with_track_changes_on(doc, out)
+        # Assert
+        reloaded = Document(str(out))
+        stale = reloaded.settings.element.find(qn("w:trackChanges"))
+        assert stale is None
+
+    def test_save_emits_trackRevisions_even_when_stale_trackChanges_was_present(
+        self, tmp_path
+    ):
+        """Cleanup doesn't suppress the correct emission."""
+        # Arrange
+        pytest.importorskip("docx")
+        from docx import Document
+        from docx.oxml.ns import qn
+        from scitex_msword.track_changes import save_with_track_changes_on
+
+        doc = Document()
+        _seed_stale_trackChanges(doc)
+        out = tmp_path / "v42.docx"
+        # Act
+        save_with_track_changes_on(doc, out)
+        # Assert
+        reloaded = Document(str(out))
+        tr = reloaded.settings.element.find(qn("w:trackRevisions"))
+        assert tr is not None
+
+    def test_save_emits_documentProtection_even_when_stale_trackChanges_was_present(
+        self, tmp_path
+    ):
+        """Cleanup doesn't suppress the documentProtection echo either."""
+        # Arrange
+        pytest.importorskip("docx")
+        from docx import Document
+        from docx.oxml.ns import qn
+        from scitex_msword.track_changes import save_with_track_changes_on
+
+        doc = Document()
+        _seed_stale_trackChanges(doc)
+        out = tmp_path / "v42.docx"
+        # Act
+        save_with_track_changes_on(doc, out)
+        # Assert
+        protection = (
+            Document(str(out))
+            .settings.element.find(qn("w:documentProtection"))
+        )
+        observed = (
+            None
+            if protection is None
+            else (
+                protection.get(qn("w:edit")),
+                protection.get(qn("w:enforcement")),
+            )
+        )
+        assert observed == ("trackedChanges", "0")
+
+    def test_save_with_track_changes_on_is_idempotent_no_duplicate_elements(
+        self, tmp_path
+    ):
+        """Saving twice yields exactly one trackRevisions + one documentProtection."""
+        # Arrange
+        pytest.importorskip("docx")
+        from docx import Document
+        from docx.oxml.ns import qn
+        from scitex_msword.track_changes import save_with_track_changes_on
+
+        doc = Document()
+        out = tmp_path / "twice.docx"
+        save_with_track_changes_on(doc, out)
+        # Act
+        save_with_track_changes_on(Document(str(out)), out)
+        # Assert
+        reloaded = Document(str(out))
+        counts = (
+            len(reloaded.settings.element.findall(qn("w:trackRevisions"))),
+            len(reloaded.settings.element.findall(qn("w:documentProtection"))),
+        )
+        assert counts == (1, 1)
+
+
+class TestEnableTrackChangesKwargs:
+    """v0.3.1 kwargs on enable_track_changes / save_with_track_changes_on."""
+
+    def test_enable_track_changes_omits_documentProtection_when_echo_disabled(
+        self,
+    ):
+        """``emit_doc_protection_echo=False`` writes trackRevisions but no protection."""
+        # Arrange
+        pytest.importorskip("docx")
+        from docx import Document
+        from docx.oxml.ns import qn
+        from scitex_msword.track_changes import enable_track_changes
+
+        doc = Document()
+        # Act
+        enable_track_changes(doc, True, emit_doc_protection_echo=False)
+        # Assert
+        protection = doc.settings.element.find(qn("w:documentProtection"))
+        assert protection is None
+
+    def test_enable_track_changes_still_writes_trackRevisions_when_echo_disabled(
+        self,
+    ):
+        """Disabling the echo does NOT skip the actual trackRevisions toggle."""
+        # Arrange
+        pytest.importorskip("docx")
+        from docx import Document
+        from docx.oxml.ns import qn
+        from scitex_msword.track_changes import enable_track_changes
+
+        doc = Document()
+        # Act
+        enable_track_changes(doc, True, emit_doc_protection_echo=False)
+        # Assert
+        tr = doc.settings.element.find(qn("w:trackRevisions"))
+        assert tr is not None
+
+    def test_save_with_track_revisions_false_does_not_write_trackRevisions(
+        self, tmp_path
+    ):
+        """``track_revisions=False`` is the clean-export path: no TC element."""
+        # Arrange
+        pytest.importorskip("docx")
+        from docx import Document
+        from docx.oxml.ns import qn
+        from scitex_msword.track_changes import save_with_track_changes_on
+
+        doc = Document()
+        out = tmp_path / "clean.docx"
+        # Act
+        save_with_track_changes_on(doc, out, track_revisions=False)
+        # Assert
+        reloaded = Document(str(out))
+        tr = reloaded.settings.element.find(qn("w:trackRevisions"))
+        assert tr is None
+
+    def test_save_with_track_revisions_false_also_clears_documentProtection(
+        self, tmp_path
+    ):
+        """``track_revisions=False`` also drops the documentProtection echo."""
+        # Arrange
+        pytest.importorskip("docx")
+        from docx import Document
+        from docx.oxml.ns import qn
+        from scitex_msword.track_changes import (
+            enable_track_changes,
+            save_with_track_changes_on,
+        )
+
+        doc = Document()
+        enable_track_changes(doc, True)  # seed both elements
+        out = tmp_path / "stripped.docx"
+        # Act
+        save_with_track_changes_on(doc, out, track_revisions=False)
+        # Assert
+        reloaded = Document(str(out))
+        protection = reloaded.settings.element.find(
+            qn("w:documentProtection")
+        )
+        assert protection is None
+
+
+class TestTrackRevisionsAgainstVendoredWordGroundTruth:
+    """Pins the v0.3.1 trackChanges→trackRevisions fix against a
+    committed Word-emitted ``word/settings.xml`` fixture (extracted
+    from proj-grant draft_v39 — the operator's manual Track Changes
+    ON save during BOOST v40). See
+    ``tests/fixtures/track_changes/README.md`` for full provenance.
+
+    The blind-spot fixed by these tests is that the previous
+    conformance gate asserted our writer's own output, not Word's
+    actual emit — so the self-consistent wrong-name state matched
+    itself in CI and looked fine until proj-grant crashed it on the
+    operator's desktop Word. These pins anchor against bytes Word
+    itself wrote, so a future regression in either direction (back to
+    the wrong name OR away from it) fails CI loudly."""
+
+    @staticmethod
+    def _parse_groundtruth():
+        from lxml import etree
+
+        return etree.fromstring(
+            _VENDORED_WORD_GROUNDTRUTH_SETTINGS.read_bytes()
+        )
+
+    def test_vendored_groundtruth_carries_trackRevisions_element(self):
+        """Word's own emit puts ``<w:trackRevisions/>`` in CT_Settings."""
+        # Arrange
+        from docx.oxml.ns import qn
+
+        root = self._parse_groundtruth()
+        # Act
+        found = root.find(qn("w:trackRevisions"))
+        # Assert
+        assert found is not None
+
+    def test_vendored_groundtruth_does_not_carry_trackChanges_element(self):
+        """Word's own emit does NOT use ``<w:trackChanges/>`` for the toggle."""
+        # Arrange
+        from docx.oxml.ns import qn
+
+        root = self._parse_groundtruth()
+        # Act
+        found = root.find(qn("w:trackChanges"))
+        # Assert
+        assert found is None
+
+    def test_vendored_groundtruth_carries_documentProtection_state_only(self):
+        """Word's emit pairs ``<w:trackRevisions/>`` with
+        ``<w:documentProtection w:edit="trackedChanges" w:enforcement="0"/>``.
+        """
+        # Arrange
+        from docx.oxml.ns import qn
+
+        root = self._parse_groundtruth()
+        # Act
+        protection = root.find(qn("w:documentProtection"))
+        observed = (
+            None
+            if protection is None
+            else (
+                protection.get(qn("w:edit")),
+                protection.get(qn("w:enforcement")),
+            )
+        )
+        # Assert
+        assert observed == ("trackedChanges", "0")
+
+    def test_save_with_track_changes_on_matches_word_trackRevisions_slice(
+        self, tmp_path
+    ):
+        """``save_with_track_changes_on`` emits the same trackRevisions
+        slice (``trackRevisions`` + ``documentProtection edit=trackedChanges
+        enforcement=0``) as Word's own save."""
+        # Arrange
+        pytest.importorskip("docx")
+        from docx import Document
+        from docx.oxml.ns import qn
+        from scitex_msword.track_changes import save_with_track_changes_on
+
+        save_with_track_changes_on(Document(), tmp_path / "rc.docx")
+        emitted = Document(str(tmp_path / "rc.docx")).settings.element
+
+        groundtruth = self._parse_groundtruth()
+
+        def _slice(parent):
+            wanted = ("trackRevisions", "documentProtection")
+            from lxml import etree
+
+            out = []
+            for child in parent:
+                local = etree.QName(child).localname
+                if local in wanted:
+                    out.append(
+                        (
+                            local,
+                            child.get(qn("w:edit")),
+                            child.get(qn("w:enforcement")),
+                        )
+                    )
+            return out
+
+        # Act
+        observed = (_slice(emitted), _slice(groundtruth))
+        # Assert
+        assert observed[0] == observed[1]
+
+
+# Path resolver kept for the H4 builtin-hooks work where we'll exercise
+# more of the full docx round-trip; today nothing references it.
+def _resolve_draft_v39_reference():
+    """Return the proj-grant draft_v39 reference docx Path or None.
+
+    H4 / SXM-TC001 follow-up will use this to broaden the conformance
+    tests against the entire docx (not just settings.xml).
+    """
+    import os
+
+    candidates = [
+        os.environ.get("SXM_DRAFT_V39_REFERENCE"),
+        "/home/ywatanabe/proj/grant/2026-06-11---2027-04-2032-03"
+        "---20-PERC---1000---BOOST/"
+        "draft_v39_ywata-turned-on-edit-history.docx",
+    ]
+    for raw in candidates:
+        if not raw:
+            continue
+        p = pathlib.Path(raw)
+        if p.exists():
+            return p
+    return None
 
 
 # EOF

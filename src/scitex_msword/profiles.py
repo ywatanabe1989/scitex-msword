@@ -272,22 +272,28 @@ def _boost_2026_profile() -> BaseWordProfile:
     """
     JST BOOST 2026 grant application template profile.
 
-    Layout convention (per the BOOST v37 / proj-grant dogfooding spec):
+    Layout convention (per the BOOST v40 / proj-grant dogfooding spec
+    — v0.3.1 corrects v0.3.0's width-form + slot-routing bugs):
 
-    - Regular body text: 10.5pt MS 明朝 (MS Mincho)
-    - Bold runs / headings: 10.5pt MS ゴシック (MS Gothic)
+    - Regular body text: 10.5pt ＭＳ 明朝 (MS Mincho, full-width form)
+    - Bold runs / headings: 10.5pt ＭＳ ゴシック (MS Gothic, full-width
+      form)
     - Headings: bold, with light-grey (#D9D9D9) background shading
     - Line spacing: 1.0 (single)
     - Single column
 
-    The advisory ``body_font`` / ``bold_font`` / ``body_font_size_pt`` /
-    ``heading_background_hex`` / ``line_spacing`` fields let the writer
-    layer (or downstream tooling such as the BOOST v37 builder) pick
-    these up without hard-coding per-document logic. The Mincho/Gothic
-    pairing reflects standard Japanese typographic practice: Mincho
-    (serif) carries body text; Gothic (sans-serif) carries emphasis and
-    headings, so weight contrast comes from the typeface itself rather
-    than a synthetic bold transform.
+    The full-width ``ＭＳ`` prefix is what Word's Japanese font picker
+    resolves; the half-width ``MS`` form that v0.3.0 shipped did not
+    match a known font in Word's font picker.
+
+    The Mincho/Gothic pairing reflects standard Japanese typographic
+    practice: Mincho (serif) carries body text in all three of
+    ``eastAsia``, ``ascii``, and ``hAnsi`` slots (BOOST uses Mincho
+    for embedded Latin runs too — operator id 685); Gothic (sans-
+    serif) is applied **at run level** to bold runs only, so the
+    bold/heading weight contrast lives in the typeface itself rather
+    than in a synthetic-bold transform. See
+    :func:`scitex_msword._save_document._apply_bold_font_to_bold_runs`.
     """
     return BaseWordProfile(
         name="boost-2026",
@@ -301,8 +307,8 @@ def _boost_2026_profile() -> BaseWordProfile:
         normal_style="Normal",
         reference_section_titles=["参考文献", "References"],
         columns=1,
-        body_font="MS 明朝",
-        bold_font="MS ゴシック",
+        body_font="ＭＳ 明朝",
+        bold_font="ＭＳ ゴシック",
         body_font_size_pt=10.5,
         heading_background_hex="D9D9D9",
         line_spacing=1.0,

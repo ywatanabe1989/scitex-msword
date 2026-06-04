@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>scitex_msword.track_changes &mdash; scitex-msword 0.2.1 documentation</title>
+  <title>scitex_msword.track_changes &mdash; scitex-msword 0.3.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=37f418d5"></script>
+      <script src="../_static/documentation_options.js?v=4621528c"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -115,20 +115,20 @@
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">accept_all_tracked_changes</span></code>(document)</p></td>
 <td><p>Accept all tracked changes — equivalent to Word's &quot;Accept All&quot;.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">enable_track_changes</span></code>(document[, enabled])</p></td>
-<td><p>Toggle Word's &quot;Track Changes&quot; switch on the document.</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">enable_track_changes</span></code>(document[, enabled, ...])</p></td>
+<td><p>Toggle Word's Track Changes switch on the document.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">extract_tracked_changes</span></code>(document)</p></td>
 <td><p>Return every <code class="docutils literal notranslate"><span class="pre">&lt;w:ins&gt;</span></code> / <code class="docutils literal notranslate"><span class="pre">&lt;w:del&gt;</span></code> revision as a structured dict.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_track_changes_enabled</span></code>(document)</p></td>
-<td><p>Return True iff <code class="docutils literal notranslate"><span class="pre">&lt;w:trackChanges/&gt;</span></code> is present in settings.xml.</p></td>
+<td><p>Return True iff <code class="docutils literal notranslate"><span class="pre">&lt;w:trackRevisions/&gt;</span></code> is present in settings.xml.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">reject_all_tracked_changes</span></code>(document)</p></td>
 <td><p>Reject all tracked changes — equivalent to Word's &quot;Reject All&quot;.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_with_track_changes_on</span></code>(document, path)</p></td>
-<td><p>Enable Track Changes (in ECMA-376 order) and save the Document.</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_with_track_changes_on</span></code>(document, path, *)</p></td>
+<td><p>Save a Document, default-correct for Word Track Changes.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrap_as_tracked_deletion</span></code>(paragraph, runs[, ...])</p></td>
 <td><p>Wrap the given runs of <code class="docutils literal notranslate"><span class="pre">paragraph</span></code> in <code class="docutils literal notranslate"><span class="pre">&lt;w:del&gt;</span></code> revision blocks.</p></td>
