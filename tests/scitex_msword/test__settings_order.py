@@ -234,7 +234,7 @@ class TestSaveWithTrackChangesOnHelper:
 
 
 _VENDORED_WORD_GROUNDTRUTH_SETTINGS = (
-    pathlib.Path(__file__).parent.parent
+    pathlib.Path(__file__).parent
     / "fixtures"
     / "track_changes"
     / "word_groundtruth_settings.xml"
@@ -294,6 +294,7 @@ class TestTrackRevisionsAgainstVendoredWordGroundTruth:
         from docx.oxml.ns import qn
 
         root = self._parse_groundtruth()
+        # Act
         protection = root.find(qn("w:documentProtection"))
         observed = (
             None
@@ -303,7 +304,7 @@ class TestTrackRevisionsAgainstVendoredWordGroundTruth:
                 protection.get(qn("w:enforcement")),
             )
         )
-        # Act / Assert
+        # Assert
         assert observed == ("trackedChanges", "0")
 
     def test_save_with_track_changes_on_matches_word_trackRevisions_slice(
