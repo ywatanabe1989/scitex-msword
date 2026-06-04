@@ -68,7 +68,8 @@ class TestHookDataclass:
         """Assigning to a field on a built ``Hook`` raises."""
         # Arrange
         hook = self._make_hook()
-        # Act / Assert
+        # Act
+        # Assert
         with pytest.raises(Exception):
             hook.id = "other"  # type: ignore[misc]
 
@@ -94,13 +95,11 @@ class TestIssueException:
         # Assert
         assert is_subclass is True
 
-    def test_issue_raise_then_catch_preserves_hook_id(self):
-        """Raising an ``Issue`` and catching it preserves ``hook_id``."""
-        # Arrange
+    def _raise_and_capture_issue(self):
+        """Helper: raise an ``Issue`` with fixed fields and return the caught instance."""
         from scitex_msword.hooks import Issue
 
-        # Act
-        with pytest.raises(Issue) as exc_info:
+        try:
             raise Issue(
                 hook_id="X-001",
                 severity="error",
@@ -108,76 +107,53 @@ class TestIssueException:
                 message="m",
                 suggestion="s",
             )
+        except Issue as caught:
+            return caught
+
+    def test_issue_raise_then_catch_preserves_hook_id(self):
+        """Raising an ``Issue`` and catching it preserves ``hook_id``."""
+        # Arrange
+        # (Issue is constructed inside the helper below.)
+        # Act
+        caught = self._raise_and_capture_issue()
         # Assert
-        assert exc_info.value.hook_id == "X-001"
+        assert caught.hook_id == "X-001"
 
     def test_issue_raise_then_catch_preserves_severity(self):
         """Raising an ``Issue`` and catching it preserves ``severity``."""
         # Arrange
-        from scitex_msword.hooks import Issue
-
+        # (Issue is constructed inside the helper below.)
         # Act
-        with pytest.raises(Issue) as exc_info:
-            raise Issue(
-                hook_id="X-001",
-                severity="error",
-                location="loc",
-                message="m",
-                suggestion="s",
-            )
+        caught = self._raise_and_capture_issue()
         # Assert
-        assert exc_info.value.severity == "error"
+        assert caught.severity == "error"
 
     def test_issue_raise_then_catch_preserves_location(self):
         """Raising an ``Issue`` and catching it preserves ``location``."""
         # Arrange
-        from scitex_msword.hooks import Issue
-
+        # (Issue is constructed inside the helper below.)
         # Act
-        with pytest.raises(Issue) as exc_info:
-            raise Issue(
-                hook_id="X-001",
-                severity="error",
-                location="loc",
-                message="m",
-                suggestion="s",
-            )
+        caught = self._raise_and_capture_issue()
         # Assert
-        assert exc_info.value.location == "loc"
+        assert caught.location == "loc"
 
     def test_issue_raise_then_catch_preserves_message(self):
         """Raising an ``Issue`` and catching it preserves ``message``."""
         # Arrange
-        from scitex_msword.hooks import Issue
-
+        # (Issue is constructed inside the helper below.)
         # Act
-        with pytest.raises(Issue) as exc_info:
-            raise Issue(
-                hook_id="X-001",
-                severity="error",
-                location="loc",
-                message="m",
-                suggestion="s",
-            )
+        caught = self._raise_and_capture_issue()
         # Assert
-        assert exc_info.value.message == "m"
+        assert caught.message == "m"
 
     def test_issue_raise_then_catch_preserves_suggestion(self):
         """Raising an ``Issue`` and catching it preserves ``suggestion``."""
         # Arrange
-        from scitex_msword.hooks import Issue
-
+        # (Issue is constructed inside the helper below.)
         # Act
-        with pytest.raises(Issue) as exc_info:
-            raise Issue(
-                hook_id="X-001",
-                severity="error",
-                location="loc",
-                message="m",
-                suggestion="s",
-            )
+        caught = self._raise_and_capture_issue()
         # Assert
-        assert exc_info.value.suggestion == "s"
+        assert caught.suggestion == "s"
 
     def test_issue_str_form_includes_hook_id_and_location_and_message(self):
         """``str(Issue(...))`` embeds the ``hook_id``, ``location``, and ``message``."""
@@ -236,7 +212,8 @@ class TestHookContextElementFor:
         from scitex_msword.hooks import HookContext
 
         ctx = HookContext(doc=object())
-        # Act / Assert
+        # Act
+        # Assert
         with pytest.raises(AttributeError):
             ctx.element_for("/word/settings.xml")
 

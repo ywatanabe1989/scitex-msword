@@ -165,7 +165,8 @@ class TestRunPhasePreSave:
             doc=object(),
             config={"hooks": {"enable": ["SXM-A", "SXM-B", "SXM-C"]}},
         )
-        # Act / Assert
+        # Act
+        # Assert
         with pytest.raises(RuntimeError, match="nope"):
             run_phase(Phase.PRE_SAVE, ctx.doc, ctx)
 
@@ -256,7 +257,8 @@ class TestRunPhasePostSave:
         from scitex_msword.hooks import HookContext, Phase, run_phase
 
         ctx = HookContext(doc=object(), config={})
-        # Act / Assert
+        # Act
+        # Assert
         with pytest.raises(AssertionError):
             run_phase(Phase.POST_SAVE, ctx.doc, ctx)
 
