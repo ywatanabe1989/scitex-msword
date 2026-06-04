@@ -74,10 +74,76 @@ sxm.create_post_import_hook(doc)
 sxm.register_profile("my-style", {...})
 ```
 
+### Review / dogfooding helpers (unreleased)
+
+```python
+import docx
+import scitex_msword as sxm
+
+# 1. Diff two .docx versions by paragraph (paragraphs in/out + run-level
+#    bold / italic / font / highlight deltas).
+ops = sxm.diff_docx("v15.docx", "v16.docx")
+sxm.summarize_diff(ops)            # {'equal': 38, 'insert': 4, 'delete': 1, 'modify': 3}
+
+# 2. Visualize edits with highlights (BOOST review convention).
+doc = docx.Document("v16.docx")
+sxm.mark_additions(doc, runs=[(3, 0), (5, 2)])     # default turquoise
+sxm.mark_modifications(doc, runs=[(7, 1)])         # default magenta -> Word PINK
+
+# 3. Read highlights back, bucketed by color name.
+sxm.extract_highlights(doc)        # {'turquoise': [...], 'pink': [...]}
+
+# 4. Bold-preserve keyword tokens (Japanese tokens get MS Gothic).
+sxm.preserve_bold_tokens(doc, tokens=["JST", "BOOST", "Sovereign Tech"])
+
+# 5. Pull Word comments + their anchor ranges.
+comments = sxm.extract_comments("v16.docx")
+# Optionally apply REPLACE:-grammar comments as edits.
+summary = sxm.apply_comments_as_edits(doc)         # {'applied': 2, 'skipped': 4, ...}
+```
+
+### Track Changes (revision) helpers
+
+```python
+import docx
+import scitex_msword as sxm
+
+# 1. Turn Word's "Track Changes" switch on, so subsequent operator edits
+#    are recorded as revisions (writes <w:trackChanges/> to settings.xml).
+doc = docx.Document("draft.docx")
+sxm.enable_track_changes(doc, enabled=True)
+sxm.is_track_changes_enabled(doc)        # True
+
+# 2. Wrap agent edits as <w:ins> / <w:del> so Word renders them as
+#    accept/reject-able revisions.
+p = doc.paragraphs[10]
+sxm.wrap_as_tracked_insertion(p, runs=[2, 3], author="agent")
+sxm.wrap_as_tracked_deletion(p, runs=[5],    author="agent")
+
+# 3. Inspect all tracked changes (structured).
+for c in sxm.extract_tracked_changes(doc):
+    print(c["type"], c["author"], c["text"])
+
+# 4. Bulk accept / reject (Word's "Accept All" / "Reject All").
+sxm.accept_all_tracked_changes(doc)        # or reject_all_tracked_changes
+doc.save("draft_v27.docx")
+```
+
+### MCP server (optional)
+
+```bash
+pip install scitex-msword[mcp]
+python -m scitex_msword.mcp_server          # stdio transport
+```
+
+Tools exposed: `diff_docx_tool`, `mark_additions_tool`,
+`mark_modifications_tool`, `preserve_bold_tokens_tool`,
+`extract_highlights_tool`, `extract_comments_tool`, `list_profiles_tool`.
+
 ### Built-in profiles
 
 `generic`, `mdpi-ijerph`, `resna-2025`, `iop-double-anonymous`, `ieee`,
-`springer`, `elsevier`.
+`springer`, `elsevier`, `boost-2026`.
 
 </details>
 

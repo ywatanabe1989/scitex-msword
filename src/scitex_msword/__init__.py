@@ -39,7 +39,9 @@ Available profiles:
 from __future__ import annotations
 
 try:
-    from importlib.metadata import version as _v, PackageNotFoundError
+    from importlib.metadata import PackageNotFoundError
+    from importlib.metadata import version as _v
+
     try:
         __version__ = _v("scitex-msword")
     except PackageNotFoundError:
@@ -51,8 +53,26 @@ except ImportError:  # pragma: no cover — only on ancient Pythons
 from pathlib import Path
 from typing import Any, Optional
 
+from .bold import preserve_bold_tokens
+from .comments import apply_comments_as_edits, extract_comments
+from .diff import diff_docx, summarize_diff
+from .highlights import (
+    clear_highlights,
+    extract_highlights,
+    mark_additions,
+    mark_modifications,
+)
 from .profiles import BaseWordProfile, get_profile, list_profiles, register_profile
 from .reader import WordReader
+from .track_changes import (
+    accept_all_tracked_changes,
+    enable_track_changes,
+    extract_tracked_changes,
+    is_track_changes_enabled,
+    reject_all_tracked_changes,
+    wrap_as_tracked_deletion,
+    wrap_as_tracked_insertion,
+)
 from .utils import (
     create_post_import_hook,
     link_captions_to_images,
@@ -265,4 +285,25 @@ __all__ = [
     "normalize_section_headings",
     "validate_document",
     "create_post_import_hook",
+    # Diff API (BOOST v16 dogfooding)
+    "diff_docx",
+    "summarize_diff",
+    # Highlight API (BOOST v16 visual marking)
+    "mark_additions",
+    "mark_modifications",
+    "extract_highlights",
+    "clear_highlights",
+    # Bold-token preservation (BOOST v16 Japanese keyword emphasis)
+    "preserve_bold_tokens",
+    # Comment extraction (+ narrow REPLACE-grammar application)
+    "extract_comments",
+    "apply_comments_as_edits",
+    # Track-Changes API (BOOST post-v16 dogfooding)
+    "enable_track_changes",
+    "is_track_changes_enabled",
+    "wrap_as_tracked_insertion",
+    "wrap_as_tracked_deletion",
+    "extract_tracked_changes",
+    "accept_all_tracked_changes",
+    "reject_all_tracked_changes",
 ]

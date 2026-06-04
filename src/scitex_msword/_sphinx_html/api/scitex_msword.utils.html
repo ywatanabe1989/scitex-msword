@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>scitex_msword.utils &mdash; scitex-msword 0.1.4 documentation</title>
+  <title>scitex_msword.utils &mdash; scitex-msword 0.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=fd825880"></script>
+      <script src="../_static/documentation_options.js?v=938c9ccc"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -23,7 +23,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="scitex_msword.writer" href="scitex_msword.writer.html" />
-    <link rel="prev" title="scitex_msword.reader" href="scitex_msword.reader.html" /> 
+    <link rel="prev" title="scitex_msword.track_changes" href="scitex_msword.track_changes.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -54,30 +54,15 @@
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#strategy">Strategy:</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#typical-usage">Typical usage:</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#available-profiles">Available profiles:</a></li>
-<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.load_docx"><code class="docutils literal notranslate"><span class="pre">load_docx()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.save_docx"><code class="docutils literal notranslate"><span class="pre">save_docx()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.convert_docx_to_tex"><code class="docutils literal notranslate"><span class="pre">convert_docx_to_tex()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.list_profiles"><code class="docutils literal notranslate"><span class="pre">list_profiles()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.get_profile"><code class="docutils literal notranslate"><span class="pre">get_profile()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.register_profile"><code class="docutils literal notranslate"><span class="pre">register_profile()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.BaseWordProfile"><code class="docutils literal notranslate"><span class="pre">BaseWordProfile</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.WordReader"><code class="docutils literal notranslate"><span class="pre">WordReader</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.WordWriter"><code class="docutils literal notranslate"><span class="pre">WordWriter</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.link_captions_to_images"><code class="docutils literal notranslate"><span class="pre">link_captions_to_images()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.link_captions_to_images_by_proximity"><code class="docutils literal notranslate"><span class="pre">link_captions_to_images_by_proximity()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.normalize_section_headings"><code class="docutils literal notranslate"><span class="pre">normalize_section_headings()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.validate_document"><code class="docutils literal notranslate"><span class="pre">validate_document()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.create_post_import_hook"><code class="docutils literal notranslate"><span class="pre">create_post_import_hook()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="scitex_msword.bold.html">scitex_msword.bold</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scitex_msword.comments.html">scitex_msword.comments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scitex_msword.diff.html">scitex_msword.diff</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scitex_msword.highlights.html">scitex_msword.highlights</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scitex_msword.mcp_server.html">scitex_msword.mcp_server</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.profiles.html">scitex_msword.profiles</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.reader.html">scitex_msword.reader</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">scitex_msword.utils</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#scitex_msword.utils.link_captions_to_images"><code class="docutils literal notranslate"><span class="pre">link_captions_to_images()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#scitex_msword.utils.link_captions_to_images_by_proximity"><code class="docutils literal notranslate"><span class="pre">link_captions_to_images_by_proximity()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#scitex_msword.utils.normalize_section_headings"><code class="docutils literal notranslate"><span class="pre">normalize_section_headings()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#scitex_msword.utils.validate_document"><code class="docutils literal notranslate"><span class="pre">validate_document()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#scitex_msword.utils.create_post_import_hook"><code class="docutils literal notranslate"><span class="pre">create_post_import_hook()</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="scitex_msword.track_changes.html">scitex_msword.track_changes</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">scitex_msword.utils</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.writer.html">scitex_msword.writer</a></li>
 </ul>
 </li>
@@ -116,152 +101,30 @@ to process document structures.</p>
 <p class="rubric">Functions</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#scitex_msword.utils.create_post_import_hook" title="scitex_msword.utils.create_post_import_hook"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_post_import_hook</span></code></a>(*functions)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_post_import_hook</span></code>(*functions)</p></td>
 <td><p>Create a composite post_import_hook from multiple functions.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#scitex_msword.utils.link_captions_to_images" title="scitex_msword.utils.link_captions_to_images"><code class="xref py py-obj docutils literal notranslate"><span class="pre">link_captions_to_images</span></code></a>(doc)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">link_captions_to_images</span></code>(doc)</p></td>
 <td><p>Link figure captions to images by matching order.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#scitex_msword.utils.link_captions_to_images_by_proximity" title="scitex_msword.utils.link_captions_to_images_by_proximity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">link_captions_to_images_by_proximity</span></code></a>(doc)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">link_captions_to_images_by_proximity</span></code>(doc)</p></td>
 <td><p>Link figure captions to images by document proximity.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#scitex_msword.utils.normalize_section_headings" title="scitex_msword.utils.normalize_section_headings"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalize_section_headings</span></code></a>(doc)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalize_section_headings</span></code>(doc)</p></td>
 <td><p>Normalize section headings for consistency.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#scitex_msword.utils.validate_document" title="scitex_msword.utils.validate_document"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_document</span></code></a>(doc)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_document</span></code>(doc)</p></td>
 <td><p>Validate document structure and add warnings.</p></td>
 </tr>
 </tbody>
 </table>
-<dl class="py function">
-<dt class="sig sig-object py" id="scitex_msword.utils.link_captions_to_images">
-<span class="sig-prename descclassname"><span class="pre">scitex_msword.utils.</span></span><span class="sig-name descname"><span class="pre">link_captions_to_images</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scitex_msword/utils.html#link_captions_to_images"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scitex_msword.utils.link_captions_to_images" title="Link to this definition"></a></dt>
-<dd><p>Link figure captions to images by matching order.</p>
-<p>This function pairs figure captions with images based on their
-sequential order in the document. Each figure caption is assigned
-an <cite>image_hash</cite> that corresponds to the image at the same position.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>doc</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – SciTeX writer document with ‘blocks’ and ‘images’ keys.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The same document with image_hash added to figure captions.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a></p>
-</dd>
-</dl>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">scitex.msword</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_docx</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">scitex.msword.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">link_captions_to_images</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">doc</span> <span class="o">=</span> <span class="n">load_docx</span><span class="p">(</span><span class="s2">&quot;manuscript.docx&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">doc</span> <span class="o">=</span> <span class="n">link_captions_to_images</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Now captions have image_hash for LaTeX export</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="scitex_msword.utils.link_captions_to_images_by_proximity">
-<span class="sig-prename descclassname"><span class="pre">scitex_msword.utils.</span></span><span class="sig-name descname"><span class="pre">link_captions_to_images_by_proximity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scitex_msword/utils.html#link_captions_to_images_by_proximity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scitex_msword.utils.link_captions_to_images_by_proximity" title="Link to this definition"></a></dt>
-<dd><p>Link figure captions to images by document proximity.</p>
-<p>This function uses the image blocks (type=”image”) that are inserted
-at their actual positions in the document body. It finds the nearest
-unlinked image block to each figure caption.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>doc</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – SciTeX writer document.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Document with image_hash added to captions.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="scitex_msword.utils.normalize_section_headings">
-<span class="sig-prename descclassname"><span class="pre">scitex_msword.utils.</span></span><span class="sig-name descname"><span class="pre">normalize_section_headings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scitex_msword/utils.html#normalize_section_headings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scitex_msword.utils.normalize_section_headings" title="Link to this definition"></a></dt>
-<dd><p>Normalize section headings for consistency.</p>
-<p>Converts common section titles to standard academic format:
-- “intro” -&gt; “Introduction”
-- “method” -&gt; “Methods”
-- etc.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>doc</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – SciTeX writer document.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Document with normalized headings.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="scitex_msword.utils.validate_document">
-<span class="sig-prename descclassname"><span class="pre">scitex_msword.utils.</span></span><span class="sig-name descname"><span class="pre">validate_document</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scitex_msword/utils.html#validate_document"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scitex_msword.utils.validate_document" title="Link to this definition"></a></dt>
-<dd><p>Validate document structure and add warnings.</p>
-<p>Checks for common issues:
-- Missing required sections
-- Unmatched caption numbers
-- Empty references section
-- Duplicate figure numbers</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>doc</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – SciTeX writer document.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Document with warnings added.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="scitex_msword.utils.create_post_import_hook">
-<span class="sig-prename descclassname"><span class="pre">scitex_msword.utils.</span></span><span class="sig-name descname"><span class="pre">create_post_import_hook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">functions</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scitex_msword/utils.html#create_post_import_hook"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scitex_msword.utils.create_post_import_hook" title="Link to this definition"></a></dt>
-<dd><p>Create a composite post_import_hook from multiple functions.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>*functions</strong> (<em>callable</em>) – Functions to apply in sequence.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A single hook that applies all functions.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>callable</p>
-</dd>
-</dl>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">scitex.msword.utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-<span class="gp">... </span>    <span class="n">link_captions_to_images</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="n">normalize_section_headings</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="n">create_post_import_hook</span><span class="p">,</span>
-<span class="gp">... </span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">hook</span> <span class="o">=</span> <span class="n">create_post_import_hook</span><span class="p">(</span>
-<span class="gp">... </span>    <span class="n">link_captions_to_images</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="n">normalize_section_headings</span><span class="p">,</span>
-<span class="gp">... </span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Use with custom profile</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">profile</span><span class="o">.</span><span class="n">post_import_hooks</span> <span class="o">=</span> <span class="p">[</span><span class="n">hook</span><span class="p">]</span>
-</pre></div>
-</div>
-</dd></dl>
-
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="scitex_msword.reader.html" class="btn btn-neutral float-left" title="scitex_msword.reader" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="scitex_msword.track_changes.html" class="btn btn-neutral float-left" title="scitex_msword.track_changes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="scitex_msword.writer.html" class="btn btn-neutral float-right" title="scitex_msword.writer" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

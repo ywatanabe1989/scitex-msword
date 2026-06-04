@@ -1,0 +1,12 @@
+scitex\_msword.bold
+===================
+
+.. automodule:: scitex_msword.bold
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      preserve_bold_tokens
+   

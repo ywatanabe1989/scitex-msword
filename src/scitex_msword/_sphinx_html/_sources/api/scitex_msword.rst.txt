@@ -18,7 +18,13 @@
    :toctree:
    :recursive:
 
+   bold
+   comments
+   diff
+   highlights
+   mcp_server
    profiles
    reader
+   track_changes
    utils
    writer

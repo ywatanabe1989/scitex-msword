@@ -1,0 +1,13 @@
+scitex\_msword.diff
+===================
+
+.. automodule:: scitex_msword.diff
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      diff_docx
+      summarize_diff
+   
