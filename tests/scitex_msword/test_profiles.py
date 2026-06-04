@@ -365,14 +365,28 @@ class TestBoost2026Profile:
         # Assert
         assert profile.name == "boost-2026"
 
-    def test_boost_2026_uses_ms_gothic_body_font(self):
-        """boost-2026 should declare MS Gothic as the body font."""
+    def test_boost_2026_uses_ms_mincho_body_font(self):
+        """boost-2026 declares MS 明朝 (MS Mincho) as the regular body font.
+
+        Per the proj-grant BOOST v37 spec: Japanese templates pair Mincho
+        body with Gothic bold so the weight contrast lives in the typeface
+        rather than in a synthetic-bold transform.
+        """
         # Arrange
         from scitex_msword import get_profile
         # Act
         profile = get_profile("boost-2026")
         # Assert
-        assert profile.body_font == "MS Gothic"
+        assert profile.body_font == "MS 明朝"
+
+    def test_boost_2026_uses_ms_gothic_bold_font(self):
+        """boost-2026 declares MS ゴシック (MS Gothic) as the bold/heading font."""
+        # Arrange
+        from scitex_msword import get_profile
+        # Act
+        profile = get_profile("boost-2026")
+        # Assert
+        assert profile.bold_font == "MS ゴシック"
 
     def test_boost_2026_uses_10_5pt_body_font(self):
         """boost-2026 should declare 10.5pt body font size."""
@@ -422,6 +436,15 @@ class TestBaseWordProfileLayoutHints:
         profile = BaseWordProfile(name="t", description="t")
         # Assert
         assert profile.body_font is None
+
+    def test_bold_font_defaults_to_none(self):
+        """bold_font should default to None for non-BOOST profiles."""
+        # Arrange
+        from scitex_msword import BaseWordProfile
+        # Act
+        profile = BaseWordProfile(name="t", description="t")
+        # Assert
+        assert profile.bold_font is None
 
     def test_line_spacing_defaults_to_none(self):
         """line_spacing should default to None for non-BOOST profiles."""
