@@ -86,7 +86,13 @@ class BaseWordProfile:
     # Optional layout / typography hints (used by profiles like boost-2026).
     # These are advisory: writer code may consult them to customize fonts,
     # heading shading, and line spacing without hard-coding per-profile logic.
+    #
+    # ``body_font`` is the regular-weight body font. ``bold_font`` is the
+    # font used for bold runs / headings — Japanese templates (JST BOOST
+    # 2026 included) typically pair a Mincho body with a Gothic bold so the
+    # weight contrast is carried by the typeface, not by synthetic bold.
     body_font: Optional[str] = None
+    bold_font: Optional[str] = None
     body_font_size_pt: Optional[float] = None
     heading_background_hex: Optional[str] = None
     line_spacing: Optional[float] = None
@@ -266,17 +272,22 @@ def _boost_2026_profile() -> BaseWordProfile:
     """
     JST BOOST 2026 grant application template profile.
 
-    Layout convention (per BOOST v16 dogfooding):
+    Layout convention (per the BOOST v37 / proj-grant dogfooding spec):
 
-    - Body text: 10.5pt MS Gothic
+    - Regular body text: 10.5pt MS 明朝 (MS Mincho)
+    - Bold runs / headings: 10.5pt MS ゴシック (MS Gothic)
     - Headings: bold, with light-grey (#D9D9D9) background shading
     - Line spacing: 1.0 (single)
     - Single column
 
-    The advisory ``body_font`` / ``body_font_size_pt`` /
+    The advisory ``body_font`` / ``bold_font`` / ``body_font_size_pt`` /
     ``heading_background_hex`` / ``line_spacing`` fields let the writer
-    layer (or downstream tooling such as the BOOST v16 builder) pick
-    these up without hard-coding per-document logic.
+    layer (or downstream tooling such as the BOOST v37 builder) pick
+    these up without hard-coding per-document logic. The Mincho/Gothic
+    pairing reflects standard Japanese typographic practice: Mincho
+    (serif) carries body text; Gothic (sans-serif) carries emphasis and
+    headings, so weight contrast comes from the typeface itself rather
+    than a synthetic bold transform.
     """
     return BaseWordProfile(
         name="boost-2026",
@@ -290,7 +301,8 @@ def _boost_2026_profile() -> BaseWordProfile:
         normal_style="Normal",
         reference_section_titles=["参考文献", "References"],
         columns=1,
-        body_font="MS Gothic",
+        body_font="MS 明朝",
+        bold_font="MS ゴシック",
         body_font_size_pt=10.5,
         heading_background_hex="D9D9D9",
         line_spacing=1.0,

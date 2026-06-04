@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>scitex_msword &mdash; scitex-msword 0.2.0 documentation</title>
+  <title>scitex_msword &mdash; scitex-msword 0.2.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../_static/documentation_options.js?v=37f418d5"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -58,6 +58,7 @@
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.comments.html">scitex_msword.comments</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.diff.html">scitex_msword.diff</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.highlights.html">scitex_msword.highlights</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scitex_msword.hooks.html">scitex_msword.hooks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.mcp_server.html">scitex_msword.mcp_server</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.profiles.html">scitex_msword.profiles</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.reader.html">scitex_msword.reader</a></li>
@@ -155,22 +156,25 @@ save_docx(doc, “output.docx”, profile=”mdpi-ijerph”)</p>
 <tr class="row-even"><td><p><a class="reference internal" href="scitex_msword.highlights.html#module-scitex_msword.highlights" title="scitex_msword.highlights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">highlights</span></code></a></p></td>
 <td><p>Visual-mark / highlight utilities for python-docx Documents.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="scitex_msword.mcp_server.html#module-scitex_msword.mcp_server" title="scitex_msword.mcp_server"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mcp_server</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="scitex_msword.hooks.html#module-scitex_msword.hooks" title="scitex_msword.hooks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hooks</span></code></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sxm.hooks</span></code> — pluggable lifecycle-hook framework for DOCX I/O.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="scitex_msword.mcp_server.html#module-scitex_msword.mcp_server" title="scitex_msword.mcp_server"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mcp_server</span></code></a></p></td>
 <td><p>MCP server scaffold exposing scitex-msword as a tool surface.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="scitex_msword.profiles.html#module-scitex_msword.profiles" title="scitex_msword.profiles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">profiles</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="scitex_msword.profiles.html#module-scitex_msword.profiles" title="scitex_msword.profiles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">profiles</span></code></a></p></td>
 <td><p>Profiles for mapping MS Word styles to SciTeX writer structures.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="scitex_msword.reader.html#module-scitex_msword.reader" title="scitex_msword.reader"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reader</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="scitex_msword.reader.html#module-scitex_msword.reader" title="scitex_msword.reader"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reader</span></code></a></p></td>
 <td><p>DOCX -&gt; SciTeX writer document converter.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="scitex_msword.track_changes.html#module-scitex_msword.track_changes" title="scitex_msword.track_changes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">track_changes</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="scitex_msword.track_changes.html#module-scitex_msword.track_changes" title="scitex_msword.track_changes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">track_changes</span></code></a></p></td>
 <td><p>Track-Changes (revision) utilities for python-docx Documents.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="scitex_msword.utils.html#module-scitex_msword.utils" title="scitex_msword.utils"><code class="xref py py-obj docutils literal notranslate"><span class="pre">utils</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="scitex_msword.utils.html#module-scitex_msword.utils" title="scitex_msword.utils"><code class="xref py py-obj docutils literal notranslate"><span class="pre">utils</span></code></a></p></td>
 <td><p>Utility functions for processing MS Word documents.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="scitex_msword.writer.html#module-scitex_msword.writer" title="scitex_msword.writer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">writer</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="scitex_msword.writer.html#module-scitex_msword.writer" title="scitex_msword.writer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">writer</span></code></a></p></td>
 <td><p>SciTeX writer document -&gt; DOCX converter.</p></td>
 </tr>
 </tbody>

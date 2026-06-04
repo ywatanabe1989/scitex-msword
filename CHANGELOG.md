@@ -7,6 +7,70 @@ versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-06-04
+
+Cut to unblock the JST BOOST 2026 grant dogfood (T-7d). Three new
+public surfaces — `sxm.hooks`, `save_with_track_changes_on`,
+`save_document` — plus a corrected `boost-2026` profile.
+
+### Added
+
+- `sxm.hooks` package skeleton (H1). `Hook` / `Phase` / `Issue` /
+  `HookContext` dataclasses, `register()` decorator, `run_phase()`
+  dispatcher, three-tier discovery (engine builtins +
+  `scitex_msword.hooks` entry-points + walk-up project-local
+  `<root>/.scitex/msword/hooks/*.py`). Override precedence:
+  project-local > entry-points > builtins. Fail-loud dispatch: the
+  first exception raised by any hook aborts the rest of the phase and
+  is propagated to the caller. `PRE_SAVE` hooks must be idempotent;
+  `POST_SAVE` hooks are read-only and signal violations by raising
+  `Issue` (also an `Exception`). No builtin hooks ship in H1 —
+  `SXM-TC001` (track-changes audit) and `SXM-JP001` (Japanese
+  typography) land in H4 / H5. Per proj-grant
+  `design_sxm_hooks_v01.md` + the proj-scitex-dev design-lock thread.
+- `scitex_msword.save_document(doc, path, profile=None)` — direct save
+  path for python-docx `Document` instances. Unlike `save_docx` (which
+  round-trips through a SciTeX writer-dict), `save_document` preserves
+  python-docx-level edits intact (table cell XML manipulation,
+  embedded image positioning, run-level bold preservation). When a
+  profile is supplied, its advisory layout hints land in
+  `<w:docDefaults>` so caller per-run / per-paragraph overrides keep
+  winning. The `sxm.hooks` dispatcher fires for both phases: `PRE_SAVE`
+  before the file is written; `POST_SAVE` after, with `out_path=path`.
+- `scitex_msword.save_with_track_changes_on(doc, path)` — canonical
+  helper for the BOOST workflow: enable Track Changes (in ECMA-376
+  ordered position) and save in one call.
+- `BaseWordProfile.bold_font: Optional[str]` — paired bold typeface
+  field. Lets a profile declare a bold/heading typeface alongside
+  `body_font`. Japanese templates use this to land Mincho in `ascii`/
+  `hAnsi` and Gothic in `eastAsia`, so weight contrast comes from the
+  typeface rather than a synthetic-bold transform.
+
+### Changed
+
+- `boost-2026` profile aligned with the proj-grant BOOST v37
+  dogfooding spec: regular body = MS 明朝 (Mincho), bold = MS ゴシック
+  (Gothic), both at 10.5pt; heading background D9D9D9, line spacing
+  1.0, `参考文献` reference title — unchanged. The previous
+  `body_font="MS Gothic"` was at odds with the spec; the field now
+  carries Mincho and `bold_font` carries Gothic.
+- `enable_track_changes` now inserts `<w:trackChanges/>` at the
+  ECMA-376 §17.15.1 `CT_Settings` ordered slot (after the last present
+  predecessor, before the first present successor) rather than naively
+  appending. Word silently ignored out-of-order elements in some
+  files; this is required for the BOOST v37 workflow (proj-grant lost
+  ~1h to this on v36).
+
+### Internal
+
+- New module `scitex_msword._settings_order`: owns the ECMA-376
+  `CT_Settings` placement decision. Generic so future ordered
+  insertions (other elements with schema-prescribed positions) can
+  reuse it.
+- New module `scitex_msword._save_document`: hosts `save_document` and
+  its profile→docDefaults bridge. Keeps `__init__.py` and `writer.py`
+  small.
+
 ## [0.2.0] - 2026-06-04
 
 ### Added

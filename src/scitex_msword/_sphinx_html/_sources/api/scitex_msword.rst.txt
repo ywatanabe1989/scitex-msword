@@ -22,6 +22,7 @@
    comments
    diff
    highlights
+   hooks
    mcp_server
    profiles
    reader

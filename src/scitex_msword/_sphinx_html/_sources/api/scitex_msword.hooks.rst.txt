@@ -1,0 +1,6 @@
+scitex\_msword.hooks
+====================
+
+.. automodule:: scitex_msword.hooks
+
+   

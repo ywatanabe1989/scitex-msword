@@ -13,6 +13,7 @@ scitex\_msword.track\_changes
       extract_tracked_changes
       is_track_changes_enabled
       reject_all_tracked_changes
+      save_with_track_changes_on
       wrap_as_tracked_deletion
       wrap_as_tracked_insertion
    

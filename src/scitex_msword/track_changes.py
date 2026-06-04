@@ -169,32 +169,49 @@ def enable_track_changes(
     Inserts ``<w:trackChanges/>`` into ``word/settings.xml`` when
     ``enabled=True`` (idempotent) or removes it when ``enabled=False``.
 
-    Parameters
-    ----------
-    document : docx.Document
-        The Document to mutate in place.
-    enabled : bool, default True
-        ``True`` keeps a single ``<w:trackChanges/>`` element present;
-        ``False`` removes any such elements.
-
-    Returns
-    -------
-    docx.Document
-        The same Document object (chainable).
+    Placement obeys the ECMA-376 §17.15.1 ``CT_Settings`` child order
+    (see ``_settings_order``): ``<w:trackChanges/>`` lands after the
+    last present predecessor and before the first present successor.
+    Word silently ignores out-of-order elements in some files, so this
+    is required for the BOOST v37 dogfood workflow.
     """
     _ensure_docx_available()
+    from ._settings_order import insert_in_settings_order
+
     settings_el = _settings_element(document)
     existing = settings_el.findall(qn("w:trackChanges"))
 
     if enabled:
         if not existing:
-            settings_el.append(_make_w_element("trackChanges"))
+            insert_in_settings_order(
+                settings_el,
+                _make_w_element("trackChanges"),
+                "trackChanges",
+            )
         else:
             for dup in existing[1:]:
                 settings_el.remove(dup)
     else:
         for el in existing:
             settings_el.remove(el)
+    return document
+
+
+def save_with_track_changes_on(
+    document: "DocxDocument",
+    path,
+) -> "DocxDocument":
+    """
+    Enable Track Changes (in ECMA-376 order) and save the Document.
+
+    Canonical helper for the BOOST v37 dogfood workflow: guarantees that
+    the saved ``.docx`` has ``<w:trackChanges/>`` in a position Word
+    will honour, then writes the file via ``document.save(path)``.
+    Returns the Document for chaining.
+    """
+    _ensure_docx_available()
+    enable_track_changes(document, enabled=True)
+    document.save(str(path))
     return document
 
 

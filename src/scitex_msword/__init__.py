@@ -64,12 +64,14 @@ from .highlights import (
 )
 from .profiles import BaseWordProfile, get_profile, list_profiles, register_profile
 from .reader import WordReader
+from ._save_document import save_document
 from .track_changes import (
     accept_all_tracked_changes,
     enable_track_changes,
     extract_tracked_changes,
     is_track_changes_enabled,
     reject_all_tracked_changes,
+    save_with_track_changes_on,
     wrap_as_tracked_deletion,
     wrap_as_tracked_insertion,
 )
@@ -309,4 +311,7 @@ __all__ = [
     "extract_tracked_changes",
     "accept_all_tracked_changes",
     "reject_all_tracked_changes",
+    "save_with_track_changes_on",
+    # Document-based save API (BOOST v37 dogfooding — no writer-dict round-trip)
+    "save_document",
 ]
