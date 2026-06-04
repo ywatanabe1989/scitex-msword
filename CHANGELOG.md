@@ -7,6 +7,8 @@ versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-06-04
+
 ### Added
 
 - `scitex_msword.enable_track_changes(doc, enabled=True)` — toggle Word's
