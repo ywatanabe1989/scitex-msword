@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>scitex_msword.utils &mdash; scitex-msword 0.1.4 documentation</title>
+  <title>scitex_msword.diff &mdash; scitex-msword 0.1.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -22,8 +22,8 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="scitex_msword.writer" href="scitex_msword.writer.html" />
-    <link rel="prev" title="scitex_msword.track_changes" href="scitex_msword.track_changes.html" /> 
+    <link rel="next" title="scitex_msword.highlights" href="scitex_msword.highlights.html" />
+    <link rel="prev" title="scitex_msword.comments" href="scitex_msword.comments.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -56,13 +56,16 @@
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#available-profiles">Available profiles:</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.bold.html">scitex_msword.bold</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.comments.html">scitex_msword.comments</a></li>
-<li class="toctree-l2"><a class="reference internal" href="scitex_msword.diff.html">scitex_msword.diff</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">scitex_msword.diff</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#typical-usage">Typical usage</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.highlights.html">scitex_msword.highlights</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.mcp_server.html">scitex_msword.mcp_server</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.profiles.html">scitex_msword.profiles</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.reader.html">scitex_msword.reader</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.track_changes.html">scitex_msword.track_changes</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">scitex_msword.utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scitex_msword.utils.html">scitex_msword.utils</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.writer.html">scitex_msword.writer</a></li>
 </ul>
 </li>
@@ -83,9 +86,9 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="scitex_msword.html">scitex_msword</a></li>
-      <li class="breadcrumb-item active">scitex_msword.utils</li>
+      <li class="breadcrumb-item active">scitex_msword.diff</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../_sources/api/scitex_msword.utils.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/api/scitex_msword.diff.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -93,39 +96,43 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-scitex_msword.utils">
-<span id="scitex-msword-utils"></span><h1>scitex_msword.utils<a class="headerlink" href="#module-scitex_msword.utils" title="Link to this heading"></a></h1>
-<p>Utility functions for processing MS Word documents.</p>
-<p>These functions can be used as post_import_hooks or called directly
-to process document structures.</p>
+  <section id="module-scitex_msword.diff">
+<span id="scitex-msword-diff"></span><h1>scitex_msword.diff<a class="headerlink" href="#module-scitex_msword.diff" title="Link to this heading"></a></h1>
+<p>Paragraph-level diff between two DOCX documents.</p>
+<p>This module implements <code class="docutils literal notranslate"><span class="pre">diff_docx</span></code> which compares two .docx files (or two
+already-loaded <code class="docutils literal notranslate"><span class="pre">python-docx</span></code> <code class="docutils literal notranslate"><span class="pre">Document</span></code> objects) and returns a list of
+paragraph-level operations describing the changes.</p>
+<p>The diff is computed with <code class="docutils literal notranslate"><span class="pre">difflib.SequenceMatcher</span></code> over paragraph text,
+and per-paragraph run-level formatting deltas (bold / italic / underline /
+font / highlight) are also captured for <code class="docutils literal notranslate"><span class="pre">modify</span></code> operations.</p>
+<section id="typical-usage">
+<h2>Typical usage<a class="headerlink" href="#typical-usage" title="Link to this heading"></a></h2>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">scitex_msword.diff</span><span class="w"> </span><span class="kn">import</span> <span class="n">diff_docx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ops</span> <span class="o">=</span> <span class="n">diff_docx</span><span class="p">(</span><span class="s2">&quot;v15.docx&quot;</span><span class="p">,</span> <span class="s2">&quot;v16.docx&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">ops</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">op</span><span class="p">[</span><span class="s2">&quot;op&quot;</span><span class="p">],</span> <span class="n">op</span><span class="p">[</span><span class="s2">&quot;index&quot;</span><span class="p">],</span> <span class="n">op</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;text_b&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">op</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;text_a&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
 <p class="rubric">Functions</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_post_import_hook</span></code>(*functions)</p></td>
-<td><p>Create a composite post_import_hook from multiple functions.</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">diff_docx</span></code>(a, b, *[, include_run_diff])</p></td>
+<td><p>Compute paragraph-level diff between two DOCX documents.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">link_captions_to_images</span></code>(doc)</p></td>
-<td><p>Link figure captions to images by matching order.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">link_captions_to_images_by_proximity</span></code>(doc)</p></td>
-<td><p>Link figure captions to images by document proximity.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalize_section_headings</span></code>(doc)</p></td>
-<td><p>Normalize section headings for consistency.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_document</span></code>(doc)</p></td>
-<td><p>Validate document structure and add warnings.</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">summarize_diff</span></code>(ops)</p></td>
+<td><p>Convenience helper: count operations by type.</p></td>
 </tr>
 </tbody>
 </table>
+</section>
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="scitex_msword.track_changes.html" class="btn btn-neutral float-left" title="scitex_msword.track_changes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="scitex_msword.writer.html" class="btn btn-neutral float-right" title="scitex_msword.writer" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="scitex_msword.comments.html" class="btn btn-neutral float-left" title="scitex_msword.comments" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="scitex_msword.highlights.html" class="btn btn-neutral float-right" title="scitex_msword.highlights" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

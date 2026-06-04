@@ -1,0 +1,15 @@
+scitex\_msword.highlights
+=========================
+
+.. automodule:: scitex_msword.highlights
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      clear_highlights
+      extract_highlights
+      mark_additions
+      mark_modifications
+   

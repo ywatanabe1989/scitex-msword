@@ -1,0 +1,13 @@
+scitex\_msword.comments
+=======================
+
+.. automodule:: scitex_msword.comments
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      apply_comments_as_edits
+      extract_comments
+   

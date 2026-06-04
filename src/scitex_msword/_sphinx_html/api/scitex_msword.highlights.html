@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>scitex_msword.utils &mdash; scitex-msword 0.1.4 documentation</title>
+  <title>scitex_msword.highlights &mdash; scitex-msword 0.1.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -22,8 +22,8 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="scitex_msword.writer" href="scitex_msword.writer.html" />
-    <link rel="prev" title="scitex_msword.track_changes" href="scitex_msword.track_changes.html" /> 
+    <link rel="next" title="scitex_msword.mcp_server" href="scitex_msword.mcp_server.html" />
+    <link rel="prev" title="scitex_msword.diff" href="scitex_msword.diff.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -57,12 +57,12 @@
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.bold.html">scitex_msword.bold</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.comments.html">scitex_msword.comments</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.diff.html">scitex_msword.diff</a></li>
-<li class="toctree-l2"><a class="reference internal" href="scitex_msword.highlights.html">scitex_msword.highlights</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">scitex_msword.highlights</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.mcp_server.html">scitex_msword.mcp_server</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.profiles.html">scitex_msword.profiles</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.reader.html">scitex_msword.reader</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.track_changes.html">scitex_msword.track_changes</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">scitex_msword.utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scitex_msword.utils.html">scitex_msword.utils</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.writer.html">scitex_msword.writer</a></li>
 </ul>
 </li>
@@ -83,9 +83,9 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="scitex_msword.html">scitex_msword</a></li>
-      <li class="breadcrumb-item active">scitex_msword.utils</li>
+      <li class="breadcrumb-item active">scitex_msword.highlights</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../_sources/api/scitex_msword.utils.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/api/scitex_msword.highlights.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -93,28 +93,40 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-scitex_msword.utils">
-<span id="scitex-msword-utils"></span><h1>scitex_msword.utils<a class="headerlink" href="#module-scitex_msword.utils" title="Link to this heading"></a></h1>
-<p>Utility functions for processing MS Word documents.</p>
-<p>These functions can be used as post_import_hooks or called directly
-to process document structures.</p>
+  <section id="module-scitex_msword.highlights">
+<span id="scitex-msword-highlights"></span><h1>scitex_msword.highlights<a class="headerlink" href="#module-scitex_msword.highlights" title="Link to this heading"></a></h1>
+<p>Visual-mark / highlight utilities for python-docx Documents.</p>
+<p>This module is used by the BOOST v16 dogfooding workflow to visualize:</p>
+<ul class="simple">
+<li><p><em>additions</em> by the operator (turquoise highlight, by convention)</p></li>
+<li><p><em>modifications</em> to operator-supplied content (magenta highlight)</p></li>
+</ul>
+<p>plus a generic <code class="xref py py-func docutils literal notranslate"><span class="pre">extract_highlights()</span></code> to inspect what colors are
+present in a document and which runs carry them.</p>
+<p>Color names mirror Word’s <code class="docutils literal notranslate"><span class="pre">WD_COLOR_INDEX</span></code> enum (case-insensitive):
+<code class="docutils literal notranslate"><span class="pre">turquoise</span></code>, <code class="docutils literal notranslate"><span class="pre">pink</span></code>, <code class="docutils literal notranslate"><span class="pre">yellow</span></code>, <code class="docutils literal notranslate"><span class="pre">green</span></code>, <code class="docutils literal notranslate"><span class="pre">blue</span></code>, <code class="docutils literal notranslate"><span class="pre">red</span></code>,
+<code class="docutils literal notranslate"><span class="pre">gray_25</span></code>, <code class="docutils literal notranslate"><span class="pre">gray_50</span></code>, <code class="docutils literal notranslate"><span class="pre">black</span></code>, <code class="docutils literal notranslate"><span class="pre">white</span></code>, <code class="docutils literal notranslate"><span class="pre">dark_red</span></code>,
+<code class="docutils literal notranslate"><span class="pre">dark_yellow</span></code>, <code class="docutils literal notranslate"><span class="pre">dark_blue</span></code>, <code class="docutils literal notranslate"><span class="pre">teal</span></code>, <code class="docutils literal notranslate"><span class="pre">violet</span></code>, and <code class="docutils literal notranslate"><span class="pre">auto</span></code>.</p>
+<p>For convenience the following BOOST-v16 aliases are also accepted:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">magenta</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">pink</span></code> (Word’s bright-pink highlight)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">purple</span></code>  -&gt; <code class="docutils literal notranslate"><span class="pre">violet</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cyan</span></code>    -&gt; <code class="docutils literal notranslate"><span class="pre">turquoise</span></code></p></li>
+</ul>
 <p class="rubric">Functions</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_post_import_hook</span></code>(*functions)</p></td>
-<td><p>Create a composite post_import_hook from multiple functions.</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_highlights</span></code>(document[, colors])</p></td>
+<td><p>Remove highlights from all runs (optionally only for the listed colors).</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">link_captions_to_images</span></code>(doc)</p></td>
-<td><p>Link figure captions to images by matching order.</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">extract_highlights</span></code>(document[, by_color])</p></td>
+<td><p>Extract highlighted runs from a document, grouped by color.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">link_captions_to_images_by_proximity</span></code>(doc)</p></td>
-<td><p>Link figure captions to images by document proximity.</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mark_additions</span></code>(document, runs[, color])</p></td>
+<td><p>Highlight the runs that the operator (or agent) <em>added</em> to the document.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalize_section_headings</span></code>(doc)</p></td>
-<td><p>Normalize section headings for consistency.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_document</span></code>(doc)</p></td>
-<td><p>Validate document structure and add warnings.</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mark_modifications</span></code>(document, runs[, color])</p></td>
+<td><p>Highlight the runs that the operator (or agent) <em>modified</em> in the document.</p></td>
 </tr>
 </tbody>
 </table>
@@ -124,8 +136,8 @@ to process document structures.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="scitex_msword.track_changes.html" class="btn btn-neutral float-left" title="scitex_msword.track_changes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="scitex_msword.writer.html" class="btn btn-neutral float-right" title="scitex_msword.writer" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="scitex_msword.diff.html" class="btn btn-neutral float-left" title="scitex_msword.diff" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="scitex_msword.mcp_server.html" class="btn btn-neutral float-right" title="scitex_msword.mcp_server" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

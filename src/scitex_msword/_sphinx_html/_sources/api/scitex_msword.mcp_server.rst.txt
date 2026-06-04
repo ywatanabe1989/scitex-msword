@@ -1,0 +1,13 @@
+scitex\_msword.mcp\_server
+==========================
+
+.. automodule:: scitex_msword.mcp_server
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      build_server
+      serve
+   
