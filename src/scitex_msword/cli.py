@@ -35,7 +35,7 @@ from typing import Optional, Sequence
 import click
 
 from . import __version__
-from ._cli import _insert_table, _list_apis, _mcp
+from ._cli import _insert_table, _list_apis, _mcp, _skills
 
 
 # =========================================================================
@@ -126,6 +126,19 @@ def main_group(ctx, as_json):
 _insert_table.register(main_group)
 _list_apis.register(main_group)
 _mcp.register(main_group)
+_skills.register(main_group)
+
+# §1a: install-shell-completion + print-shell-completion (canonical leaves)
+# Provided by the shared scitex-dev helper. If scitex-dev is not installed
+# (end-user runtime where it's not pulled in), silently skip — the audit
+# itself runs in the dev environment where scitex-dev IS available, so the
+# check fires there.
+try:
+    from scitex_dev._cli._completion import attach_shell_completion
+
+    attach_shell_completion(main_group, prog_name="scitex-msword")
+except ImportError:
+    pass
 
 
 # =========================================================================
