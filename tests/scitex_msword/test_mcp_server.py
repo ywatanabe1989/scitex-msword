@@ -42,17 +42,19 @@ class TestMcpServerScaffoldImport:
         assert isinstance(flag, bool)
 
 
-_MCP_INSTALLED: bool
-try:
-    import mcp  # noqa: F401  # pragma: no cover
+def _is_mcp_installed() -> bool:
+    """Return True iff the optional 'mcp' dependency is importable."""
+    try:
+        import mcp  # noqa: F401  # pragma: no cover
 
-    _MCP_INSTALLED = True
-except ImportError:
-    _MCP_INSTALLED = False
+        return True
+    except ImportError:
+        return False
 
 
 @pytest.mark.skipif(
-    _MCP_INSTALLED, reason="mcp is installed; cannot exercise the no-mcp branch"
+    _is_mcp_installed(),
+    reason="mcp is installed; cannot exercise the no-mcp branch",
 )
 class TestMcpServeRequiresMcp:
     """serve() should raise a helpful ImportError when 'mcp' is missing."""
@@ -69,13 +71,13 @@ class TestMcpServeRequiresMcp:
             serve()
 
 
-@pytest.mark.skipif(not _MCP_INSTALLED, reason="mcp not installed")
 class TestBuildServer:
     """build_server() smoke (only runs when mcp is installed)."""
 
     def test_build_server_returns_non_none_when_mcp_installed(self):
         """When mcp is installed, build_server() should return a server obj."""
         # Arrange
+        pytest.importorskip("mcp")
         from scitex_msword.mcp_server import build_server
 
         # Act
