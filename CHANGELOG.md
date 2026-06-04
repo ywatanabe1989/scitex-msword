@@ -9,20 +9,50 @@ versions follow [Semantic Versioning](https://semver.org/).
 
 ## [0.3.1] - 2026-06-04
 
-Patch fix for the boost-2026 profile's `docDefaults` slot semantics +
-font width forms, caught by proj-grant during the BOOST v40 dogfood.
-v0.3.0 shipped with the wrong slot routing — Japanese body text rendered
-in Gothic instead of Mincho, and bold runs lost their weight contrast
-because both body and bold defaulted to Gothic via `docDefaults
-@w:eastAsia`. This release reroutes body_font to all of eastAsia, ascii,
-and hAnsi (BOOST uses Mincho for embedded Latin runs too — operator id
-685), and emits bold_font only as a per-run override on bold runs.
+Two BOOST-critical fixes caught by proj-grant during the v40 dogfood.
 
-### Fixed
+### Fixed — Track Changes element name (P0, affects every release ≥v0.2.0)
 
-- `save_document` now routes `profile.body_font` to **eastAsia + ascii
-  + hAnsi** in `<w:docDefaults>/<w:rPrDefault>/<w:rPr>/<w:rFonts>`
-  (was only ascii + hAnsi).
+`enable_track_changes` / `save_with_track_changes_on` /
+`is_track_changes_enabled` have been operating on the wrong OOXML
+element since v0.2.0. ECMA-376 §17.15.1.92 names the actual Track
+Changes toggle `<w:trackRevisions/>` (CT_Settings child); sxm has
+been emitting `<w:trackChanges/>`, which is a different element
+entirely (CT_HdrFtr §17.10.1.84, for header/footer revisions).
+Desktop Word silently ignores `<w:trackChanges/>` in this position,
+so every `.docx` ever produced via the helper has had Track Changes
+**silently OFF** in Word, and `is_track_changes_enabled` returned
+False on documents Word itself produced.
+
+- `enable_track_changes` and `save_with_track_changes_on` now emit
+  `<w:trackRevisions/>` at the same ECMA-376-ordered slot. Public
+  API names (`enable_track_changes`, `save_with_track_changes_on`,
+  `is_track_changes_enabled`) are unchanged.
+- `enable_track_changes` also writes the matching
+  `<w:documentProtection w:edit="trackedChanges" w:enforcement="0"/>`
+  that desktop Word emits when Track Changes is toggled on (state-
+  only, not enforced — the user can still disable interactively).
+- `is_track_changes_enabled` now reads `<w:trackRevisions/>`.
+- New internal helper
+  `scitex_msword._settings_order.ensure_document_protection_for_tracked_changes`
+  owns the documentProtection placement; the ordered-placement
+  routine generalised to a per-tag anchor-table dispatch so future
+  CT_Settings elements with schema-prescribed positions can reuse it.
+- Files produced by ≤v0.3.0 need to be re-saved with this version
+  to actually have Track Changes on.
+
+### Fixed — boost-2026 profile slot semantics + width forms
+
+v0.3.0 routed `boost-2026`'s `body_font` (Mincho) only to ascii +
+hAnsi, leaving the docDefaults `<w:eastAsia/>` slot set to `bold_font`
+(Gothic). Every Japanese body paragraph therefore rendered in Gothic
+sans-serif instead of Mincho serif, and bold runs lost their weight
+contrast.
+
+- `save_document` now routes `profile.body_font` to
+  **eastAsia + ascii + hAnsi** in
+  `<w:docDefaults>/<w:rPrDefault>/<w:rPr>/<w:rFonts>` (BOOST uses
+  Mincho for embedded Latin runs too — operator id 685).
 - `save_document` no longer writes `profile.bold_font` into
   docDefaults. The new `_apply_bold_font_to_bold_runs(doc, bold_font)`
   internal helper walks every `<w:r>` under the body and applies
