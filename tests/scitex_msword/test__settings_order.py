@@ -241,6 +241,88 @@ _VENDORED_WORD_GROUNDTRUTH_SETTINGS = (
 )
 
 
+class TestEnableTrackChangesKwargs:
+    """v0.3.1 kwargs on enable_track_changes / save_with_track_changes_on."""
+
+    def test_enable_track_changes_omits_documentProtection_when_echo_disabled(
+        self,
+    ):
+        """``emit_doc_protection_echo=False`` writes trackRevisions but no protection."""
+        # Arrange
+        pytest.importorskip("docx")
+        from docx import Document
+        from docx.oxml.ns import qn
+        from scitex_msword.track_changes import enable_track_changes
+
+        doc = Document()
+        # Act
+        enable_track_changes(doc, True, emit_doc_protection_echo=False)
+        # Assert
+        protection = doc.settings.element.find(qn("w:documentProtection"))
+        assert protection is None
+
+    def test_enable_track_changes_still_writes_trackRevisions_when_echo_disabled(
+        self,
+    ):
+        """Disabling the echo does NOT skip the actual trackRevisions toggle."""
+        # Arrange
+        pytest.importorskip("docx")
+        from docx import Document
+        from docx.oxml.ns import qn
+        from scitex_msword.track_changes import enable_track_changes
+
+        doc = Document()
+        # Act
+        enable_track_changes(doc, True, emit_doc_protection_echo=False)
+        # Assert
+        tr = doc.settings.element.find(qn("w:trackRevisions"))
+        assert tr is not None
+
+    def test_save_with_track_revisions_false_does_not_write_trackRevisions(
+        self, tmp_path
+    ):
+        """``track_revisions=False`` is the clean-export path: no TC element."""
+        # Arrange
+        pytest.importorskip("docx")
+        from docx import Document
+        from docx.oxml.ns import qn
+        from scitex_msword.track_changes import save_with_track_changes_on
+
+        doc = Document()
+        out = tmp_path / "clean.docx"
+        # Act
+        save_with_track_changes_on(doc, out, track_revisions=False)
+        # Assert
+        reloaded = Document(str(out))
+        tr = reloaded.settings.element.find(qn("w:trackRevisions"))
+        assert tr is None
+
+    def test_save_with_track_revisions_false_also_clears_documentProtection(
+        self, tmp_path
+    ):
+        """``track_revisions=False`` also drops the documentProtection echo."""
+        # Arrange
+        pytest.importorskip("docx")
+        from docx import Document
+        from docx.oxml.ns import qn
+        from scitex_msword.track_changes import (
+            enable_track_changes,
+            save_with_track_changes_on,
+        )
+
+        doc = Document()
+        enable_track_changes(doc, True)  # seed both elements
+        out = tmp_path / "stripped.docx"
+        # Act
+        save_with_track_changes_on(doc, out, track_revisions=False)
+        # Assert
+        reloaded = Document(str(out))
+        protection = reloaded.settings.element.find(
+            qn("w:documentProtection")
+        )
+        assert protection is None
+
+
 class TestTrackRevisionsAgainstVendoredWordGroundTruth:
     """Pins the v0.3.1 trackChanges→trackRevisions fix against a
     committed Word-emitted ``word/settings.xml`` fixture (extracted

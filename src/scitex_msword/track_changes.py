@@ -57,101 +57,18 @@ def _ensure_docx_available() -> None:
         ) from _DOCX_IMPORT_ERROR
 
 
-# ---------------------------------------------------------------------------
-# Internal helpers
-# ---------------------------------------------------------------------------
-
-
-def _settings_element(document: "DocxDocument"):
-    """Return the lxml ``<w:settings>`` element for the document."""
-    return document.settings.element
-
-
-def _now_iso() -> str:
-    """UTC ISO-8601 timestamp at second precision (Word-friendly)."""
-    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-
-
-def _make_w_element(tag_local_name: str, **attrs):
-    """Create a ``w:<tag>`` lxml element with namespaced ``w:`` attributes."""
-    el = etree.Element(f"{{{_W_NS}}}{tag_local_name}")
-    for key, value in attrs.items():
-        if value is None:
-            continue
-        el.set(f"{{{_W_NS}}}{key}", str(value))
-    return el
-
-
-def _scan_max_revision_id(document: "DocxDocument") -> int:
-    """Largest ``w:id`` currently used on a ``<w:ins>`` / ``<w:del>``."""
-    body = document.element.body
-    ins_tag = f"{{{_W_NS}}}ins"
-    del_tag = f"{{{_W_NS}}}del"
-    max_id = 0
-    for elem in body.iter():
-        if elem.tag in (ins_tag, del_tag):
-            raw = elem.get(qn("w:id"))
-            try:
-                cid = int(raw) if raw is not None else 0
-            except (TypeError, ValueError):
-                cid = 0
-            if cid > max_id:
-                max_id = cid
-    return max_id
-
-
-def _resolve_runs(
-    paragraph: "Paragraph",
-    runs: Sequence[Any],
-) -> List["Run"]:
-    """Resolve Run objects / run indices into a list of paragraph Runs."""
-    all_runs = list(paragraph.runs)
-    elems = [r._r for r in all_runs]
-    resolved: List[Run] = []
-    for item in runs:
-        if isinstance(item, int):
-            if 0 <= item < len(all_runs):
-                resolved.append(all_runs[item])
-        else:
-            elem = getattr(item, "_r", None) or getattr(item, "element", None)
-            if elem is not None and elem in elems:
-                resolved.append(item)
-    return resolved
-
-
-def _wrap_runs_in_element(
-    paragraph: "Paragraph",
-    target_runs: Sequence["Run"],
-    wrapper_tag: str,
-    attrs: dict,
-):
-    """Wrap each run's ``<w:r>`` in a new ``<w:wrapper_tag>`` parent."""
-    wrappers = []
-    for run in target_runs:
-        r_elem = run._r
-        parent = r_elem.getparent()
-        if parent is None:
-            continue
-        idx = parent.index(r_elem)
-        wrapper = _make_w_element(wrapper_tag, **attrs)
-        parent.insert(idx, wrapper)
-        parent.remove(r_elem)
-        wrapper.append(r_elem)
-        wrappers.append(wrapper)
-    return wrappers
-
-
-def _next_revision_id(paragraph: "Paragraph", explicit: Optional[int]) -> int:
-    """Resolve the ``w:id`` for a new revision, defaulting to max+1."""
-    if explicit is not None:
-        return int(explicit)
-    try:
-        document = paragraph.part.document  # type: ignore[attr-defined]
-    except Exception:
-        document = None
-    if document is None:
-        return 1
-    return _scan_max_revision_id(document) + 1
+# Internal OOXML helpers live in ``_track_changes_helpers`` so this
+# module stays focused on the public API surface. The names are
+# re-imported verbatim so existing call-sites need no changes.
+from ._track_changes_helpers import (
+    _make_w_element,
+    _next_revision_id,
+    _now_iso,
+    _resolve_runs,
+    _scan_max_revision_id,
+    _settings_element,
+    _wrap_runs_in_element,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -162,18 +79,24 @@ def _next_revision_id(paragraph: "Paragraph", explicit: Optional[int]) -> int:
 def enable_track_changes(
     document: "DocxDocument",
     enabled: bool = True,
+    *,
+    emit_doc_protection_echo: bool = True,
 ) -> "DocxDocument":
     """Toggle Word's Track Changes switch on the document.
 
-    Inserts ``<w:trackRevisions/>`` (the actual ECMA-376 §17.15.1.92
-    Track Changes toggle in ``CT_Settings``) when ``enabled=True``
-    and ensures a matching ``<w:documentProtection w:edit="trackedChanges"
-    w:enforcement="0"/>`` (state-only). ``enabled=False`` removes both.
+    ``enabled=True`` writes ``<w:trackRevisions/>`` (ECMA-376
+    §17.15.1.92 — the actual toggle in ``CT_Settings``). When
+    ``emit_doc_protection_echo=True`` (default) also writes the
+    matching ``<w:documentProtection w:edit="trackedChanges"
+    w:enforcement="0"/>`` to mirror desktop Word's emit so the
+    Restrict-Editing pane reads correctly and so some Word
+    2016/2019 enterprise builds preserve TC across reopen.
+    ``enabled=False`` removes both elements.
 
-    v0.3.1 fix: ≤v0.3.0 wrote ``<w:trackChanges/>``, a different element
-    (``CT_HdrFtr`` §17.10.1.84) that desktop Word silently ignores as a
-    ``CT_Settings`` child — Track Changes was never actually toggled.
-    Files written by older sxm need re-saving.
+    v0.3.1 fix: ≤v0.3.0 emitted ``<w:trackChanges/>`` (``CT_HdrFtr``
+    §17.10.1.84) which desktop Word silently ignores in
+    ``CT_Settings`` — TC was never actually toggled. Re-save older
+    sxm-produced files with this version.
     """
     _ensure_docx_available()
     from ._settings_order import (
@@ -194,9 +117,10 @@ def enable_track_changes(
         else:
             for dup in existing[1:]:
                 settings_el.remove(dup)
-        ensure_document_protection_for_tracked_changes(
-            settings_el, _make_w_element
-        )
+        if emit_doc_protection_echo:
+            ensure_document_protection_for_tracked_changes(
+                settings_el, _make_w_element
+            )
     else:
         for el in existing:
             settings_el.remove(el)
@@ -209,15 +133,25 @@ def enable_track_changes(
 def save_with_track_changes_on(
     document: "DocxDocument",
     path,
+    *,
+    track_revisions: bool = True,
+    emit_doc_protection_echo: bool = True,
 ) -> "DocxDocument":
-    """Enable Track Changes (correct element, ECMA-376 ordered) and save.
+    """Save a Document, default-correct for Word Track Changes.
 
-    Canonical helper for the BOOST workflow. Returns the Document for
-    chaining. See :func:`enable_track_changes` for the v0.3.1
-    trackChanges→trackRevisions fix note.
+    Default kwargs write the Word-matching recipe (``trackRevisions``
+    + ``documentProtection`` ``enforcement=0``) — desktop Word
+    honours this natively. Pass ``track_revisions=False`` for the
+    clean-export step that strips TC; pair with
+    ``emit_doc_protection_echo=False`` if you want ``trackRevisions``
+    without the protection-pane echo. See :func:`enable_track_changes`.
     """
     _ensure_docx_available()
-    enable_track_changes(document, enabled=True)
+    enable_track_changes(
+        document,
+        enabled=track_revisions,
+        emit_doc_protection_echo=emit_doc_protection_echo,
+    )
     document.save(str(path))
     return document
 
