@@ -105,6 +105,15 @@ def enable_track_changes(
     )
 
     settings_el = _settings_element(document)
+    # Strip any stale ``<w:trackChanges/>`` left behind by ≤v0.3.0
+    # (which emitted the wrong element name — see the docstring). Both
+    # the enabled-True and enabled-False branches drop it: the writer
+    # is now idempotent, and a real-world input that ever went through
+    # an older sxm version comes out byte-clean (proj-grant v40→v42
+    # dogfood).
+    for stale in settings_el.findall(qn("w:trackChanges")):
+        settings_el.remove(stale)
+
     existing = settings_el.findall(qn("w:trackRevisions"))
 
     if enabled:

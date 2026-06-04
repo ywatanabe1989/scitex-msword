@@ -241,6 +241,124 @@ _VENDORED_WORD_GROUNDTRUTH_SETTINGS = (
 )
 
 
+def _seed_stale_trackChanges(doc):
+    """Inject a stale ``<w:trackChanges/>`` at the schema slot.
+
+    Mimics a real-world input produced by sxm ≤v0.3.0 (the wrong-name
+    bug) that a downstream caller now re-saves through v0.3.1.
+    """
+    from lxml import etree
+    from scitex_msword._settings_order import insert_in_settings_order
+
+    stale = etree.Element(
+        f"{{http://schemas.openxmlformats.org/wordprocessingml/2006/main}}"
+        f"trackChanges"
+    )
+    # Place it at the same slot v≤0.3.0 used (the ordering helper
+    # treats trackRevisions and trackChanges interchangeably here
+    # since both are local-name matches against the predecessor set,
+    # but we call with "trackRevisions" so the slot decision is
+    # identical to v0.3.0's mistaken insertion site).
+    insert_in_settings_order(doc.settings.element, stale, "trackRevisions")
+
+
+class TestEnableTrackChangesStripsStaleTrackChanges:
+    """v0.3.1: writer is idempotent + cleans up ≤v0.3.0 stale state."""
+
+    def test_save_strips_stale_trackChanges_from_real_world_input(
+        self, tmp_path
+    ):
+        """Doc with stale ``<w:trackChanges/>`` from old sxm → output has none."""
+        # Arrange
+        pytest.importorskip("docx")
+        from docx import Document
+        from docx.oxml.ns import qn
+        from scitex_msword.track_changes import save_with_track_changes_on
+
+        doc = Document()
+        _seed_stale_trackChanges(doc)
+        out = tmp_path / "v42.docx"
+        # Act
+        save_with_track_changes_on(doc, out)
+        # Assert
+        reloaded = Document(str(out))
+        stale = reloaded.settings.element.find(qn("w:trackChanges"))
+        assert stale is None
+
+    def test_save_emits_trackRevisions_even_when_stale_trackChanges_was_present(
+        self, tmp_path
+    ):
+        """Cleanup doesn't suppress the correct emission."""
+        # Arrange
+        pytest.importorskip("docx")
+        from docx import Document
+        from docx.oxml.ns import qn
+        from scitex_msword.track_changes import save_with_track_changes_on
+
+        doc = Document()
+        _seed_stale_trackChanges(doc)
+        out = tmp_path / "v42.docx"
+        # Act
+        save_with_track_changes_on(doc, out)
+        # Assert
+        reloaded = Document(str(out))
+        tr = reloaded.settings.element.find(qn("w:trackRevisions"))
+        assert tr is not None
+
+    def test_save_emits_documentProtection_even_when_stale_trackChanges_was_present(
+        self, tmp_path
+    ):
+        """Cleanup doesn't suppress the documentProtection echo either."""
+        # Arrange
+        pytest.importorskip("docx")
+        from docx import Document
+        from docx.oxml.ns import qn
+        from scitex_msword.track_changes import save_with_track_changes_on
+
+        doc = Document()
+        _seed_stale_trackChanges(doc)
+        out = tmp_path / "v42.docx"
+        # Act
+        save_with_track_changes_on(doc, out)
+        # Assert
+        protection = (
+            Document(str(out))
+            .settings.element.find(qn("w:documentProtection"))
+        )
+        observed = (
+            None
+            if protection is None
+            else (
+                protection.get(qn("w:edit")),
+                protection.get(qn("w:enforcement")),
+            )
+        )
+        assert observed == ("trackedChanges", "0")
+
+    def test_save_with_track_changes_on_is_idempotent_no_duplicate_elements(
+        self, tmp_path
+    ):
+        """Saving twice yields exactly one trackRevisions + one documentProtection."""
+        # Arrange
+        pytest.importorskip("docx")
+        from docx import Document
+        from docx.oxml.ns import qn
+        from scitex_msword.track_changes import save_with_track_changes_on
+
+        doc = Document()
+        out = tmp_path / "twice.docx"
+        save_with_track_changes_on(doc, out)
+        # Act
+        save_with_track_changes_on(Document(str(out)), out)
+        # Assert
+        reloaded = Document(str(out))
+        counts = (
+            len(reloaded.settings.element.findall(qn("w:trackRevisions"))),
+            len(reloaded.settings.element.findall(qn("w:documentProtection"))),
+        )
+        assert counts == (1, 1)
+
+
 class TestEnableTrackChangesKwargs:
     """v0.3.1 kwargs on enable_track_changes / save_with_track_changes_on."""
 
