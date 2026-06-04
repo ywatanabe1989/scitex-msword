@@ -30,4 +30,4 @@ signatures.
 - [01_installation.md](01_installation.md) — install + import sanity check
 - [02_quick-start.md](02_quick-start.md) — 30-second tour
 - [03_python-api.md](03_python-api.md) — Python API surface
-- [04_insert-table.md](04_insert-table.md) — `insert_table_after_paragraph` (Python/CLI/MCP) — pure-lxml Word table insertion at a paragraph anchor, with optional Track-Changes row markers
+- [04_cli-reference.md](04_cli-reference.md) — `scitex-msword` Click CLI reference, including the `insert-table` subcommand (pure-lxml Word table insertion at a paragraph anchor, optional Track-Changes row markers), `list-python-apis`, `mcp start` / `mcp list-tools`

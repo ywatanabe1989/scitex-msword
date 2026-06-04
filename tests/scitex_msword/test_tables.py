@@ -356,9 +356,11 @@ class TestInputValidation:
         from scitex_msword import insert_table_after_paragraph
 
         doc = _doc_with_paragraphs(["only"])
+        ctx = pytest.raises(IndexError)
 
-        # Act / Assert
-        with pytest.raises(IndexError):
+        # Act
+        # Assert
+        with ctx:
             insert_table_after_paragraph(doc, 99, [("a", "b")])
 
     def test_empty_rows_raises_value_error(self):
@@ -367,9 +369,11 @@ class TestInputValidation:
         from scitex_msword import insert_table_after_paragraph
 
         doc = _doc_with_paragraphs(["anchor"])
+        ctx = pytest.raises(ValueError)
 
-        # Act / Assert
-        with pytest.raises(ValueError):
+        # Act
+        # Assert
+        with ctx:
             insert_table_after_paragraph(doc, 0, [])
 
     def test_uneven_columns_raises_value_error(self):
@@ -378,12 +382,12 @@ class TestInputValidation:
         from scitex_msword import insert_table_after_paragraph
 
         doc = _doc_with_paragraphs(["anchor"])
+        ctx = pytest.raises(ValueError)
 
-        # Act / Assert
-        with pytest.raises(ValueError):
-            insert_table_after_paragraph(
-                doc, 0, [("a", "b"), ("c",)]
-            )
+        # Act
+        # Assert
+        with ctx:
+            insert_table_after_paragraph(doc, 0, [("a", "b"), ("c",)])
 
     def test_col_widths_mismatch_raises_value_error(self):
         """col_widths_dxa length mismatch with row width should raise ValueError."""
@@ -391,9 +395,11 @@ class TestInputValidation:
         from scitex_msword import insert_table_after_paragraph
 
         doc = _doc_with_paragraphs(["anchor"])
+        ctx = pytest.raises(ValueError)
 
-        # Act / Assert
-        with pytest.raises(ValueError):
+        # Act
+        # Assert
+        with ctx:
             insert_table_after_paragraph(
                 doc, 0, [("a", "b")], col_widths_dxa=(3000,)
             )

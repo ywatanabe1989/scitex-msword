@@ -1,16 +1,34 @@
 ---
 description: |
-  [TOPIC] insert_table_after_paragraph — insert a Word table at a paragraph anchor.
-  [DETAILS] Pure-lxml <w:tbl> insertion via Paragraph._p.addnext(). Supports
-  per-column dxa widths, header-row styling (default MS ゴシック bold) vs.
-  body-row styling (default MS 明朝), configurable font size, and
-  automatic row-level <w:trPr><w:ins/></w:trPr> wrapping when the document
-  already has Track Changes enabled. Lifted from proj-grant build_v43.py
-  (BOOST 2026 dogfood) as the canonical sxm public API.
-tags: [scitex-msword-tables, scitex-msword-track-changes]
+  [TOPIC] scitex-msword CLI reference.
+  [DETAILS] Click-based command-line interface. Top-level: -V/--version,
+  --help-recursive, --json. Subcommands: insert-table (Word table insertion
+  at a paragraph anchor, with optional Track-Changes row markers),
+  list-python-apis (enumerate public Python API), mcp start / mcp list-tools.
+  Mirrors the Python public API verbatim — see also 03_python-api.md.
+tags: [scitex-msword-cli-reference, scitex-msword-insert-table, scitex-msword-track-changes]
 ---
 
-# Insert a Word table after a paragraph
+# CLI reference
+
+## Top-level
+
+```sh
+scitex-msword --help          # short help
+scitex-msword --help-recursive  # full help tree (root + every subcommand)
+scitex-msword --version         # vX.Y.Z
+scitex-msword --json …          # machine-readable output (per-subcommand)
+```
+
+Configuration precedence (highest -> lowest):
+1. Explicit CLI flags
+2. `./pyproject.toml [tool.scitex_msword]`
+3. `./config.yaml` (project-local)
+4. `$SCITEX_MSWORD_CONFIG` (path to a YAML file)
+5. `~/.scitex/msword/config.yaml` (user-wide)
+6. Built-in defaults
+
+## `insert-table` — insert a Word table after a paragraph
 
 ```python
 from docx import Document
@@ -88,7 +106,7 @@ insert_table_after_paragraph(doc, 17, rows)  # autoTC -> rows marked as ins
 save_with_track_changes_on(doc, "draft_with_table.docx")
 ```
 
-## CLI
+## `insert-table` CLI invocation
 
 ```sh
 scitex-msword insert-table \
@@ -112,16 +130,28 @@ scitex-msword insert-table \
 `--track-changes` / `--no-track-changes` force the wrapping mode; omit
 both to let the document's existing Track Changes state decide.
 
-## MCP
-
-The MCP server exposes the same surface as
-`insert_table_after_paragraph_tool` — same kwargs, same default
-column widths, same return-out-path convention as the other sxm
-`*_tool` wrappers. Run it via:
+## `list-python-apis`
 
 ```sh
-python -m scitex_msword.mcp_server
+scitex-msword list-python-apis        # bare list
+scitex-msword list-python-apis -v     # +signatures
+scitex-msword list-python-apis -vv    # +docstring first lines
+scitex-msword list-python-apis --json # JSON dump
 ```
+
+## `mcp` group
+
+```sh
+scitex-msword mcp start              # run the MCP server over stdio
+scitex-msword mcp start --dry-run    # plan only
+scitex-msword mcp list-tools         # enumerate registered MCP tools
+scitex-msword mcp list-tools --json
+```
+
+The MCP server exposes the same surface as the Python API. Each tool
+takes `path`, `out`, plus the per-verb kwargs and returns the output
+path — matches every other sxm `*_tool` convention. Also runnable
+directly via `python -m scitex_msword.mcp_server`.
 
 ## OOXML details
 
