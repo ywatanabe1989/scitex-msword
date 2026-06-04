@@ -365,28 +365,29 @@ class TestBoost2026Profile:
         # Assert
         assert profile.name == "boost-2026"
 
-    def test_boost_2026_uses_ms_mincho_body_font(self):
-        """boost-2026 declares MS 明朝 (MS Mincho) as the regular body font.
+    def test_boost_2026_uses_full_width_ms_mincho_body_font(self):
+        """boost-2026 declares ＭＳ 明朝 (full-width MS Mincho) as the body font.
 
-        Per the proj-grant BOOST v37 spec: Japanese templates pair Mincho
-        body with Gothic bold so the weight contrast lives in the typeface
-        rather than in a synthetic-bold transform.
+        The full-width ``ＭＳ`` prefix is what Word's Japanese font
+        picker resolves; the half-width ``MS`` form that v0.3.0 shipped
+        did not match a known font in Word's font picker (proj-grant
+        BOOST v40 dogfood).
         """
         # Arrange
         from scitex_msword import get_profile
         # Act
         profile = get_profile("boost-2026")
         # Assert
-        assert profile.body_font == "MS 明朝"
+        assert profile.body_font == "ＭＳ 明朝"
 
-    def test_boost_2026_uses_ms_gothic_bold_font(self):
-        """boost-2026 declares MS ゴシック (MS Gothic) as the bold/heading font."""
+    def test_boost_2026_uses_full_width_ms_gothic_bold_font(self):
+        """boost-2026 declares ＭＳ ゴシック (full-width MS Gothic) as the bold font."""
         # Arrange
         from scitex_msword import get_profile
         # Act
         profile = get_profile("boost-2026")
         # Assert
-        assert profile.bold_font == "MS ゴシック"
+        assert profile.bold_font == "ＭＳ ゴシック"
 
     def test_boost_2026_uses_10_5pt_body_font(self):
         """boost-2026 should declare 10.5pt body font size."""
