@@ -7,6 +7,23 @@ versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### v0.3.0 — sxm.hooks framework (in progress)
+
+- feat(hooks): introduce `sxm.hooks` package skeleton.
+  `Hook` / `Phase` / `Issue` / `HookContext` dataclasses, `register()`
+  decorator, `run_phase()` dispatcher, three-tier discovery (engine
+  builtins + `scitex_msword.hooks` entry-points + walk-up project-local
+  `<root>/.scitex/msword/hooks/*.py`). Override precedence:
+  project-local > entry-points > builtins. Fail-loud dispatch: the
+  first exception raised by any hook aborts the rest of the phase and
+  is propagated to the caller. `PRE_SAVE` hooks must be idempotent;
+  `POST_SAVE` hooks are read-only and signal violations by raising
+  `Issue` (also an `Exception`). No builtin hooks ship in H1 —
+  `SXM-TC001` (track-changes audit) and `SXM-JP001` (Japanese
+  typography) land in H4 / H5, and `save_docx` integration is the H3
+  follow-up. Per proj-grant `design_sxm_hooks_v01.md` + the
+  proj-scitex-dev design-lock thread (msg `0b582ee9994f4ea7b6efee58f6d9959e`).
+
 ## [0.2.0] - 2026-06-04
 
 ### Added
