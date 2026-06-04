@@ -1,0 +1,18 @@
+scitex\_msword.track\_changes
+=============================
+
+.. automodule:: scitex_msword.track_changes
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      accept_all_tracked_changes
+      enable_track_changes
+      extract_tracked_changes
+      is_track_changes_enabled
+      reject_all_tracked_changes
+      wrap_as_tracked_deletion
+      wrap_as_tracked_insertion
+   

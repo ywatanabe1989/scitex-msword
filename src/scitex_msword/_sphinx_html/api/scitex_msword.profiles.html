@@ -23,7 +23,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="scitex_msword.reader" href="scitex_msword.reader.html" />
-    <link rel="prev" title="scitex_msword" href="scitex_msword.html" /> 
+    <link rel="prev" title="scitex_msword.mcp_server" href="scitex_msword.mcp_server.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -54,56 +54,14 @@
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#strategy">Strategy:</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#typical-usage">Typical usage:</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#available-profiles">Available profiles:</a></li>
-<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.load_docx"><code class="docutils literal notranslate"><span class="pre">load_docx()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.save_docx"><code class="docutils literal notranslate"><span class="pre">save_docx()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.convert_docx_to_tex"><code class="docutils literal notranslate"><span class="pre">convert_docx_to_tex()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.list_profiles"><code class="docutils literal notranslate"><span class="pre">list_profiles()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.get_profile"><code class="docutils literal notranslate"><span class="pre">get_profile()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.register_profile"><code class="docutils literal notranslate"><span class="pre">register_profile()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.BaseWordProfile"><code class="docutils literal notranslate"><span class="pre">BaseWordProfile</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.WordReader"><code class="docutils literal notranslate"><span class="pre">WordReader</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.WordWriter"><code class="docutils literal notranslate"><span class="pre">WordWriter</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.link_captions_to_images"><code class="docutils literal notranslate"><span class="pre">link_captions_to_images()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.link_captions_to_images_by_proximity"><code class="docutils literal notranslate"><span class="pre">link_captions_to_images_by_proximity()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.normalize_section_headings"><code class="docutils literal notranslate"><span class="pre">normalize_section_headings()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.validate_document"><code class="docutils literal notranslate"><span class="pre">validate_document()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.create_post_import_hook"><code class="docutils literal notranslate"><span class="pre">create_post_import_hook()</span></code></a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">scitex_msword.profiles</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#scitex_msword.profiles.BaseWordProfile"><code class="docutils literal notranslate"><span class="pre">BaseWordProfile</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#scitex_msword.profiles.BaseWordProfile.name"><code class="docutils literal notranslate"><span class="pre">BaseWordProfile.name</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#scitex_msword.profiles.BaseWordProfile.description"><code class="docutils literal notranslate"><span class="pre">BaseWordProfile.description</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#scitex_msword.profiles.BaseWordProfile.heading_styles"><code class="docutils literal notranslate"><span class="pre">BaseWordProfile.heading_styles</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#scitex_msword.profiles.BaseWordProfile.caption_style"><code class="docutils literal notranslate"><span class="pre">BaseWordProfile.caption_style</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#scitex_msword.profiles.BaseWordProfile.normal_style"><code class="docutils literal notranslate"><span class="pre">BaseWordProfile.normal_style</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#scitex_msword.profiles.BaseWordProfile.reference_section_titles"><code class="docutils literal notranslate"><span class="pre">BaseWordProfile.reference_section_titles</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#scitex_msword.profiles.BaseWordProfile.figure_caption_prefixes"><code class="docutils literal notranslate"><span class="pre">BaseWordProfile.figure_caption_prefixes</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#scitex_msword.profiles.BaseWordProfile.table_caption_prefixes"><code class="docutils literal notranslate"><span class="pre">BaseWordProfile.table_caption_prefixes</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#scitex_msword.profiles.BaseWordProfile.list_styles"><code class="docutils literal notranslate"><span class="pre">BaseWordProfile.list_styles</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#scitex_msword.profiles.BaseWordProfile.equation_style"><code class="docutils literal notranslate"><span class="pre">BaseWordProfile.equation_style</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#scitex_msword.profiles.BaseWordProfile.columns"><code class="docutils literal notranslate"><span class="pre">BaseWordProfile.columns</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#scitex_msword.profiles.BaseWordProfile.double_anonymous"><code class="docutils literal notranslate"><span class="pre">BaseWordProfile.double_anonymous</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id0"><code class="docutils literal notranslate"><span class="pre">BaseWordProfile.name</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id1"><code class="docutils literal notranslate"><span class="pre">BaseWordProfile.description</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id2"><code class="docutils literal notranslate"><span class="pre">BaseWordProfile.heading_styles</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id3"><code class="docutils literal notranslate"><span class="pre">BaseWordProfile.caption_style</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id4"><code class="docutils literal notranslate"><span class="pre">BaseWordProfile.normal_style</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id5"><code class="docutils literal notranslate"><span class="pre">BaseWordProfile.reference_section_titles</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id6"><code class="docutils literal notranslate"><span class="pre">BaseWordProfile.figure_caption_prefixes</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id7"><code class="docutils literal notranslate"><span class="pre">BaseWordProfile.table_caption_prefixes</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id8"><code class="docutils literal notranslate"><span class="pre">BaseWordProfile.list_styles</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id9"><code class="docutils literal notranslate"><span class="pre">BaseWordProfile.equation_style</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id10"><code class="docutils literal notranslate"><span class="pre">BaseWordProfile.columns</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id11"><code class="docutils literal notranslate"><span class="pre">BaseWordProfile.double_anonymous</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#scitex_msword.profiles.BaseWordProfile.post_import_hooks"><code class="docutils literal notranslate"><span class="pre">BaseWordProfile.post_import_hooks</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#scitex_msword.profiles.BaseWordProfile.pre_export_hooks"><code class="docutils literal notranslate"><span class="pre">BaseWordProfile.pre_export_hooks</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#scitex_msword.profiles.list_profiles"><code class="docutils literal notranslate"><span class="pre">list_profiles()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#scitex_msword.profiles.get_profile"><code class="docutils literal notranslate"><span class="pre">get_profile()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#scitex_msword.profiles.register_profile"><code class="docutils literal notranslate"><span class="pre">register_profile()</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="scitex_msword.bold.html">scitex_msword.bold</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scitex_msword.comments.html">scitex_msword.comments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scitex_msword.diff.html">scitex_msword.diff</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scitex_msword.highlights.html">scitex_msword.highlights</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scitex_msword.mcp_server.html">scitex_msword.mcp_server</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">scitex_msword.profiles</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.reader.html">scitex_msword.reader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scitex_msword.track_changes.html">scitex_msword.track_changes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.utils.html">scitex_msword.utils</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.writer.html">scitex_msword.writer</a></li>
 </ul>
@@ -151,13 +109,13 @@
 <p class="rubric">Functions</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#scitex_msword.profiles.get_profile" title="scitex_msword.profiles.get_profile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_profile</span></code></a>(name)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_profile</span></code>(name)</p></td>
 <td><p>Get a Word profile by name.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#scitex_msword.profiles.list_profiles" title="scitex_msword.profiles.list_profiles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_profiles</span></code></a>()</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_profiles</span></code>()</p></td>
 <td><p>List available MS Word profiles.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#scitex_msword.profiles.register_profile" title="scitex_msword.profiles.register_profile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_profile</span></code></a>(profile)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_profile</span></code>(profile)</p></td>
 <td><p>Register a custom Word profile.</p></td>
 </tr>
 </tbody>
@@ -165,301 +123,18 @@
 <p class="rubric">Classes</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#scitex_msword.profiles.BaseWordProfile" title="scitex_msword.profiles.BaseWordProfile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseWordProfile</span></code></a>(name, description[, ...])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseWordProfile</span></code>(name, description[, ...])</p></td>
 <td><p>Base configuration for mapping between DOCX and SciTeX writer documents.</p></td>
 </tr>
 </tbody>
 </table>
-<dl class="py class">
-<dt class="sig sig-object py" id="scitex_msword.profiles.BaseWordProfile">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">scitex_msword.profiles.</span></span><span class="sig-name descname"><span class="pre">BaseWordProfile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">heading_styles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">caption_style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Caption'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normal_style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Normal'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_section_titles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figure_caption_prefixes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_caption_prefixes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">list_styles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">equation_style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">double_anonymous</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">post_import_hooks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pre_export_hooks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scitex_msword/profiles.html#BaseWordProfile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scitex_msword.profiles.BaseWordProfile" title="Link to this definition"></a></dt>
-<dd><p>Base configuration for mapping between DOCX and SciTeX writer documents.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="scitex_msword.profiles.BaseWordProfile.name">
-<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#scitex_msword.profiles.BaseWordProfile.name" title="Link to this definition"></a></dt>
-<dd><p>Profile identifier (e.g., “mdpi-ijerph”).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="scitex_msword.profiles.BaseWordProfile.description">
-<span class="sig-name descname"><span class="pre">description</span></span><a class="headerlink" href="#scitex_msword.profiles.BaseWordProfile.description" title="Link to this definition"></a></dt>
-<dd><p>Human-readable description.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="scitex_msword.profiles.BaseWordProfile.heading_styles">
-<span class="sig-name descname"><span class="pre">heading_styles</span></span><a class="headerlink" href="#scitex_msword.profiles.BaseWordProfile.heading_styles" title="Link to this definition"></a></dt>
-<dd><p>Mapping from section depth (1, 2, 3…) to Word style names
-(e.g., {1: “Heading 1”, 2: “Heading 2”}).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a>]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="scitex_msword.profiles.BaseWordProfile.caption_style">
-<span class="sig-name descname"><span class="pre">caption_style</span></span><a class="headerlink" href="#scitex_msword.profiles.BaseWordProfile.caption_style" title="Link to this definition"></a></dt>
-<dd><p>Word style name used for figure/table captions.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="scitex_msword.profiles.BaseWordProfile.normal_style">
-<span class="sig-name descname"><span class="pre">normal_style</span></span><a class="headerlink" href="#scitex_msword.profiles.BaseWordProfile.normal_style" title="Link to this definition"></a></dt>
-<dd><p>Default paragraph style.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="scitex_msword.profiles.BaseWordProfile.reference_section_titles">
-<span class="sig-name descname"><span class="pre">reference_section_titles</span></span><a class="headerlink" href="#scitex_msword.profiles.BaseWordProfile.reference_section_titles" title="Link to this definition"></a></dt>
-<dd><p>Titles that indicate the start of the reference section.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a>]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="scitex_msword.profiles.BaseWordProfile.figure_caption_prefixes">
-<span class="sig-name descname"><span class="pre">figure_caption_prefixes</span></span><a class="headerlink" href="#scitex_msword.profiles.BaseWordProfile.figure_caption_prefixes" title="Link to this definition"></a></dt>
-<dd><p>Prefixes that identify figure captions (e.g., [“Figure”, “Fig.”]).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a>]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="scitex_msword.profiles.BaseWordProfile.table_caption_prefixes">
-<span class="sig-name descname"><span class="pre">table_caption_prefixes</span></span><a class="headerlink" href="#scitex_msword.profiles.BaseWordProfile.table_caption_prefixes" title="Link to this definition"></a></dt>
-<dd><p>Prefixes that identify table captions (e.g., [“Table”]).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a>]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="scitex_msword.profiles.BaseWordProfile.list_styles">
-<span class="sig-name descname"><span class="pre">list_styles</span></span><a class="headerlink" href="#scitex_msword.profiles.BaseWordProfile.list_styles" title="Link to this definition"></a></dt>
-<dd><p>Mapping for list styles (bullet, numbered).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a>]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="scitex_msword.profiles.BaseWordProfile.equation_style">
-<span class="sig-name descname"><span class="pre">equation_style</span></span><a class="headerlink" href="#scitex_msword.profiles.BaseWordProfile.equation_style" title="Link to this definition"></a></dt>
-<dd><p>Style name for equations, if any.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a> | None</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="scitex_msword.profiles.BaseWordProfile.columns">
-<span class="sig-name descname"><span class="pre">columns</span></span><a class="headerlink" href="#scitex_msword.profiles.BaseWordProfile.columns" title="Link to this definition"></a></dt>
-<dd><p>Number of columns in the layout (1 or 2).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="scitex_msword.profiles.BaseWordProfile.double_anonymous">
-<span class="sig-name descname"><span class="pre">double_anonymous</span></span><a class="headerlink" href="#scitex_msword.profiles.BaseWordProfile.double_anonymous" title="Link to this definition"></a></dt>
-<dd><p>Whether this profile requires double-anonymous formatting.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)">bool</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="id0">
-<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="id1">
-<span class="sig-name descname"><span class="pre">description</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#id1" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="id2">
-<span class="sig-name descname"><span class="pre">heading_styles</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#id2" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="id3">
-<span class="sig-name descname"><span class="pre">caption_style</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Caption'</span></span><a class="headerlink" href="#id3" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="id4">
-<span class="sig-name descname"><span class="pre">normal_style</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Normal'</span></span><a class="headerlink" href="#id4" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="id5">
-<span class="sig-name descname"><span class="pre">reference_section_titles</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#id5" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="id6">
-<span class="sig-name descname"><span class="pre">figure_caption_prefixes</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#id6" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="id7">
-<span class="sig-name descname"><span class="pre">table_caption_prefixes</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#id7" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="id8">
-<span class="sig-name descname"><span class="pre">list_styles</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#id8" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="id9">
-<span class="sig-name descname"><span class="pre">equation_style</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#id9" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="id10">
-<span class="sig-name descname"><span class="pre">columns</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></span><a class="headerlink" href="#id10" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="id11">
-<span class="sig-name descname"><span class="pre">double_anonymous</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#id11" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="scitex_msword.profiles.BaseWordProfile.post_import_hooks">
-<span class="sig-name descname"><span class="pre">post_import_hooks</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.14)"><span class="pre">Callable</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#scitex_msword.profiles.BaseWordProfile.post_import_hooks" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="scitex_msword.profiles.BaseWordProfile.pre_export_hooks">
-<span class="sig-name descname"><span class="pre">pre_export_hooks</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.14)"><span class="pre">Callable</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#scitex_msword.profiles.BaseWordProfile.pre_export_hooks" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="scitex_msword.profiles.list_profiles">
-<span class="sig-prename descclassname"><span class="pre">scitex_msword.profiles.</span></span><span class="sig-name descname"><span class="pre">list_profiles</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scitex_msword/profiles.html#list_profiles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scitex_msword.profiles.list_profiles" title="Link to this definition"></a></dt>
-<dd><p>List available MS Word profiles.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>List of profile names (e.g., [“generic”, “mdpi-ijerph”, …]).</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a>]</p>
-</dd>
-</dl>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">scitex.msword</span><span class="w"> </span><span class="kn">import</span> <span class="n">list_profiles</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">profiles</span> <span class="o">=</span> <span class="n">list_profiles</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="s2">&quot;generic&quot;</span> <span class="ow">in</span> <span class="n">profiles</span>
-<span class="go">True</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="scitex_msword.profiles.get_profile">
-<span class="sig-prename descclassname"><span class="pre">scitex_msword.profiles.</span></span><span class="sig-name descname"><span class="pre">get_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scitex_msword/profiles.html#get_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scitex_msword.profiles.get_profile" title="Link to this definition"></a></dt>
-<dd><p>Get a Word profile by name.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> | </em><em>None</em>) – Profile name. If None, “generic” is used.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The requested profile.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="#scitex_msword.profiles.BaseWordProfile" title="scitex_msword.profiles.BaseWordProfile">BaseWordProfile</a></p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#KeyError" title="(in Python v3.14)"><strong>KeyError</strong></a> – If the profile name is unknown.</p>
-</dd>
-</dl>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">scitex.msword</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_profile</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">profile</span> <span class="o">=</span> <span class="n">get_profile</span><span class="p">(</span><span class="s2">&quot;mdpi-ijerph&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">profile</span><span class="o">.</span><span class="n">columns</span>
-<span class="go">1</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="scitex_msword.profiles.register_profile">
-<span class="sig-prename descclassname"><span class="pre">scitex_msword.profiles.</span></span><span class="sig-name descname"><span class="pre">register_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scitex_msword/profiles.html#register_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scitex_msword.profiles.register_profile" title="Link to this definition"></a></dt>
-<dd><p>Register a custom Word profile.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>profile</strong> (<a class="reference internal" href="#scitex_msword.profiles.BaseWordProfile" title="scitex_msword.profiles.BaseWordProfile"><em>BaseWordProfile</em></a>) – The profile to register.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
-</dd>
-</dl>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">scitex.msword</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseWordProfile</span><span class="p">,</span> <span class="n">register_profile</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">custom</span> <span class="o">=</span> <span class="n">BaseWordProfile</span><span class="p">(</span>
-<span class="gp">... </span>    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;my-journal&quot;</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;My custom journal template&quot;</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="n">heading_styles</span><span class="o">=</span><span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="s2">&quot;Title&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="s2">&quot;Subtitle&quot;</span><span class="p">},</span>
-<span class="gp">... </span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">register_profile</span><span class="p">(</span><span class="n">custom</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="s2">&quot;my-journal&quot;</span> <span class="ow">in</span> <span class="n">list_profiles</span><span class="p">()</span>
-<span class="go">True</span>
-</pre></div>
-</div>
-</dd></dl>
-
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="scitex_msword.html" class="btn btn-neutral float-left" title="scitex_msword" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="scitex_msword.mcp_server.html" class="btn btn-neutral float-left" title="scitex_msword.mcp_server" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="scitex_msword.reader.html" class="btn btn-neutral float-right" title="scitex_msword.reader" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

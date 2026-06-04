@@ -53,30 +53,16 @@
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#strategy">Strategy:</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#typical-usage">Typical usage:</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#available-profiles">Available profiles:</a></li>
-<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.load_docx"><code class="docutils literal notranslate"><span class="pre">load_docx()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.save_docx"><code class="docutils literal notranslate"><span class="pre">save_docx()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.convert_docx_to_tex"><code class="docutils literal notranslate"><span class="pre">convert_docx_to_tex()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.list_profiles"><code class="docutils literal notranslate"><span class="pre">list_profiles()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.get_profile"><code class="docutils literal notranslate"><span class="pre">get_profile()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.register_profile"><code class="docutils literal notranslate"><span class="pre">register_profile()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.BaseWordProfile"><code class="docutils literal notranslate"><span class="pre">BaseWordProfile</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.WordReader"><code class="docutils literal notranslate"><span class="pre">WordReader</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.WordWriter"><code class="docutils literal notranslate"><span class="pre">WordWriter</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.link_captions_to_images"><code class="docutils literal notranslate"><span class="pre">link_captions_to_images()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.link_captions_to_images_by_proximity"><code class="docutils literal notranslate"><span class="pre">link_captions_to_images_by_proximity()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.normalize_section_headings"><code class="docutils literal notranslate"><span class="pre">normalize_section_headings()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.validate_document"><code class="docutils literal notranslate"><span class="pre">validate_document()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#scitex_msword.create_post_import_hook"><code class="docutils literal notranslate"><span class="pre">create_post_import_hook()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="scitex_msword.bold.html">scitex_msword.bold</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scitex_msword.comments.html">scitex_msword.comments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scitex_msword.diff.html">scitex_msword.diff</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scitex_msword.highlights.html">scitex_msword.highlights</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scitex_msword.mcp_server.html">scitex_msword.mcp_server</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.profiles.html">scitex_msword.profiles</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.reader.html">scitex_msword.reader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scitex_msword.track_changes.html">scitex_msword.track_changes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.utils.html">scitex_msword.utils</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">scitex_msword.writer</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#scitex_msword.writer.WordWriter"><code class="docutils literal notranslate"><span class="pre">WordWriter</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#scitex_msword.writer.WordWriter.write"><code class="docutils literal notranslate"><span class="pre">WordWriter.write()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">scitex_msword.writer</a></li>
 </ul>
 </li>
 </ul>
@@ -114,41 +100,11 @@ applying journal-specific styles and formatting.</p>
 <p class="rubric">Classes</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#scitex_msword.writer.WordWriter" title="scitex_msword.writer.WordWriter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">WordWriter</span></code></a>(profile[, template_path])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">WordWriter</span></code>(profile[, template_path])</p></td>
 <td><p>Export a SciTeX writer document to a DOCX file.</p></td>
 </tr>
 </tbody>
 </table>
-<dl class="py class">
-<dt class="sig sig-object py" id="scitex_msword.writer.WordWriter">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">scitex_msword.writer.</span></span><span class="sig-name descname"><span class="pre">WordWriter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">template_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scitex_msword/writer.html#WordWriter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scitex_msword.writer.WordWriter" title="Link to this definition"></a></dt>
-<dd><p>Export a SciTeX writer document to a DOCX file.</p>
-<p>This writer handles:
-- Section headings with proper styles
-- Paragraphs with formatting
-- Figure and table captions
-- References section
-- Image embedding
-- Journal-specific template application</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="scitex_msword.writer.WordWriter.write">
-<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">writer_doc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scitex_msword/writer.html#WordWriter.write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scitex_msword.writer.WordWriter.write" title="Link to this definition"></a></dt>
-<dd><p>Write a SciTeX writer document to a DOCX file.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>writer_doc</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em> | </em><em>Any</em>) – Writer document or intermediate structure.</p></li>
-<li><p><strong>path</strong> (<em>Path</em>) – Output path for the DOCX file.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
 </section>
 
 
