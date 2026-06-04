@@ -7,6 +7,74 @@ versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.3.2] - 2026-06-04
+
+Table insertion API + first CLI subcommand. Lifts the canonical
+`build_modules_table` / `fix_comment_24_p17` pattern from proj-grant's
+`build_v43.py` (BOOST 2026 dogfood) into sxm public surface, with
+Track-Changes-aware row markers and full Python / CLI / MCP parity.
+
+### Added — `insert_table_after_paragraph`
+
+A pure-lxml `<w:tbl>` builder that inserts a Word table immediately
+after `doc.paragraphs[paragraph_index]` via `Paragraph._p.addnext()`.
+Signature matches the proj-grant reference verbatim plus optional
+Track-Changes wiring:
+
+```python
+insert_table_after_paragraph(
+    doc, paragraph_index, rows,
+    col_widths_dxa=(3000, 6000), header_row=True,
+    body_font='MS 明朝', header_font='MS ゴシック',
+    font_size_pt=10.5,
+    *, track_changes=None,
+    track_changes_author='agent', track_changes_date=None,
+)
+```
+
+- Per-cell `<w:tcPr><w:tcW @type="dxa"/><w:vAlign val="center"/></w:tcPr>`
+  layout — caller-controlled `col_widths_dxa` drives column widths.
+- Header row (when `header_row=True`) runs use `header_font` + bold
+  (`<w:b/><w:bCs/>`); body rows use `body_font` without bold.
+- `font_size_pt=10.5` encoded as `<w:sz w:val="21">` (half-points).
+- `<w:tblBorders>` emits single-line borders on all six sides.
+- Validates row width consistency and `len(col_widths_dxa)` match;
+  raises `ValueError` / `IndexError` with explicit messages.
+
+### Added — Track-Changes-aware row markers
+
+When `track_changes=None` (default) the writer reads `<w:trackRevisions/>`
+from `word/settings.xml`. If Track Changes is on, each generated `<w:tr>`
+gets `<w:trPr><w:ins w:id w:author w:date/></w:trPr>` — Word then
+surfaces the rows as accept/reject-able revisions. Pass
+`track_changes=True` / `track_changes=False` to override. `w:id`
+values are picked one past the max existing revision id in the body
+so they don't collide with prior `wrap_as_tracked_insertion` /
+`wrap_as_tracked_deletion` revisions.
+
+### Added — `scitex-msword` CLI
+
+First console-script entry point: `scitex-msword` (registered via
+`[project.scripts]` in `pyproject.toml`). Initial subcommand is
+`insert-table`; argument shape mirrors the Python API verbatim and
+accepts rows either inline (`--rows '[…]'`) or from a file
+(`--rows-file path.json`). `--track-changes` / `--no-track-changes`
+override the auto-detect default; omit both to follow the doc's
+Track-Changes state.
+
+### Added — MCP tool `insert_table_after_paragraph_tool`
+
+Same kwarg surface as the Python API, returns the output path —
+matches every other sxm `*_tool` convention. Available via
+`python -m scitex_msword.mcp_server`.
+
+### Added — Skill leaf `04_insert-table.md`
+
+`src/scitex_msword/_skills/scitex-msword/04_insert-table.md` — the
+canonical agent-facing documentation for `insert_table_after_paragraph`
+across all three interfaces (Python / CLI / MCP). `SKILL.md`
+interface counts bumped to `python: 3 / cli: 1 / mcp: 1 / skills: 3`.
+
 ## [0.3.1] - 2026-06-04
 
 Track Changes correctness + Japanese-typography slot semantics for the

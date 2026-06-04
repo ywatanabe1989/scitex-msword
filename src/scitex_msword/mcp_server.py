@@ -285,6 +285,59 @@ def build_server():  # pragma: no cover — exercised by `serve()` integration
         doc.save(out)
         return out
 
+    # -- Tool: insert_table_after_paragraph ------------------------------
+    @server.tool()
+    def insert_table_after_paragraph_tool(
+        path: str,
+        out: str,
+        paragraph_index: int,
+        rows: List[List[str]],
+        col_widths_dxa: Optional[List[int]] = None,
+        header_row: bool = True,
+        body_font: str = "MS 明朝",
+        header_font: str = "MS ゴシック",
+        font_size_pt: float = 10.5,
+        track_changes: Optional[bool] = None,
+        track_changes_author: str = "agent",
+        track_changes_date: Optional[str] = None,
+    ) -> str:
+        """Insert a Word table after ``doc.paragraphs[paragraph_index]`` in ``path``.
+
+        Builds the ``<w:tbl>`` directly via lxml (no python-docx Table
+        wrapper) and writes the modified document to ``out``. When the
+        source document has Track Changes on, each generated ``<w:tr>``
+        is marked with ``<w:trPr><w:ins/></w:trPr>`` so Word surfaces
+        the rows as accept/reject-able revisions. Pass
+        ``track_changes=False`` to force a plain insertion, or
+        ``track_changes=True`` to force-mark even when the source has
+        Track Changes off.
+
+        ``col_widths_dxa`` defaults to ``[3000, 6000]`` (2-col 1:2
+        layout) — matches proj-grant's ``build_v43.py``. Returns ``out``.
+        """
+        import docx as _docx
+
+        from .tables import insert_table_after_paragraph as _insert_table
+
+        col_widths = tuple(col_widths_dxa) if col_widths_dxa else (3000, 6000)
+        normalised_rows = [list(r) for r in rows]
+        doc = _docx.Document(path)
+        _insert_table(
+            doc,
+            paragraph_index=paragraph_index,
+            rows=normalised_rows,
+            col_widths_dxa=col_widths,
+            header_row=header_row,
+            body_font=body_font,
+            header_font=header_font,
+            font_size_pt=font_size_pt,
+            track_changes=track_changes,
+            track_changes_author=track_changes_author,
+            track_changes_date=track_changes_date,
+        )
+        doc.save(out)
+        return out
+
     # -- Tool: reject_all_tracked_changes --------------------------------
     @server.tool()
     def reject_all_tracked_changes_tool(path: str, out: str) -> str:

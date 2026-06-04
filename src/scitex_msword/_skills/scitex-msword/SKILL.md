@@ -3,17 +3,17 @@ name: scitex-msword
 description: MS Word (.docx) ↔ SciTeX writer document model. `import_docx(path)` parses Word paragraphs into the writer schema; `export_docx(doc, path)` writes back. Strategy: Word users write text only; figures/tables/refs/LaTeX stay in SciTeX. Drop-in replacement for `python-docx` boilerplate when round-tripping with the manuscript pipeline.
 primary_interface: python
 interfaces:
-  python: 2
-  cli: 0
-  mcp: 0
-  skills: 2
+  python: 3
+  cli: 1
+  mcp: 1
+  skills: 3
   hook: 0
   http: 0
 canonical-location: scitex-msword/src/scitex_msword/_skills/scitex-msword/SKILL.md
 tags: [scitex-msword, scitex-package]
 ---
 
-> **Interfaces:** Python ⭐⭐ · CLI — · MCP — · Skills ⭐⭐ · Hook — · HTTP —
+> **Interfaces:** Python ⭐⭐⭐ · CLI ⭐ · MCP ⭐ · Skills ⭐⭐⭐ · Hook — · HTTP —
 
 # scitex-msword
 
@@ -30,3 +30,4 @@ signatures.
 - [01_installation.md](01_installation.md) — install + import sanity check
 - [02_quick-start.md](02_quick-start.md) — 30-second tour
 - [03_python-api.md](03_python-api.md) — Python API surface
+- [04_cli-reference.md](04_cli-reference.md) — `scitex-msword` Click CLI reference, including the `insert-table` subcommand (pure-lxml Word table insertion at a paragraph anchor, optional Track-Changes row markers), `list-python-apis`, `mcp start` / `mcp list-tools`
