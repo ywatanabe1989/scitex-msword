@@ -70,6 +70,7 @@ from .track_changes import (
     extract_tracked_changes,
     is_track_changes_enabled,
     reject_all_tracked_changes,
+    save_with_track_changes_on,
     wrap_as_tracked_deletion,
     wrap_as_tracked_insertion,
 )
@@ -309,4 +310,5 @@ __all__ = [
     "extract_tracked_changes",
     "accept_all_tracked_changes",
     "reject_all_tracked_changes",
+    "save_with_track_changes_on",
 ]
