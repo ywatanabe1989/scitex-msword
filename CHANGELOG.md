@@ -9,6 +9,22 @@ versions follow [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- `scitex_msword.enable_track_changes(doc, enabled=True)` — toggle Word's
+  Track Changes switch by inserting/removing `<w:trackChanges/>` in
+  `word/settings.xml`. Idempotent and reversible.
+- `scitex_msword.is_track_changes_enabled(doc)` — report whether the
+  switch is currently on.
+- `scitex_msword.wrap_as_tracked_insertion(paragraph, runs, author, date,
+  w_id)` and `wrap_as_tracked_deletion(...)` — wrap selected runs as
+  `<w:ins>` / `<w:del>` revision blocks so Word renders them as
+  accept/reject-able tracked changes. Deletions also convert `<w:t>`
+  children to `<w:delText>` for strike-through rendering.
+- `scitex_msword.extract_tracked_changes(doc)` — structured extraction
+  of every `<w:ins>` / `<w:del>` in the body
+  (`type`, `paragraph_idx`, `author`, `date`, `id`, `text`).
+- `scitex_msword.accept_all_tracked_changes(doc)` and
+  `reject_all_tracked_changes(doc)` — bulk equivalents of Word's
+  "Accept All" / "Reject All" Review actions.
 - `scitex_msword.diff_docx(a, b)` and `summarize_diff(ops)` — paragraph-
   level diff between two DOCX files with run-level formatting deltas
   (bold/italic/underline/font/highlight).

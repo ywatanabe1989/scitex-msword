@@ -102,6 +102,33 @@ comments = sxm.extract_comments("v16.docx")
 summary = sxm.apply_comments_as_edits(doc)         # {'applied': 2, 'skipped': 4, ...}
 ```
 
+### Track Changes (revision) helpers
+
+```python
+import docx
+import scitex_msword as sxm
+
+# 1. Turn Word's "Track Changes" switch on, so subsequent operator edits
+#    are recorded as revisions (writes <w:trackChanges/> to settings.xml).
+doc = docx.Document("draft.docx")
+sxm.enable_track_changes(doc, enabled=True)
+sxm.is_track_changes_enabled(doc)        # True
+
+# 2. Wrap agent edits as <w:ins> / <w:del> so Word renders them as
+#    accept/reject-able revisions.
+p = doc.paragraphs[10]
+sxm.wrap_as_tracked_insertion(p, runs=[2, 3], author="agent")
+sxm.wrap_as_tracked_deletion(p, runs=[5],    author="agent")
+
+# 3. Inspect all tracked changes (structured).
+for c in sxm.extract_tracked_changes(doc):
+    print(c["type"], c["author"], c["text"])
+
+# 4. Bulk accept / reject (Word's "Accept All" / "Reject All").
+sxm.accept_all_tracked_changes(doc)        # or reject_all_tracked_changes
+doc.save("draft_v27.docx")
+```
+
 ### MCP server (optional)
 
 ```bash
