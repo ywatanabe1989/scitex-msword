@@ -21,6 +21,8 @@ test (STX-TQ007), ≥3-word descriptive names (STX-TQ003), no
 
 from __future__ import annotations
 
+import pathlib
+
 import pytest
 
 
@@ -231,10 +233,128 @@ class TestSaveWithTrackChangesOnHelper:
         assert observed == ("trackedChanges", "0")
 
 
+_VENDORED_WORD_GROUNDTRUTH_SETTINGS = (
+    pathlib.Path(__file__).parent.parent
+    / "fixtures"
+    / "track_changes"
+    / "word_groundtruth_settings.xml"
+)
+
+
+class TestTrackRevisionsAgainstVendoredWordGroundTruth:
+    """Pins the v0.3.1 trackChanges→trackRevisions fix against a
+    committed Word-emitted ``word/settings.xml`` fixture (extracted
+    from proj-grant draft_v39 — the operator's manual Track Changes
+    ON save during BOOST v40). See
+    ``tests/fixtures/track_changes/README.md`` for full provenance.
+
+    The blind-spot fixed by these tests is that the previous
+    conformance gate asserted our writer's own output, not Word's
+    actual emit — so the self-consistent wrong-name state matched
+    itself in CI and looked fine until proj-grant crashed it on the
+    operator's desktop Word. These pins anchor against bytes Word
+    itself wrote, so a future regression in either direction (back to
+    the wrong name OR away from it) fails CI loudly."""
+
+    @staticmethod
+    def _parse_groundtruth():
+        from lxml import etree
+
+        return etree.fromstring(
+            _VENDORED_WORD_GROUNDTRUTH_SETTINGS.read_bytes()
+        )
+
+    def test_vendored_groundtruth_carries_trackRevisions_element(self):
+        """Word's own emit puts ``<w:trackRevisions/>`` in CT_Settings."""
+        # Arrange
+        from docx.oxml.ns import qn
+
+        root = self._parse_groundtruth()
+        # Act
+        found = root.find(qn("w:trackRevisions"))
+        # Assert
+        assert found is not None
+
+    def test_vendored_groundtruth_does_not_carry_trackChanges_element(self):
+        """Word's own emit does NOT use ``<w:trackChanges/>`` for the toggle."""
+        # Arrange
+        from docx.oxml.ns import qn
+
+        root = self._parse_groundtruth()
+        # Act
+        found = root.find(qn("w:trackChanges"))
+        # Assert
+        assert found is None
+
+    def test_vendored_groundtruth_carries_documentProtection_state_only(self):
+        """Word's emit pairs ``<w:trackRevisions/>`` with
+        ``<w:documentProtection w:edit="trackedChanges" w:enforcement="0"/>``.
+        """
+        # Arrange
+        from docx.oxml.ns import qn
+
+        root = self._parse_groundtruth()
+        protection = root.find(qn("w:documentProtection"))
+        observed = (
+            None
+            if protection is None
+            else (
+                protection.get(qn("w:edit")),
+                protection.get(qn("w:enforcement")),
+            )
+        )
+        # Act / Assert
+        assert observed == ("trackedChanges", "0")
+
+    def test_save_with_track_changes_on_matches_word_trackRevisions_slice(
+        self, tmp_path
+    ):
+        """``save_with_track_changes_on`` emits the same trackRevisions
+        slice (``trackRevisions`` + ``documentProtection edit=trackedChanges
+        enforcement=0``) as Word's own save."""
+        # Arrange
+        pytest.importorskip("docx")
+        from docx import Document
+        from docx.oxml.ns import qn
+        from scitex_msword.track_changes import save_with_track_changes_on
+
+        save_with_track_changes_on(Document(), tmp_path / "rc.docx")
+        emitted = Document(str(tmp_path / "rc.docx")).settings.element
+
+        groundtruth = self._parse_groundtruth()
+
+        def _slice(parent):
+            wanted = ("trackRevisions", "documentProtection")
+            from lxml import etree
+
+            out = []
+            for child in parent:
+                local = etree.QName(child).localname
+                if local in wanted:
+                    out.append(
+                        (
+                            local,
+                            child.get(qn("w:edit")),
+                            child.get(qn("w:enforcement")),
+                        )
+                    )
+            return out
+
+        # Act
+        observed = (_slice(emitted), _slice(groundtruth))
+        # Assert
+        assert observed[0] == observed[1]
+
+
+# Path resolver kept for the H4 builtin-hooks work where we'll exercise
+# more of the full docx round-trip; today nothing references it.
 def _resolve_draft_v39_reference():
-    """Return the proj-grant draft_v39 reference docx Path or None."""
+    """Return the proj-grant draft_v39 reference docx Path or None.
+
+    H4 / SXM-TC001 follow-up will use this to broaden the conformance
+    tests against the entire docx (not just settings.xml).
+    """
     import os
-    from pathlib import Path
 
     candidates = [
         os.environ.get("SXM_DRAFT_V39_REFERENCE"),
@@ -245,51 +365,10 @@ def _resolve_draft_v39_reference():
     for raw in candidates:
         if not raw:
             continue
-        p = Path(raw)
+        p = pathlib.Path(raw)
         if p.exists():
             return p
     return None
-
-
-_DRAFT_V39 = _resolve_draft_v39_reference()
-
-
-@pytest.mark.skipif(
-    _DRAFT_V39 is None,
-    reason="proj-grant draft_v39 ground-truth reference not available",
-)
-class TestTrackChangesNameGroundTruthRegression:
-    """Pins the v0.3.1 trackChanges→trackRevisions fix against a known-
-    good reference: a docx Word itself wrote after the user toggled
-    Track Changes on. proj-grant draft_v39 was the operator's manual
-    save during BOOST v40 dogfood. Reference is auto-skipped when the
-    file isn't reachable; CI override: ``SXM_DRAFT_V39_REFERENCE``."""
-
-    def test_reference_file_carries_trackRevisions_not_trackChanges(self):
-        """Word's own save uses ``trackRevisions``, NOT ``trackChanges``."""
-        # Arrange
-        from docx import Document
-        from docx.oxml.ns import qn
-
-        doc = Document(str(_DRAFT_V39))
-        # Act
-        has_revisions = (
-            doc.settings.element.find(qn("w:trackRevisions")) is not None
-        )
-        # Assert
-        assert has_revisions is True
-
-    def test_is_track_changes_enabled_returns_true_on_word_reference(self):
-        """The v0.3.1 reader recognises Word's own toggle (≤v0.3.0 returned False)."""
-        # Arrange
-        from docx import Document
-        from scitex_msword.track_changes import is_track_changes_enabled
-
-        doc = Document(str(_DRAFT_V39))
-        # Act
-        enabled = is_track_changes_enabled(doc)
-        # Assert
-        assert enabled is True
 
 
 # EOF
