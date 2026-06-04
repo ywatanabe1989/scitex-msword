@@ -344,6 +344,95 @@ class TestRegisterProfile:
         assert retrieved.columns == 2
 
 
+class TestBoost2026Profile:
+    """Tests for the boost-2026 profile (BOOST v16 dogfooding)."""
+
+    def test_list_profiles_contains_boost_2026(self):
+        """boost-2026 should appear in list_profiles."""
+        # Arrange
+        from scitex_msword import list_profiles
+        # Act
+        profiles = list_profiles()
+        # Assert
+        assert "boost-2026" in profiles
+
+    def test_get_profile_boost_returns_boost_2026(self):
+        """The 'boost' alias should resolve to boost-2026."""
+        # Arrange
+        from scitex_msword import get_profile
+        # Act
+        profile = get_profile("boost")
+        # Assert
+        assert profile.name == "boost-2026"
+
+    def test_boost_2026_uses_ms_gothic_body_font(self):
+        """boost-2026 should declare MS Gothic as the body font."""
+        # Arrange
+        from scitex_msword import get_profile
+        # Act
+        profile = get_profile("boost-2026")
+        # Assert
+        assert profile.body_font == "MS Gothic"
+
+    def test_boost_2026_uses_10_5pt_body_font(self):
+        """boost-2026 should declare 10.5pt body font size."""
+        # Arrange
+        from scitex_msword import get_profile
+        # Act
+        profile = get_profile("boost-2026")
+        # Assert
+        assert profile.body_font_size_pt == 10.5
+
+    def test_boost_2026_uses_light_grey_heading_background(self):
+        """boost-2026 should declare D9D9D9 (light grey) heading background."""
+        # Arrange
+        from scitex_msword import get_profile
+        # Act
+        profile = get_profile("boost-2026")
+        # Assert
+        assert profile.heading_background_hex == "D9D9D9"
+
+    def test_boost_2026_uses_single_line_spacing(self):
+        """boost-2026 should declare 1.0 line spacing."""
+        # Arrange
+        from scitex_msword import get_profile
+        # Act
+        profile = get_profile("boost-2026")
+        # Assert
+        assert profile.line_spacing == 1.0
+
+    def test_boost_2026_includes_japanese_references_title(self):
+        """boost-2026 should accept 参考文献 as a reference section title."""
+        # Arrange
+        from scitex_msword import get_profile
+        # Act
+        profile = get_profile("boost-2026")
+        # Assert
+        assert "参考文献" in profile.reference_section_titles
+
+
+class TestBaseWordProfileLayoutHints:
+    """Tests for the new layout hint fields on BaseWordProfile."""
+
+    def test_body_font_defaults_to_none(self):
+        """body_font should default to None for non-BOOST profiles."""
+        # Arrange
+        from scitex_msword import BaseWordProfile
+        # Act
+        profile = BaseWordProfile(name="t", description="t")
+        # Assert
+        assert profile.body_font is None
+
+    def test_line_spacing_defaults_to_none(self):
+        """line_spacing should default to None for non-BOOST profiles."""
+        # Arrange
+        from scitex_msword import BaseWordProfile
+        # Act
+        profile = BaseWordProfile(name="t", description="t")
+        # Assert
+        assert profile.line_spacing is None
+
+
 if __name__ == "__main__":
     import os
 
