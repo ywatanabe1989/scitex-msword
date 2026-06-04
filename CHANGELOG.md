@@ -9,7 +9,11 @@ versions follow [Semantic Versioning](https://semver.org/).
 
 ## [0.3.1] - 2026-06-04
 
-Two BOOST-critical fixes caught by proj-grant during the v40 dogfood.
+Track Changes correctness + Japanese-typography slot semantics for the
+JST BOOST 2026 dogfood. Three fixes (one P0, one P1, one P2 cleanup)
+plus a switchable contract on `save_with_track_changes_on` and a
+committed Word-emitted ground-truth fixture so the conformance gate
+can no longer pass on self-consistent wrong-name state.
 
 ### Fixed — Track Changes element name (P0, affects every release ≥v0.2.0)
 
@@ -62,6 +66,61 @@ contrast.
 - `boost-2026` profile now ships full-width forms (`ＭＳ 明朝` /
   `ＭＳ ゴシック`) so Word's Japanese font picker resolves them — the
   half-width `MS 明朝` / `MS ゴシック` forms in v0.3.0 did not.
+
+### Fixed — Track Changes writer cleans up legacy stale state (P2)
+
+`enable_track_changes` (and therefore `save_with_track_changes_on`) now
+strips every stray `<w:trackChanges/>` from `CT_Settings` before
+writing — so re-saving a document originally produced by sxm
+≤v0.3.0 (which wrote the wrong element name; see above) yields a
+byte-clean settings.xml that matches Word's own emission. CT_HdrFtr
+trackChanges (a different element entirely) is not touched. The writer
+is now idempotent: calling `save_with_track_changes_on` twice on the
+same document yields exactly one `<w:trackRevisions/>` and one
+`<w:documentProtection edit=trackedChanges enforcement=0>`.
+
+### Added — switchable kwargs (per operator spec)
+
+`enable_track_changes` and `save_with_track_changes_on` gain two
+keyword-only flags, both defaulting `True` so today's callers keep the
+default-correct Word-matching recipe:
+
+```python
+enable_track_changes(doc, enabled=True, *, emit_doc_protection_echo=True)
+save_with_track_changes_on(
+    doc, path, *, track_revisions=True, emit_doc_protection_echo=True,
+)
+```
+
+- `emit_doc_protection_echo=False` writes `<w:trackRevisions/>`
+  without the matching `<w:documentProtection/>` echo (for callers
+  that read the protection element independently).
+- `track_revisions=False` is the clean-export path on
+  `save_with_track_changes_on`: strips both elements before saving.
+
+### Added — committed Word-emitted ground-truth fixture
+
+`tests/scitex_msword/fixtures/track_changes/word_groundtruth_settings.xml`
+is the `word/settings.xml` Word itself wrote when the operator
+manually toggled Track Changes ON during the BOOST v40 dogfood. The
+new `TestTrackRevisionsAgainstVendoredWordGroundTruth` class pins
+the writer against this committed reference, closing the
+self-consistent-wrong-name blind-spot that let the trackChanges /
+trackRevisions bug ship from v0.2.0 through v0.3.0. Full provenance
++ sha256 in the fixtures `README.md`.
+
+### Internal
+
+- Extract the OOXML primitive helpers (`_make_w_element`,
+  `_scan_max_revision_id`, `_resolve_runs`, `_wrap_runs_in_element`,
+  `_next_revision_id`, `_settings_element`, `_now_iso`) from
+  `track_changes.py` into a sibling module
+  `_track_changes_helpers.py`. Public API surface unchanged.
+- Generalise `_settings_order.insert_in_settings_order` via a
+  per-tag `_ANCHOR_TABLES` dispatch so additional CT_Settings
+  children with schema-prescribed positions can reuse the routine.
+- New `_settings_order.ensure_document_protection_for_tracked_changes`
+  owns the documentProtection placement.
 
 ## [0.3.0] - 2026-06-04
 
