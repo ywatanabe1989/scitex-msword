@@ -226,14 +226,17 @@ def convert_docx_to_tex(
 
     Examples
     --------
-    >>> from scitex.msword import convert_docx_to_tex
-    >>> convert_docx_to_tex(
-    ...     "RESNA 2025 Scientific Paper Template.docx",
-    ...     "manuscript.tex",
-    ...     profile="resna-2025",
-    ...     image_dir="figures",
-    ... )
-    PosixPath('manuscript.tex')
+    .. code-block:: python
+
+        from scitex.msword import convert_docx_to_tex
+
+        convert_docx_to_tex(
+            "RESNA 2025 Scientific Paper Template.docx",
+            "manuscript.tex",
+            profile="resna-2025",
+            image_dir="figures",
+        )
+        # -> PosixPath('manuscript.tex')
     """
     # Lazy import: convert_docx_to_tex requires scitex (or scitex-tex) for the
     # final .tex serialization step. Other scitex_msword functions don't need it.
