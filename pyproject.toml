@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "scitex-msword"
-version = "0.3.1"
+version = "0.3.2"
 description = "MS Word (.docx) reader/writer with journal-style profiles (MDPI, IEEE, Springer, Elsevier, RESNA, IOP) — standalone module from the SciTeX ecosystem"
 readme = "README.md"
 license = "AGPL-3.0-only"
@@ -48,6 +48,9 @@ docs = [
 all = [
     "scitex-msword[tex,mcp]",
 ]
+
+[project.scripts]
+scitex-msword = "scitex_msword.cli:main"
 
 [project.urls]
 Homepage = "https://github.com/ywatanabe1989/scitex-msword"
