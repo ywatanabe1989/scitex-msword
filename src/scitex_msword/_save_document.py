@@ -78,45 +78,52 @@ def _apply_profile_to_document_defaults(doc, profile) -> None:
     profile sets are touched (others stay at the document's existing
     defaults).
 
-    Mapping:
-        profile.body_font           → rPrDefault / rPr / rFonts @w:ascii / @w:hAnsi
-        profile.bold_font           → rPrDefault / rPr / rFonts @w:eastAsia
-                                      (Japanese practice: Mincho body in
-                                      ascii/hAnsi, Gothic bold in eastAsia)
+    Mapping (corrected v0.3.1 per proj-grant BOOST v40 dogfood):
+
+        profile.body_font           → rPrDefault / rPr / rFonts
+                                      @w:eastAsia + @w:ascii + @w:hAnsi
+                                      (BOOST uses Mincho for both
+                                      Japanese body AND embedded Latin
+                                      runs — operator id 685).
         profile.body_font_size_pt   → rPrDefault / rPr / sz @w:val   (half-pts)
         profile.line_spacing        → pPrDefault / pPr / spacing
                                       @w:line + @w:lineRule=auto      (240ths)
+
+    ``profile.bold_font`` is intentionally NOT applied here. Putting it
+    in docDefaults @w:eastAsia (as v0.3.0 did) made every Japanese body
+    paragraph render in Gothic and destroyed the visual contrast bold
+    is supposed to provide. v0.3.1 ships
+    :func:`_apply_bold_font_to_bold_runs` instead, which sets
+    ``rFonts/@w:eastAsia`` on the existing bold runs only.
     """
     if profile is None:
         return
 
     body_font = getattr(profile, "body_font", None)
-    bold_font = getattr(profile, "bold_font", None)
     body_font_size_pt = getattr(profile, "body_font_size_pt", None)
     line_spacing = getattr(profile, "line_spacing", None)
 
     if not any(
         v is not None
-        for v in (body_font, bold_font, body_font_size_pt, line_spacing)
+        for v in (body_font, body_font_size_pt, line_spacing)
     ):
         return
 
     styles_part = doc.styles.element
     doc_defaults = _ensure_child(styles_part, "docDefaults")
 
-    if body_font or bold_font or body_font_size_pt is not None:
+    if body_font or body_font_size_pt is not None:
         rpr_default = _ensure_child(doc_defaults, "rPrDefault")
         rpr = _ensure_child(rpr_default, "rPr")
 
-        if body_font or bold_font:
+        if body_font:
             r_fonts = _ensure_child(rpr, "rFonts")
-            if body_font:
-                r_fonts.set(qn("w:ascii"), str(body_font))
-                r_fonts.set(qn("w:hAnsi"), str(body_font))
-            if bold_font:
-                # Japanese pairing: Gothic in eastAsia carries the bold/heading
-                # weight contrast against a Mincho ascii body.
-                r_fonts.set(qn("w:eastAsia"), str(bold_font))
+            # body_font fills all three of eastAsia/ascii/hAnsi — BOOST
+            # uses Mincho for embedded Latin runs too (operator id 685).
+            # cs (complex-script) is left untouched.
+            r_fonts.set(qn("w:eastAsia"), str(body_font))
+            r_fonts.set(qn("w:ascii"), str(body_font))
+            r_fonts.set(qn("w:hAnsi"), str(body_font))
 
         if body_font_size_pt is not None:
             sz = _ensure_child(rpr, "sz")
@@ -130,6 +137,49 @@ def _apply_profile_to_document_defaults(doc, profile) -> None:
         # ECMA-376 §17.3.1.33: w:line is in 240ths of a line; lineRule=auto.
         spacing.set(qn("w:line"), str(int(round(float(line_spacing) * 240))))
         spacing.set(qn("w:lineRule"), "auto")
+
+
+def _apply_bold_font_to_bold_runs(doc, bold_font: str) -> None:
+    """Set ``<w:r>/<w:rPr>/<w:rFonts>@w:eastAsia=bold_font`` on every bold run.
+
+    Japanese-grant typography uses a Gothic typeface only on bold runs
+    so the bold/heading weight contrast lives in the typeface itself
+    (sans vs serif), not in a synthetic-bold transform. proj-grant
+    BOOST v40 confirmed this is the correct semantics — putting the
+    Gothic font in docDefaults @w:eastAsia (as v0.3.0 did) wrongly
+    propagates it to non-bold body paragraphs.
+
+    Walks ``doc.paragraphs`` and every nested run in headers / footers
+    too. Only runs whose ``rPr/b/@w:val`` is truthy (or whose ``b``
+    child is present without an explicit ``w:val="false"``) are
+    touched; non-bold runs are left at the docDefaults Mincho.
+    """
+    if not bold_font:
+        return
+
+    bold_font_str = str(bold_font)
+
+    def _run_is_bold(r_el) -> bool:
+        rpr = r_el.find(qn("w:rPr"))
+        if rpr is None:
+            return False
+        b = rpr.find(qn("w:b"))
+        if b is None:
+            return False
+        val = b.get(qn("w:val"))
+        if val is None:
+            return True  # presence = bold
+        return val.lower() not in ("0", "false", "off")
+
+    def _set_eastAsia(r_el) -> None:
+        rpr = _ensure_child(r_el, "rPr")
+        r_fonts = _ensure_child(rpr, "rFonts")
+        r_fonts.set(qn("w:eastAsia"), bold_font_str)
+
+    body = doc.element.body
+    for r_el in body.iter(qn("w:r")):
+        if _run_is_bold(r_el):
+            _set_eastAsia(r_el)
 
 
 def save_document(
@@ -181,6 +231,9 @@ def save_document(
 
     if profile_obj is not None:
         _apply_profile_to_document_defaults(doc, profile_obj)
+        bold_font = getattr(profile_obj, "bold_font", None)
+        if bold_font:
+            _apply_bold_font_to_bold_runs(doc, bold_font)
 
     ctx = HookContext(doc=doc, profile=profile_obj, path=out_path)
     run_phase(Phase.PRE_SAVE, doc, ctx)
