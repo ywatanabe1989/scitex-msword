@@ -52,32 +52,14 @@ napoleon_google_docstring = True
 napoleon_numpy_docstring = True
 
 # ------------------------------------------------------------------
-# Scoped warning suppression for v0.2.0 release.
-#
-# Background: the v0.2.0 build initially produced 93 sphinx warnings
-# under `-W` (PR mode), of which:
-#   * ~91 were "duplicate object description" emissions from the
-#     Python domain caused by `autodoc_default_options['members']=True`
-#     combined with autosummary `:recursive:`. Each re-export in
-#     `scitex_msword.__all__` (e.g. BaseWordProfile re-exported from
-#     scitex_msword.profiles) was documented twice. Fixed at the root
-#     cause by switching to `members: False` above; autosummary
-#     templates still produce the per-symbol pages.
-#   * 2 were docutils "Unexpected indentation" ERRORs inside the
-#     `convert_docx_to_tex` Examples block in
-#     src/scitex_msword/__init__.py. The HTML renders correctly;
-#     docstring polish is queued as a follow-up doc-only PR.
-#
-# Per the scitex-dev convention (msg 546b8181): keep `-W` enforced
-# globally, scope the exception to the affected categories rather
-# than dropping `-W` or going blanket with `suppress_warnings=["*"]`.
-# ------------------------------------------------------------------
-suppress_warnings = [
-    # docutils indentation ERRORs inside docstring example blocks
-    # (currently: scitex_msword.convert_docx_to_tex). Polish queued
-    # as a follow-up doc-only PR; HTML output is unaffected.
-    "docutils",
-]
+# suppress_warnings was set to ["docutils"] in v0.2.0 to scope-suppress
+# two "Unexpected indentation" ERRORs in scitex_msword.convert_docx_to_tex's
+# Examples block (multi-line `>>> / ...` doctest continuation). Polished
+# in v0.2.1 by rewriting that block as `.. code-block:: python`, after
+# which the suppress was no longer needed and was lifted to keep `-W`
+# enforced globally with no scoped exceptions.
+# Per the scitex-dev convention (msg 546b8181): explicit exception with
+# a clear forward-pointer until the underlying issue is fixed at source.
 
 templates_path = ["_templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]

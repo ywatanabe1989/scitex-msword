@@ -4,11 +4,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "scitex-msword"
-version = "0.2.0"
+version = "0.2.1"
 description = "MS Word (.docx) reader/writer with journal-style profiles (MDPI, IEEE, Springer, Elsevier, RESNA, IOP) — standalone module from the SciTeX ecosystem"
 readme = "README.md"
 license = "AGPL-3.0-only"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 authors = [{name = "Yusuke Watanabe", email = "ywatanabe@scitex.ai"}]
 keywords = ["scitex", "msword", "docx", "word", "manuscript", "journal-template"]
 classifiers = [
@@ -73,7 +73,7 @@ source = ["scitex_msword"]
 concurrency = ["multiprocessing", "thread"]
 
 [tool.ruff]
-target-version = "py39"
+target-version = "py310"
 line-length = 88
 
 [tool.ruff.lint]
