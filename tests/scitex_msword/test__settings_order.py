@@ -220,53 +220,58 @@ class TestSaveWithTrackChangesOnHelper:
         protection = reloaded.settings.element.find(
             qn("w:documentProtection")
         )
-        # Assert
-        assert (
-            protection is not None
-            and protection.get(qn("w:edit")) == "trackedChanges"
-            and protection.get(qn("w:enforcement")) == "0"
+        observed = (
+            None if protection is None
+            else (
+                protection.get(qn("w:edit")),
+                protection.get(qn("w:enforcement")),
+            )
         )
+        # Assert
+        assert observed == ("trackedChanges", "0")
 
 
+def _resolve_draft_v39_reference():
+    """Return the proj-grant draft_v39 reference docx Path or None."""
+    import os
+    from pathlib import Path
+
+    candidates = [
+        os.environ.get("SXM_DRAFT_V39_REFERENCE"),
+        "/home/ywatanabe/proj/grant/2026-06-11---2027-04-2032-03"
+        "---20-PERC---1000---BOOST/"
+        "draft_v39_ywata-turned-on-edit-history.docx",
+    ]
+    for raw in candidates:
+        if not raw:
+            continue
+        p = Path(raw)
+        if p.exists():
+            return p
+    return None
+
+
+_DRAFT_V39 = _resolve_draft_v39_reference()
+
+
+@pytest.mark.skipif(
+    _DRAFT_V39 is None,
+    reason="proj-grant draft_v39 ground-truth reference not available",
+)
 class TestTrackChangesNameGroundTruthRegression:
     """Pins the v0.3.1 trackChanges→trackRevisions fix against a known-
     good reference: a docx Word itself wrote after the user toggled
     Track Changes on. proj-grant draft_v39 was the operator's manual
-    save during BOOST v40 dogfood; the file is checked into the grant
-    repo at /home/ywatanabe/proj/grant/.../draft_v39_ywata-turned-on-
-    edit-history.docx and is also reachable in CI via the ``DRAFT_V39_
-    REFERENCE`` env override (skipped when neither path resolves)."""
-
-    @staticmethod
-    def _resolve_reference():
-        import os
-        from pathlib import Path
-
-        candidates = [
-            os.environ.get("SXM_DRAFT_V39_REFERENCE"),
-            "/home/ywatanabe/proj/grant/2026-06-11---2027-04-2032-03"
-            "---20-PERC---1000---BOOST/"
-            "draft_v39_ywata-turned-on-edit-history.docx",
-        ]
-        for raw in candidates:
-            if not raw:
-                continue
-            p = Path(raw)
-            if p.exists():
-                return p
-        return None
+    save during BOOST v40 dogfood. Reference is auto-skipped when the
+    file isn't reachable; CI override: ``SXM_DRAFT_V39_REFERENCE``."""
 
     def test_reference_file_carries_trackRevisions_not_trackChanges(self):
         """Word's own save uses ``trackRevisions``, NOT ``trackChanges``."""
         # Arrange
-        ref = self._resolve_reference()
-        if ref is None:
-            pytest.skip("draft_v39 ground-truth reference not available")
-        pytest.importorskip("docx")
         from docx import Document
         from docx.oxml.ns import qn
 
-        doc = Document(str(ref))
+        doc = Document(str(_DRAFT_V39))
         # Act
         has_revisions = (
             doc.settings.element.find(qn("w:trackRevisions")) is not None
@@ -277,14 +282,10 @@ class TestTrackChangesNameGroundTruthRegression:
     def test_is_track_changes_enabled_returns_true_on_word_reference(self):
         """The v0.3.1 reader recognises Word's own toggle (≤v0.3.0 returned False)."""
         # Arrange
-        ref = self._resolve_reference()
-        if ref is None:
-            pytest.skip("draft_v39 ground-truth reference not available")
-        pytest.importorskip("docx")
         from docx import Document
         from scitex_msword.track_changes import is_track_changes_enabled
 
-        doc = Document(str(ref))
+        doc = Document(str(_DRAFT_V39))
         # Act
         enabled = is_track_changes_enabled(doc)
         # Assert
