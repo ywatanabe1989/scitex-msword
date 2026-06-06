@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>scitex_msword.utils &mdash; scitex-msword 0.3.2 documentation</title>
+  <title>scitex_msword.tables &mdash; scitex-msword 0.3.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -22,8 +22,8 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="scitex_msword.writer" href="scitex_msword.writer.html" />
-    <link rel="prev" title="scitex_msword.track_changes" href="scitex_msword.track_changes.html" /> 
+    <link rel="next" title="scitex_msword.track_changes" href="scitex_msword.track_changes.html" />
+    <link rel="prev" title="scitex_msword.reader" href="scitex_msword.reader.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -63,9 +63,9 @@
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.mcp_server.html">scitex_msword.mcp_server</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.profiles.html">scitex_msword.profiles</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.reader.html">scitex_msword.reader</a></li>
-<li class="toctree-l2"><a class="reference internal" href="scitex_msword.tables.html">scitex_msword.tables</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">scitex_msword.tables</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.track_changes.html">scitex_msword.track_changes</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">scitex_msword.utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scitex_msword.utils.html">scitex_msword.utils</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.writer.html">scitex_msword.writer</a></li>
 </ul>
 </li>
@@ -86,9 +86,9 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="scitex_msword.html">scitex_msword</a></li>
-      <li class="breadcrumb-item active">scitex_msword.utils</li>
+      <li class="breadcrumb-item active">scitex_msword.tables</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../_sources/api/scitex_msword.utils.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/api/scitex_msword.tables.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -96,28 +96,32 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-scitex_msword.utils">
-<span id="scitex-msword-utils"></span><h1>scitex_msword.utils<a class="headerlink" href="#module-scitex_msword.utils" title="Link to this heading"></a></h1>
-<p>Utility functions for processing MS Word documents.</p>
-<p>These functions can be used as post_import_hooks or called directly
-to process document structures.</p>
+  <section id="module-scitex_msword.tables">
+<span id="scitex-msword-tables"></span><h1>scitex_msword.tables<a class="headerlink" href="#module-scitex_msword.tables" title="Link to this heading"></a></h1>
+<p>Table insertion utilities for python-docx Documents.</p>
+<p>The public entry point <code class="xref py py-func docutils literal notranslate"><span class="pre">insert_table_after_paragraph()</span></code> builds a
+<code class="docutils literal notranslate"><span class="pre">&lt;w:tbl&gt;</span></code> element directly with pure lxml (so it works on raw
+python-docx 1.1.x without going through the high-level Table API) and
+inserts it as the next sibling of a target paragraph. When the source
+document already has Track Changes enabled, each generated <code class="docutils literal notranslate"><span class="pre">&lt;w:tr&gt;</span></code>
+is marked as an inserted row by emitting
+<code class="docutils literal notranslate"><span class="pre">&lt;w:trPr&gt;&lt;w:ins</span> <span class="pre">.../&gt;&lt;/w:trPr&gt;</span></code> so that Word surfaces the new rows
+as accept/reject-able revisions — matching the dogfood-time pattern
+proj-grant’s <code class="docutils literal notranslate"><span class="pre">build_v43.py</span></code> shipped in BOOST today.</p>
+<p>OOXML refs:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">w:tbl</span></code>        ECMA-376 §17.4.38</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">w:tblPr</span></code>      ECMA-376 §17.4.59</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">w:tblGrid</span></code>    ECMA-376 §17.4.49</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">w:tr</span></code>         ECMA-376 §17.4.79</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">w:trPr</span></code>       ECMA-376 §17.4.82</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">w:ins</span></code> (in trPr)  ECMA-376 §17.13.5.18 (row-level insertion marker)</p></li>
+</ul>
 <p class="rubric">Functions</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_post_import_hook</span></code>(*functions)</p></td>
-<td><p>Create a composite post_import_hook from multiple functions.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">link_captions_to_images</span></code>(doc)</p></td>
-<td><p>Link figure captions to images by matching order.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">link_captions_to_images_by_proximity</span></code>(doc)</p></td>
-<td><p>Link figure captions to images by document proximity.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalize_section_headings</span></code>(doc)</p></td>
-<td><p>Normalize section headings for consistency.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_document</span></code>(doc)</p></td>
-<td><p>Validate document structure and add warnings.</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_table_after_paragraph</span></code>(doc, ...[, ...])</p></td>
+<td><p>Insert a Word table immediately after <code class="docutils literal notranslate"><span class="pre">doc.paragraphs[paragraph_index]</span></code>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -127,8 +131,8 @@ to process document structures.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="scitex_msword.track_changes.html" class="btn btn-neutral float-left" title="scitex_msword.track_changes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="scitex_msword.writer.html" class="btn btn-neutral float-right" title="scitex_msword.writer" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="scitex_msword.reader.html" class="btn btn-neutral float-left" title="scitex_msword.reader" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="scitex_msword.track_changes.html" class="btn btn-neutral float-right" title="scitex_msword.track_changes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

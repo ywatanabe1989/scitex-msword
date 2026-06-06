@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>scitex_msword.utils &mdash; scitex-msword 0.3.2 documentation</title>
+  <title>scitex_msword.cli &mdash; scitex-msword 0.3.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -22,8 +22,8 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="scitex_msword.writer" href="scitex_msword.writer.html" />
-    <link rel="prev" title="scitex_msword.track_changes" href="scitex_msword.track_changes.html" /> 
+    <link rel="next" title="scitex_msword.comments" href="scitex_msword.comments.html" />
+    <link rel="prev" title="scitex_msword.bold" href="scitex_msword.bold.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -55,7 +55,7 @@
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#typical-usage">Typical usage:</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.html#available-profiles">Available profiles:</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.bold.html">scitex_msword.bold</a></li>
-<li class="toctree-l2"><a class="reference internal" href="scitex_msword.cli.html">scitex_msword.cli</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">scitex_msword.cli</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.comments.html">scitex_msword.comments</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.diff.html">scitex_msword.diff</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.highlights.html">scitex_msword.highlights</a></li>
@@ -65,7 +65,7 @@
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.reader.html">scitex_msword.reader</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.tables.html">scitex_msword.tables</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.track_changes.html">scitex_msword.track_changes</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">scitex_msword.utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scitex_msword.utils.html">scitex_msword.utils</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scitex_msword.writer.html">scitex_msword.writer</a></li>
 </ul>
 </li>
@@ -86,9 +86,9 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="scitex_msword.html">scitex_msword</a></li>
-      <li class="breadcrumb-item active">scitex_msword.utils</li>
+      <li class="breadcrumb-item active">scitex_msword.cli</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../_sources/api/scitex_msword.utils.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/api/scitex_msword.cli.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -96,28 +96,30 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-scitex_msword.utils">
-<span id="scitex-msword-utils"></span><h1>scitex_msword.utils<a class="headerlink" href="#module-scitex_msword.utils" title="Link to this heading"></a></h1>
-<p>Utility functions for processing MS Word documents.</p>
-<p>These functions can be used as post_import_hooks or called directly
-to process document structures.</p>
+  <section id="module-scitex_msword.cli">
+<span id="scitex-msword-cli"></span><h1>scitex_msword.cli<a class="headerlink" href="#module-scitex_msword.cli" title="Link to this heading"></a></h1>
+<p>Click-based command-line interface for scitex-msword.</p>
+<p>This module is the thin orchestrator: it defines the root <code class="docutils literal notranslate"><span class="pre">main_group</span></code>
+plus universal flags (<code class="docutils literal notranslate"><span class="pre">-V</span></code>/<code class="docutils literal notranslate"><span class="pre">--version</span></code>, <code class="docutils literal notranslate"><span class="pre">--help-recursive</span></code>,
+<code class="docutils literal notranslate"><span class="pre">--json</span></code>) and delegates each subcommand group to a focused module
+under <code class="docutils literal notranslate"><span class="pre">scitex_msword._cli</span></code> so file size stays under the 512-line
+policy and each command lives next to the verb it implements.</p>
+<p>Canonical subcommands (audit-§1a compliant):</p>
+<blockquote>
+<div><p>scitex-msword insert-table       Insert a Word table at a paragraph anchor.
+scitex-msword list-python-apis   Enumerate the public Python API surface.
+scitex-msword mcp start          Start the MCP server (stdio).
+scitex-msword mcp list-tools     Enumerate registered MCP tools.</p>
+</div></blockquote>
+<p>The CLI is a thin wrapper around the public Python API — every
+mutating verb takes <code class="docutils literal notranslate"><span class="pre">--path</span></code> (input) and <code class="docutils literal notranslate"><span class="pre">--out</span></code> (output) and
+never edits in place. Run <code class="docutils literal notranslate"><span class="pre">scitex-msword</span> <span class="pre">--help-recursive</span></code> for the
+full tree.</p>
 <p class="rubric">Functions</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_post_import_hook</span></code>(*functions)</p></td>
-<td><p>Create a composite post_import_hook from multiple functions.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">link_captions_to_images</span></code>(doc)</p></td>
-<td><p>Link figure captions to images by matching order.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">link_captions_to_images_by_proximity</span></code>(doc)</p></td>
-<td><p>Link figure captions to images by document proximity.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalize_section_headings</span></code>(doc)</p></td>
-<td><p>Normalize section headings for consistency.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_document</span></code>(doc)</p></td>
-<td><p>Validate document structure and add warnings.</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">main</span></code>([argv])</p></td>
+<td><p>Top-level entry — returns process exit code (0 on success).</p></td>
 </tr>
 </tbody>
 </table>
@@ -127,8 +129,8 @@ to process document structures.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="scitex_msword.track_changes.html" class="btn btn-neutral float-left" title="scitex_msword.track_changes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="scitex_msword.writer.html" class="btn btn-neutral float-right" title="scitex_msword.writer" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="scitex_msword.bold.html" class="btn btn-neutral float-left" title="scitex_msword.bold" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="scitex_msword.comments.html" class="btn btn-neutral float-right" title="scitex_msword.comments" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

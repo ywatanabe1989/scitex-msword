@@ -1,0 +1,12 @@
+scitex\_msword.tables
+=====================
+
+.. automodule:: scitex_msword.tables
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      insert_table_after_paragraph
+   

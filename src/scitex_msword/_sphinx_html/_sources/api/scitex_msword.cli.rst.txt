@@ -1,0 +1,12 @@
+scitex\_msword.cli
+==================
+
+.. automodule:: scitex_msword.cli
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      main
+   

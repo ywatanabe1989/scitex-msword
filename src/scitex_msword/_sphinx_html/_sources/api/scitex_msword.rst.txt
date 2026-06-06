@@ -19,6 +19,7 @@
    :recursive:
 
    bold
+   cli
    comments
    diff
    highlights
@@ -26,6 +27,7 @@
    mcp_server
    profiles
    reader
+   tables
    track_changes
    utils
    writer
