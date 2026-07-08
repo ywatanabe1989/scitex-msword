@@ -27,3 +27,4 @@ docs/sphinx/api/
 
 # Local sprint reports / scratch notes; not tracked.
 GITIGNORED/
+.worktrees/
